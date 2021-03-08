@@ -6,7 +6,10 @@
 #include <vector>
 
 #define framePixels 16
-#define airTime 9
+#define airTime 6
+#define movementX 5.0f
+#define movementY 5.0f
+
 enum Direction {
     TOPRIGHT, TOPLEFT, DOWNRIGHT, DOWNLEFT
 };
@@ -77,9 +80,7 @@ int main() {
         }
     }
 
-    bool done = false;
-    bool redraw = true;
-    bool jumping = false;
+    bool done = false, redraw = true, jumping = false;
     int airTimer = 0;
     ALLEGRO_EVENT event;
 
@@ -96,19 +97,19 @@ int main() {
                     if(airTimer < airTime/2){
                         //GO UP AND DIRECTION
                         if(player1.dir == TOPRIGHT || player1.dir == DOWNRIGHT)
-                            player1.x += 5.0f;
+                            player1.x += movementX;
                         else
-                            player1.x -= 5.0f;
+                            player1.x -= movementX;
                         if(player1.dir != DOWNRIGHT && player1.dir != DOWNLEFT)
-                            player1.y -= 5.0f;
+                            player1.y -= movementY;
                     }else if (airTimer > airTime/2 && airTimer < airTime){
                         //GO DOWN AND DIRECTION
                         if(player1.dir == TOPRIGHT || player1.dir == DOWNRIGHT)
-                            player1.x += 5.0f;
+                            player1.x += movementX;
                         else
-                            player1.x -= 5.0f;
+                            player1.x -= movementX;
                         if(player1.dir == DOWNRIGHT || player1.dir == DOWNLEFT)
-                            player1.y += 5.0f;
+                            player1.y += movementY;
                     }else if (airTimer > airTime) {
                         //WE LANDED
                         airTimer = 0;
@@ -144,8 +145,9 @@ int main() {
         }
 
         if (redraw && al_is_event_queue_empty(queue)) {
+            //REDRAW THE IMAGE WITH EVERYTHING
             al_clear_to_color(al_map_rgb(0, 0, 0));
-
+            //TODO MAP FUNCTION OR SOMETHING
             al_draw_bitmap_region(player, sourceX + (player1.dir * 2 * framePixels), 0, framePixels, framePixels,
                                   player1.x, player1.y, 0);
 
