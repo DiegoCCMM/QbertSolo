@@ -1,2 +1,9 @@
 # Project exclude paths
 /cmake-build-debug/
+CMakeLists.txt
+fffff.cpp
+.idea/vcs.xml
+.idea/Qbert.iml
+.idea/modules.xml
+.idea/misc.xml
+.idea/.name
