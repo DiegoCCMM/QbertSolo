@@ -37,6 +37,9 @@ struct Character {
     ALLEGRO_BITMAP *draw;
 };
 
+float scale = 1.0f;
+
+
 void drawMap(Cube map[][7]) {
     for(int i=0; i<7; i++){ // Fila
         for(int j=0; j<i+1; j++){ // Columna
@@ -55,15 +58,22 @@ void loadMap(Cube map[][7], int level, ALLEGRO_BITMAP *cubes){
 
     for(int i=0; i<7; i++){ // Fila
         for(int j=0; j<i+1; j++){ // Columna
-            Cube cubo{300, 100 + i*cubeSize, FIRST, cubes};
+            float x, y;
+
+            if(i%2 < j){   // hacia la izq
+                x = 310 + cubeSize/2 + (j-1)*cubeSize/2, y = 100 + i*cubeSize;
+            } else if(i%2 > j) { // hacia der
+                x = 310 - cubeSize/2 - (i+1-j)*cubeSize/2, y = 100 + i*cubeSize;
+            } else { // cubo en medio
+                x = 310, y = 100 + i*cubeSize;
+            }
+            Cube cubo{x, y, FIRST, cubes};
             map[i][j] = cubo;
         }
     }
 
     drawMap(map);
 }
-
-
 
 void must_init(bool test, const char *description) {
     if (test) return;
@@ -76,15 +86,18 @@ int main() {
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
+    ALLEGRO_TRANSFORM camera;
+
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / 30.0);
     must_init(timer, "timer");
 
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
     must_init(queue, "queue");
 
-    int w = 840, h = 680;
-    ALLEGRO_DISPLAY* disp = al_create_display(w, h);
+    al_set_new_display_flags(ALLEGRO_RESIZABLE);
+    ALLEGRO_DISPLAY *disp = al_create_display(640, 480);
     al_set_window_title(disp, "Q*Bert");
+    int prev_disp[2];
     must_init(disp, "display");
 
     ALLEGRO_FONT *font = al_create_builtin_font();
@@ -145,7 +158,6 @@ int main() {
     while (!done) {
         al_wait_for_event(queue, &event);
         al_get_keyboard_state(&keyState);
-        al_acknowledge_resize(disp);
 
         switch (event.type) {
             case ALLEGRO_EVENT_TIMER:
@@ -197,11 +209,21 @@ int main() {
                     sourceX += 16;
                 }
                 break;
+
+            case ALLEGRO_EVENT_DISPLAY_RESIZE:
+                al_identity_transform(&camera);
+
+                prev_disp[0] = al_get_display_width(disp);
+                al_acknowledge_resize(disp);
+                scale +=((float)al_get_display_width(disp) - (float)prev_disp[0])*0.001f;
+                al_scale_transform(&camera, scale, scale);
+                al_use_transform(&camera);
+                break;
+
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 done = true;
                 break;
         }
-        //TODO CAMERA SCALING CLOSER
         if (redraw && al_is_event_queue_empty(queue)) {
             //REDRAW THE IMAGE WITH EVERYTHING
             al_clear_to_color(al_map_rgb(0, 0, 0));
