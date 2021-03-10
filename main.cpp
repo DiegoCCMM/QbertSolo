@@ -4,11 +4,27 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
 #include <vector>
+#include <iostream>
 
 #define framePixels 16
+#define cubeSize 32.0f
 #define airTime 6
 #define movementX 5.0f
 #define movementY 5.0f
+
+int sx1, sy1;
+int sx2, sy2;
+int sx3, sy3;
+
+enum Color {
+    FIRST, SECOND, THIRD
+};
+
+struct Cube {
+    float x, y;
+    Color color;
+    ALLEGRO_BITMAP *draw;
+};
 
 enum Direction {
     TOPRIGHT, TOPLEFT, DOWNRIGHT, DOWNLEFT
@@ -20,6 +36,34 @@ struct Character {
     Direction dir;
     ALLEGRO_BITMAP *draw;
 };
+
+void drawMap(Cube map[][7]) {
+    for(int i=0; i<7; i++){ // Fila
+        for(int j=0; j<i+1; j++){ // Columna
+            // Esta funcion solo se ejecuta cuando se inicia el nivel
+            al_draw_bitmap_region(map[i][j].draw, sx1, sy1, cubeSize, cubeSize,
+                                  map[i][j].x, map[i][j].y, 0);
+
+            al_flip_display();
+        }
+    }
+}
+
+void loadMap(Cube map[][7], int level, ALLEGRO_BITMAP *cubes){
+    // Segun el nivel establecer sx y sy
+    sx1 = 0, sy1 = 0;
+
+    for(int i=0; i<7; i++){ // Fila
+        for(int j=0; j<i+1; j++){ // Columna
+            Cube cubo{300, 100 + i*cubeSize, FIRST, cubes};
+            map[i][j] = cubo;
+        }
+    }
+
+    drawMap(map);
+}
+
+
 
 void must_init(bool test, const char *description) {
     if (test) return;
@@ -38,8 +82,9 @@ int main() {
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
     must_init(queue, "queue");
 
-    al_set_new_display_flags(ALLEGRO_RESIZABLE);
-    ALLEGRO_DISPLAY *disp = al_create_display(640, 480);
+    int w = 840, h = 680;
+    ALLEGRO_DISPLAY* disp = al_create_display(w, h);
+    al_set_window_title(disp, "Q*Bert");
     must_init(disp, "display");
 
     ALLEGRO_FONT *font = al_create_builtin_font();
@@ -48,7 +93,7 @@ int main() {
     ALLEGRO_KEYBOARD_STATE keyState;
 
     must_init(al_init_image_addon(), "image addon");
-    ALLEGRO_BITMAP *player = al_load_bitmap("/home/diego/Desktop/info/4-2/Videojuegos/Qbert/qbert.png");
+    ALLEGRO_BITMAP *player = al_load_bitmap("../sprites/qbert.png");
     must_init(player, "player");
     Character qbert{100, 100, DOWNRIGHT};
     qbert.draw = player;
@@ -57,6 +102,13 @@ int main() {
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
     al_register_event_source(queue, al_get_timer_event_source(timer));
+
+    // MAPA
+    Cube map[7][7];
+    ALLEGRO_BITMAP *cubes = al_load_bitmap("../sprites/azul.png");
+    must_init(cubes, "cubes");
+    loadMap(map, 1, cubes);
+    // END MAPA
 
     std::vector<int> source;
     std::vector<int> width;
@@ -159,7 +211,7 @@ int main() {
             al_draw_bitmap_region(qbert.draw, sourceX + (qbert.dir * 2 * framePixels), 0, framePixels, framePixels,
                                   qbert.x, qbert.y, 0);
 
-            al_flip_display();
+            //al_flip_display();
 
             redraw = false;
         }
