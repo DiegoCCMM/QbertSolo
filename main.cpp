@@ -7,6 +7,10 @@
 #include <iostream>
 
 #include "Piramide.hpp"
+#include "Character.hpp"
+#include "Player.hpp"
+#include "Enemy.hpp"
+#include "Coily.hpp"
 
 /* Q*BERT */
 #define framePixels 16
