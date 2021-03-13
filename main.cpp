@@ -6,27 +6,13 @@
 #include <vector>
 #include <iostream>
 
+#include "Piramide.hpp"
+
 /* Q*BERT */
 #define framePixels 16
 #define airTime 6
 #define movementX 4.0f
 #define movementY 12.0f
-/* CUBOS */
-#define cubeSize 32.0f
-
-/* VARIABLES GLOBALES */
-float sx[3], sy[3];
-int sigCubo[3];
-
-enum Color {
-    FIRST=0, SECOND=1, THIRD=2
-};
-
-struct Cube {
-    float x, y;
-    int color;
-    ALLEGRO_BITMAP *draw;
-};
 
 enum Direction {
     TOPRIGHT, TOPLEFT, DOWNRIGHT, DOWNLEFT
@@ -42,37 +28,7 @@ struct Character {
 
 float scale = 1.0f;
 
-void drawMap(Cube map[][7]) {
-    for(int i=0; i<7; i++){ // Fila
-        for(int j=0; j<i+1; j++){ // Columna
-            al_draw_bitmap_region(map[i][j].draw, sx[map[i][j].color], sy[map[i][j].color], cubeSize, cubeSize,
-                                  map[i][j].x, map[i][j].y, 0);
-        }
-    }
-}
 
-void loadMap(Cube map[][7], int level, int round, ALLEGRO_BITMAP *cubes){
-    // TODO: Segun el nivel establecer sx y sy leyendo de txt correspondiente
-    sx[0] = 0, sy[0] = 0;
-    sx[1] = 0, sy[1] = 32;
-    sigCubo[0] = 1, sigCubo[1] = 1;
-
-    float x = 320, y = 100;
-    for(int i=0; i<7; i++){ // Fila
-        x -= cubeSize/2;
-        for(int j=0; j<i+1; j++){ // Columna
-            Cube cubo{x + j*cubeSize, y, 0, cubes};
-            map[i][j] = cubo;
-        }
-        y += cubeSize*3/4;
-    }
-
-    drawMap(map);
-}
-
-void changeCube(Cube map[][7], int i, int j){
-    map[i][j].color = sigCubo[map[i][j].color];
-}
 
 void must_init(bool test, const char *description) {
     if (test) return;
@@ -94,7 +50,8 @@ int main() {
     must_init(queue, "queue");
 
     al_set_new_display_flags(ALLEGRO_RESIZABLE);
-    ALLEGRO_DISPLAY *disp = al_create_display(640, 480);
+    float WIDTH = 640, HEIGHT = 480;
+    ALLEGRO_DISPLAY *disp = al_create_display(WIDTH, HEIGHT);
     al_set_window_title(disp, "Q*Bert");
     int prev_disp[2];
     must_init(disp, "display");
@@ -107,18 +64,16 @@ int main() {
     must_init(al_init_image_addon(), "image addon");
     ALLEGRO_BITMAP *player = al_load_bitmap("../sprites/qbert.png");
     must_init(player, "player");
-    Character qbert{320-6, 100-8, DOWNRIGHT, player, 0,0};
+    Character qbert{WIDTH/2-6, 100-8, DOWNRIGHT, player, 0,0};
     int sourceX = 0, sourceY = 2;
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
-    // MAPA
-    Cube map[7][7];
-    ALLEGRO_BITMAP *cubes = al_load_bitmap("../sprites/cubos.png");
-    must_init(cubes, "cubes");
-    loadMap(map, 1, 1, cubes);
+    // CARGAR MAPA
+    Piramide piramide;
+    piramide.loadMap(1, 1, WIDTH, HEIGHT);
     // END MAPA
 
     std::vector<int> source;
@@ -180,7 +135,7 @@ int main() {
                             qbert.y += movementY;
                     }else if (airTimer > airTime) {
                         //WE LANDED
-                        changeCube(map, qbert.i, qbert.j);
+                        piramide.changeCube(qbert.i, qbert.j);
                         airTimer = 0;
                         jumping = false;
                         sourceX -= 16;
@@ -221,11 +176,18 @@ int main() {
                 scale +=((float)al_get_display_width(disp) - (float)prev_disp[0])*0.001f;
                 al_scale_transform(&camera, scale, scale);
                 al_use_transform(&camera);
+
+                WIDTH = al_get_display_width(disp);
+                HEIGHT = al_get_display_height(disp);
+
+                piramide.resizeMap(WIDTH, HEIGHT);
+
                 break;
 
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 done = true;
                 break;
+
         }
         if (redraw && al_is_event_queue_empty(queue)) {
             //REDRAW THE IMAGE WITH EVERYTHING
@@ -233,7 +195,7 @@ int main() {
 
             //TODO MAP FUNCTION OR SOMETHING
 
-            drawMap(map);
+            piramide.drawMap();
             al_draw_bitmap_region(qbert.draw, sourceX + (qbert.dir * 2 * framePixels), 0, framePixels, framePixels,
                                   qbert.x, qbert.y, 0);
 
