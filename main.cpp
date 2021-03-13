@@ -4,11 +4,29 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
 #include <vector>
+#include <iostream>
 
+/* Q*BERT */
 #define framePixels 16
 #define airTime 6
-#define movementX 5.0f
-#define movementY 5.0f
+#define movementX 4.0f
+#define movementY 12.0f
+/* CUBOS */
+#define cubeSize 32.0f
+
+/* VARIABLES GLOBALES */
+float sx[3], sy[3];
+int sigCubo[3];
+
+enum Color {
+    FIRST=0, SECOND=1, THIRD=2
+};
+
+struct Cube {
+    float x, y;
+    int color;
+    ALLEGRO_BITMAP *draw;
+};
 
 enum Direction {
     TOPRIGHT, TOPLEFT, DOWNRIGHT, DOWNLEFT
@@ -19,9 +37,42 @@ struct Character {
     float y;
     Direction dir;
     ALLEGRO_BITMAP *draw;
+    int i, j; // coordenada cubo
 };
 
 float scale = 1.0f;
+
+void drawMap(Cube map[][7]) {
+    for(int i=0; i<7; i++){ // Fila
+        for(int j=0; j<i+1; j++){ // Columna
+            al_draw_bitmap_region(map[i][j].draw, sx[map[i][j].color], sy[map[i][j].color], cubeSize, cubeSize,
+                                  map[i][j].x, map[i][j].y, 0);
+        }
+    }
+}
+
+void loadMap(Cube map[][7], int level, int round, ALLEGRO_BITMAP *cubes){
+    // TODO: Segun el nivel establecer sx y sy leyendo de txt correspondiente
+    sx[0] = 0, sy[0] = 0;
+    sx[1] = 0, sy[1] = 32;
+    sigCubo[0] = 1, sigCubo[1] = 1;
+
+    float x = 320, y = 100;
+    for(int i=0; i<7; i++){ // Fila
+        x -= cubeSize/2;
+        for(int j=0; j<i+1; j++){ // Columna
+            Cube cubo{x + j*cubeSize, y, 0, cubes};
+            map[i][j] = cubo;
+        }
+        y += cubeSize*3/4;
+    }
+
+    drawMap(map);
+}
+
+void changeCube(Cube map[][7], int i, int j){
+    map[i][j].color = sigCubo[map[i][j].color];
+}
 
 void must_init(bool test, const char *description) {
     if (test) return;
@@ -44,6 +95,7 @@ int main() {
 
     al_set_new_display_flags(ALLEGRO_RESIZABLE);
     ALLEGRO_DISPLAY *disp = al_create_display(640, 480);
+    al_set_window_title(disp, "Q*Bert");
     int prev_disp[2];
     must_init(disp, "display");
 
@@ -53,15 +105,21 @@ int main() {
     ALLEGRO_KEYBOARD_STATE keyState;
 
     must_init(al_init_image_addon(), "image addon");
-    ALLEGRO_BITMAP *player = al_load_bitmap("/home/diego/Desktop/info/4-2/Videojuegos/Qbert/qbert.png");
+    ALLEGRO_BITMAP *player = al_load_bitmap("../sprites/qbert.png");
     must_init(player, "player");
-    Character qbert{100, 100, DOWNRIGHT};
-    qbert.draw = player;
+    Character qbert{320-6, 100-8, DOWNRIGHT, player, 0,0};
     int sourceX = 0, sourceY = 2;
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
     al_register_event_source(queue, al_get_timer_event_source(timer));
+
+    // MAPA
+    Cube map[7][7];
+    ALLEGRO_BITMAP *cubes = al_load_bitmap("../sprites/cubos.png");
+    must_init(cubes, "cubes");
+    loadMap(map, 1, 1, cubes);
+    // END MAPA
 
     std::vector<int> source;
     std::vector<int> width;
@@ -122,6 +180,7 @@ int main() {
                             qbert.y += movementY;
                     }else if (airTimer > airTime) {
                         //WE LANDED
+                        changeCube(map, qbert.i, qbert.j);
                         airTimer = 0;
                         jumping = false;
                         sourceX -= 16;
@@ -134,15 +193,19 @@ int main() {
                     switch (event.keyboard.keycode) {
                         case ALLEGRO_KEY_LEFT:
                             qbert.dir = TOPLEFT;
+                            qbert.i--, qbert.j--;
                             break;
                         case ALLEGRO_KEY_RIGHT:
                             qbert.dir = DOWNRIGHT;
+                            qbert.i++, qbert.j++;
                             break;
                         case ALLEGRO_KEY_UP:
                             qbert.dir = TOPRIGHT;
+                            qbert.i--;
                             break;
                         case ALLEGRO_KEY_DOWN:
                             qbert.dir = DOWNLEFT;
+                            qbert.i++;
                             break;
                     }
                     jumping = true;
@@ -170,8 +233,10 @@ int main() {
 
             //TODO MAP FUNCTION OR SOMETHING
 
+            drawMap(map);
             al_draw_bitmap_region(qbert.draw, sourceX + (qbert.dir * 2 * framePixels), 0, framePixels, framePixels,
                                   qbert.x, qbert.y, 0);
+
 
             al_flip_display();
 
