@@ -4,4 +4,5 @@ CMakeLists.txt
 .idea/misc.xml
 .idea/modules.xml
 .idea/Qbert.iml
+.idea/Q*bert.iml
 .idea/vcs.xml
