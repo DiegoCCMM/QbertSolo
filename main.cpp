@@ -58,7 +58,7 @@ int main() {
     must_init(al_init_image_addon(), "image addon");
     ALLEGRO_BITMAP *player = al_load_bitmap("../sprites/qbert.png");
     must_init(player, "player");
-    Player qbert = Player(WIDTH/2-6, 100-8, player, 0, 0, DOWNRIGHT);
+    Player qbert = Player(WIDTH/2-6, 144-8, player, 0, 0, DOWNRIGHT);
     int sourceX = 0, sourceY = 2;
 
     al_register_event_source(queue, al_get_keyboard_event_source());
@@ -181,6 +181,8 @@ int main() {
                 al_scale_transform(&camera, scale, scale);
                 al_use_transform(&camera);
 
+                std::cout << WIDTH << " + " << al_get_display_width(disp) << std::endl;
+
                 WIDTH = al_get_display_width(disp);
                 HEIGHT = al_get_display_height(disp);
 
@@ -209,7 +211,7 @@ int main() {
             redraw = false;
         }
     }
-    
+
     piramide.destroy();
     al_destroy_sample(jump);
     al_destroy_bitmap(qbert.getDraw());

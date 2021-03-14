@@ -61,6 +61,7 @@ public:
         for(int i=0; i<7; i++){ // Fila
             width -= cubeSize/2;
             for(int j=0; j<i+1; j++){ // Columna
+                std::cout << map[i][j].y << " - " << width + j*cubeSize << std::endl;
                 map[i][j].x = width + j*cubeSize;
                 map[i][j].y = height;
             }

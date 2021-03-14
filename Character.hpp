@@ -57,6 +57,10 @@ public:
     void setDraw(ALLEGRO_BITMAP *draw) {
         Character::draw = draw;
     }
+
+    void resize(Piramide *piramide){
+
+    }
 };
 
 #endif //ALLEGRO5TUTORIAL_CHARACTER_HPP
