@@ -3,6 +3,8 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include <vector>
 #include <iostream>
 
@@ -28,14 +30,14 @@ struct Character {
 
 float scale = 1.0f;
 
-
-
 void must_init(bool test, const char *description) {
     if (test) return;
 
     printf("couldn't initialize %s\n", description);
     exit(1);
 }
+
+void destroy_all();
 
 int main() {
     must_init(al_init(), "allegro");
@@ -71,10 +73,18 @@ int main() {
     al_register_event_source(queue, al_get_display_event_source(disp));
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
+    // TODO: crear el resto de .txt de todos los niveles y sus rondas
     // CARGAR MAPA
     Piramide piramide;
-    piramide.loadMap(1, 1, WIDTH, HEIGHT);
+    piramide.loadMap(2, 4, WIDTH, HEIGHT);
     // END MAPA
+
+    // CARGAR SONIDO
+    al_install_audio();
+    al_init_acodec_addon();
+    al_reserve_samples(10);
+    ALLEGRO_SAMPLE *jump = NULL;
+    jump = al_load_sample("../sounds/jump-3.ogg");
 
     std::vector<int> source;
     std::vector<int> width;
@@ -135,6 +145,7 @@ int main() {
                             qbert.y += movementY;
                     }else if (airTimer > airTime) {
                         //WE LANDED
+                        al_play_sample(jump, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
                         piramide.changeCube(qbert.i, qbert.j);
                         airTimer = 0;
                         jumping = false;
@@ -180,7 +191,8 @@ int main() {
                 WIDTH = al_get_display_width(disp);
                 HEIGHT = al_get_display_height(disp);
 
-                piramide.resizeMap(WIDTH, HEIGHT);
+                piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
+                // TODO: establecer bien la posicion de Q*Bert (y futuros objetos) despues del resize
 
                 break;
 
@@ -199,13 +211,14 @@ int main() {
             al_draw_bitmap_region(qbert.draw, sourceX + (qbert.dir * 2 * framePixels), 0, framePixels, framePixels,
                                   qbert.x, qbert.y, 0);
 
-
             al_flip_display();
 
             redraw = false;
         }
     }
 
+    piramide.destroy();
+    al_destroy_sample(jump);
     al_destroy_bitmap(qbert.draw);
     al_destroy_font(font);
     al_destroy_display(disp);
@@ -213,4 +226,8 @@ int main() {
     al_destroy_event_queue(queue);
 
     return 0;
+}
+
+void destroy_all(){
+
 }
