@@ -3,6 +3,8 @@
 //
 #include "Character.hpp"
 #include "Player.hpp"
+#include <random>
+
 #ifndef ALLEGRO5TUTORIAL_ENEMY_HPP
 #define ALLEGRO5TUTORIAL_ENEMY_HPP
 class Enemy : public Character{
@@ -10,6 +12,7 @@ class Enemy : public Character{
 public:
     void randomMovement(){
         //TODO CHOOSE A RANDOM DIRECTION BETWEEN DOWNRIGHT AND DOWNLEFT
+
     }
 };
 #endif //ALLEGRO5TUTORIAL_ENEMY_HPP

@@ -18,18 +18,6 @@
 #define movementX 4.0f
 #define movementY 12.0f
 
-enum Direction {
-    TOPRIGHT, TOPLEFT, DOWNRIGHT, DOWNLEFT
-};
-
-struct Character {
-    float x;
-    float y;
-    Direction dir;
-    ALLEGRO_BITMAP *draw;
-    int i, j; // coordenada cubo
-};
-
 float scale = 1.0f;
 
 
@@ -68,7 +56,7 @@ int main() {
     must_init(al_init_image_addon(), "image addon");
     ALLEGRO_BITMAP *player = al_load_bitmap("../sprites/qbert.png");
     must_init(player, "player");
-    Character qbert{WIDTH/2-6, 100-8, DOWNRIGHT, player, 0,0};
+    Player qbert = Player(WIDTH/2-6, 100-8, player, 0, 0, DOWNRIGHT);
     int sourceX = 0, sourceY = 2;
 
     al_register_event_source(queue, al_get_keyboard_event_source());
@@ -87,9 +75,9 @@ int main() {
 
     source.push_back(0);
 
-    for (int i = 0; i < al_get_bitmap_width(qbert.draw); i++) {
+    for (int i = 0; i < al_get_bitmap_width(qbert.getDraw()); i++) {
         separatorColor = al_map_rgba(0, 0, 255, 255);
-        pixel = al_get_pixel(qbert.draw, i, 0);
+        pixel = al_get_pixel(qbert.getDraw(), i, 0);
 
         if (memcmp(&pixel, &lastPixel, sizeof(ALLEGRO_COLOR))) {
             if (!memcmp(&pixel, &separatorColor, sizeof(ALLEGRO_COLOR))) {
@@ -99,7 +87,7 @@ int main() {
                 else
                     width.push_back(i - width[width.size() - 1]);
             }
-        } else if (i == al_get_bitmap_width(qbert.draw) - 1) {
+        } else if (i == al_get_bitmap_width(qbert.getDraw()) - 1) {
             width.push_back(i - width[width.size() - 1]);
             lastPixel = pixel;
         }
@@ -123,23 +111,23 @@ int main() {
                     airTimer++;
                     if(airTimer < airTime/2){
                         //GO UP AND DIRECTION
-                        if(qbert.dir == TOPRIGHT || qbert.dir == DOWNRIGHT)
-                            qbert.x += movementX;
+                        if(qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
+                            qbert.setX(movementX + qbert.getX());
                         else
-                            qbert.x -= movementX;
-                        if(qbert.dir != DOWNRIGHT && qbert.dir != DOWNLEFT)
-                            qbert.y -= movementY;
+                            qbert.setX(qbert.getX() - movementX);
+                        if(qbert.getDir() != DOWNRIGHT && qbert.getDir() != DOWNLEFT)
+                            qbert.setY(qbert.getY()-movementY);
                     }else if (airTimer > airTime/2 && airTimer < airTime){
                         //GO DOWN AND DIRECTION
-                        if(qbert.dir == TOPRIGHT || qbert.dir == DOWNRIGHT)
-                            qbert.x += movementX;
+                        if(qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
+                            qbert.setX(movementX + qbert.getX());
                         else
-                            qbert.x -= movementX;
-                        if(qbert.dir == DOWNRIGHT || qbert.dir == DOWNLEFT)
-                            qbert.y += movementY;
+                            qbert.setX(qbert.getX() - movementX);
+                        if(qbert.getDir() == DOWNRIGHT || qbert.getDir() == DOWNLEFT)
+                            qbert.setY(qbert.getY() + movementY);
                     }else if (airTimer > airTime) {
                         //WE LANDED
-                        piramide.changeCube(qbert.i, qbert.j);
+                        piramide.changeCube(qbert.getI(), qbert.getJ());
                         airTimer = 0;
                         jumping = false;
                         sourceX -= 16;
@@ -151,20 +139,20 @@ int main() {
                 if (!jumping) {
                     switch (event.keyboard.keycode) {
                         case ALLEGRO_KEY_LEFT:
-                            qbert.dir = TOPLEFT;
-                            qbert.i--, qbert.j--;
+                            qbert.setDir(TOPLEFT);
+                            qbert.setI(qbert.getI()-1), qbert.setI(qbert.getJ()-1);
                             break;
                         case ALLEGRO_KEY_RIGHT:
-                            qbert.dir = DOWNRIGHT;
-                            qbert.i++, qbert.j++;
+                            qbert.setDir(DOWNRIGHT);
+                            qbert.setI(qbert.getI()+1), qbert.setI(qbert.getJ()+1);
                             break;
                         case ALLEGRO_KEY_UP:
-                            qbert.dir = TOPRIGHT;
-                            qbert.i--;
+                            qbert.setDir(TOPRIGHT) ;
+                            qbert.setI(qbert.getI()-1);
                             break;
                         case ALLEGRO_KEY_DOWN:
-                            qbert.dir = DOWNLEFT;
-                            qbert.i++;
+                            qbert.setDir(DOWNLEFT);
+                            qbert.setI(qbert.getI()+1);
                             break;
                     }
                     jumping = true;
@@ -200,8 +188,8 @@ int main() {
             //TODO MAP FUNCTION OR SOMETHING
 
             piramide.drawMap();
-            al_draw_bitmap_region(qbert.draw, sourceX + (qbert.dir * 2 * framePixels), 0, framePixels, framePixels,
-                                  qbert.x, qbert.y, 0);
+            al_draw_bitmap_region(qbert.getDraw(), sourceX + (qbert.getDir() * 2 * framePixels), 0, framePixels, framePixels,
+                                  qbert.getX(), qbert.getY(), 0);
 
 
             al_flip_display();
@@ -210,7 +198,7 @@ int main() {
         }
     }
 
-    al_destroy_bitmap(qbert.draw);
+    al_destroy_bitmap(qbert.getDraw());
     al_destroy_font(font);
     al_destroy_display(disp);
     al_destroy_timer(timer);

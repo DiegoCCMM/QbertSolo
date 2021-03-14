@@ -20,6 +20,8 @@ public:
         Character::x = x;
     }
 
+    Character(float x, float y, ALLEGRO_BITMAP *draw, int i, int j) : x(x), y(y), draw(draw), i(i), j(j) {}
+
     int getI() const {
         return i;
     }
@@ -34,6 +36,18 @@ public:
 
     void setJ(int j) {
         Character::j = j;
+    }
+
+    float getX() const {
+        return x;
+    }
+
+    float getY() const {
+        return y;
+    }
+
+    ALLEGRO_BITMAP *getDraw() const {
+        return draw;
     }
 
     void setY(float y) {
