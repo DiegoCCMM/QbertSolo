@@ -11,6 +11,17 @@ enum Direction {
 
 class Player : public Character{
     Direction dir = DOWNRIGHT;
+    int sourceX = 0;
+public:
+    int getSourceX() const {
+        return sourceX;
+    }
+
+    void setSourceX(int sourceX) {
+        Player::sourceX = sourceX;
+    }
+
+private:
     int lives = 3;
     int score = 0;
 public:

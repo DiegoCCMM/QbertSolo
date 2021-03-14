@@ -31,6 +31,10 @@ void must_init(bool test, const char *description) {
 
 void destroy_all();
 
+void movement(Player &qbert, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airTimer);
+void movement2(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airTimer);
+
+
 int main() {
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
@@ -57,9 +61,13 @@ int main() {
 
     must_init(al_init_image_addon(), "image addon");
     ALLEGRO_BITMAP *player = al_load_bitmap("../sprites/qbert.png");
+    ALLEGRO_BITMAP *Redblob = al_load_bitmap("../sprites/Redblob.png");
     must_init(player, "player");
+    must_init(Redblob, "redblob");
     Player qbert = Player(WIDTH/2-6, 144-8, player, 0, 0, DOWNRIGHT);
-    int sourceX = 0, sourceY = 2;
+    Enemy redblob = Enemy(WIDTH/2-6, 144-8, Redblob, 0, 0, DOWNRIGHT);
+
+    int sourceY = 2;
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
@@ -103,8 +111,9 @@ int main() {
         }
     }
 
-    bool done = false, redraw = true, jumping = false;
+    bool done = false, redraw = true;
     int airTimer = 0;
+    int enemyTimer = 0;
     ALLEGRO_EVENT event;
 
     //GAME LOOP
@@ -116,39 +125,19 @@ int main() {
 
         switch (event.type) {
             case ALLEGRO_EVENT_TIMER:
-                redraw = true;
-                if (jumping) {
-                    airTimer++;
-                    if(airTimer < airTime/2){
-                        //GO UP AND DIRECTION
-                        if(qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
-                            qbert.setX(movementX + qbert.getX());
-                        else
-                            qbert.setX(qbert.getX() - movementX);
-                        if(qbert.getDir() != DOWNRIGHT && qbert.getDir() != DOWNLEFT)
-                            qbert.setY(qbert.getY()-movementY);
-                    }else if (airTimer > airTime/2 && airTimer < airTime){
-                        //GO DOWN AND DIRECTION
-                        if(qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
-                            qbert.setX(movementX + qbert.getX());
-                        else
-                            qbert.setX(qbert.getX() - movementX);
-                        if(qbert.getDir() == DOWNRIGHT || qbert.getDir() == DOWNLEFT)
-                            qbert.setY(qbert.getY() + movementY);
-                    }else if (airTimer > airTime) {
-                        //WE LANDED
-                        al_play_sample(jump, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
-                        piramide.changeCube(qbert.getI(), qbert.getJ());
 
-                        airTimer = 0;
-                        jumping = false;
-                        sourceX -= 16;
-                    }
+                redraw = true;
+                if(enemyTimer % 120 == 0){
+                    redblob.randomMovement();
                 }
+                movement(qbert, piramide, jump, airTimer);
+                movement2(redblob, piramide, jump, airTimer);
+                enemyTimer++;
                 break;
 
             case ALLEGRO_EVENT_KEY_DOWN:
-                if (!jumping) {
+
+                if (!qbert.isJumping()) {
                     switch (event.keyboard.keycode) {
                         case ALLEGRO_KEY_LEFT:
                             qbert.setDir(TOPLEFT);
@@ -167,12 +156,13 @@ int main() {
                             qbert.setI(qbert.getI()+1);
                             break;
                     }
-                    jumping = true;
-                    sourceX += 16;
+                    qbert.setJumping(true);
+                    qbert.setSourceX(qbert.getSourceX()+16);
                 }
                 break;
 
             case ALLEGRO_EVENT_DISPLAY_RESIZE:
+
                 al_identity_transform(&camera);
 
                 prev_disp[0] = al_get_display_width(disp);
@@ -192,6 +182,7 @@ int main() {
                 break;
 
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
+
                 done = true;
                 break;
 
@@ -199,13 +190,12 @@ int main() {
         if (redraw && al_is_event_queue_empty(queue)) {
             //REDRAW THE IMAGE WITH EVERYTHING
             al_clear_to_color(al_map_rgb(0, 0, 0));
-
-            //TODO MAP FUNCTION OR SOMETHING
-
             piramide.drawMap();
-            al_draw_bitmap_region(qbert.getDraw(), sourceX + (qbert.getDir() * 2 * framePixels), 0, framePixels, framePixels,
+            al_draw_bitmap_region(qbert.getDraw(), qbert.getSourceX() + (qbert.getDir() * 2 * framePixels), 0, framePixels, framePixels,
                                   qbert.getX(), qbert.getY(), 0);
 
+            al_draw_bitmap_region(redblob.getDraw(), redblob.getSourceX(), 0, framePixels, framePixels,
+                                  redblob.getX(), redblob.getY(), 0);
             al_flip_display();
 
             redraw = false;
@@ -215,6 +205,7 @@ int main() {
     piramide.destroy();
     al_destroy_sample(jump);
     al_destroy_bitmap(qbert.getDraw());
+    al_destroy_bitmap(redblob.getDraw());
     al_destroy_font(font);
     al_destroy_display(disp);
     al_destroy_timer(timer);
@@ -222,6 +213,69 @@ int main() {
 
     return 0;
 }
+
+void movement(Player &qbert, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airTimer) {
+    if (qbert.isJumping()) {
+        airTimer++;
+        if(airTimer < airTime/2){
+            //GO UP AND DIRECTION
+            if(qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
+                qbert.setX(movementX + qbert.getX());
+            else
+                qbert.setX(qbert.getX() - movementX);
+            if(qbert.getDir() != DOWNRIGHT && qbert.getDir() != DOWNLEFT)
+                qbert.setY(qbert.getY()-movementY);
+        }else if (airTimer > airTime/2 && airTimer < airTime){
+            //GO DOWN AND DIRECTION
+            if(qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
+                qbert.setX(movementX + qbert.getX());
+            else
+                qbert.setX(qbert.getX() - movementX);
+            if(qbert.getDir() == DOWNRIGHT || qbert.getDir() == DOWNLEFT)
+                qbert.setY(qbert.getY() + movementY);
+        }else if (airTimer > airTime) {
+            //WE LANDED
+            al_play_sample(jump, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+            piramide.changeCube(qbert.getI(), qbert.getJ());
+
+            airTimer = 0;
+            qbert.setJumping(false);
+            qbert.setSourceX(qbert.getSourceX() - 16);
+        }
+    }
+}
+
+void movement2(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airTimer) {
+    if (blob.isJumping()) {
+        airTimer++;
+        if(airTimer < airTime/2){
+            //GO UP AND DIRECTION
+            if(blob.getDir() == TOPRIGHT || blob.getDir() == DOWNRIGHT)
+                blob.setX(movementX + blob.getX());
+            else
+                blob.setX(blob.getX() - movementX);
+            if(blob.getDir() != DOWNRIGHT && blob.getDir() != DOWNLEFT)
+                blob.setY(blob.getY()-movementY);
+        }else if (airTimer > airTime/2 && airTimer < airTime){
+            //GO DOWN AND DIRECTION
+            if(blob.getDir() == TOPRIGHT || blob.getDir() == DOWNRIGHT)
+                blob.setX(movementX + blob.getX());
+            else
+                blob.setX(blob.getX() - movementX);
+            if(blob.getDir() == DOWNRIGHT || blob.getDir() == DOWNLEFT)
+                blob.setY(blob.getY() + movementY);
+        }else if (airTimer > airTime) {
+            //WE LANDED
+            al_play_sample(jump, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+            piramide.changeCube(blob.getI(), blob.getJ());
+
+            airTimer = 0;
+            blob.setJumping(false);
+            blob.setSourceX(blob.getSourceX() + 16);
+        }
+    }
+}
+
 
 void destroy_all(){
 

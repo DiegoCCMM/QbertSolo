@@ -11,6 +11,17 @@ class Character{
     float x;    // display coordinates
     float y;
     ALLEGRO_BITMAP *draw;   //sprite
+    bool jumping = false;
+public:
+    bool isJumping() const {
+        return jumping;
+    }
+
+    void setJumping(bool jumping) {
+        Character::jumping = jumping;
+    }
+
+private:
     int i, j; // coordenada cubo
 
 public:
