@@ -29,8 +29,6 @@ void must_init(bool test, const char *description) {
     exit(1);
 }
 
-void destroy_all();
-
 int main() {
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
@@ -68,7 +66,7 @@ int main() {
     // TODO: crear el resto de .txt de todos los niveles y sus rondas
     // CARGAR MAPA
     Piramide piramide;
-    piramide.loadMap(2, 4, WIDTH, HEIGHT);
+    piramide.loadMap(1, 4, WIDTH, HEIGHT);
     // END MAPA
 
     // CARGAR SONIDO
@@ -167,6 +165,15 @@ int main() {
                             qbert.setI(qbert.getI()+1);
                             break;
                     }
+
+                    if(qbert.getJ()<0 || qbert.getJ() > qbert.getI() || qbert.getI()>=7){
+                        // TODO: Si no hay platillo Q*Bert cae al vacio y pierde 1 vida
+                        // Reiniciar posiciones Q*Bert
+                        qbert.setDir(DOWNRIGHT);
+                        qbert.setI(0), qbert.setJ(0);
+                        qbert.setX(piramide.map[0][0].x-6), qbert.setY(piramide.map[0][0].y-32);
+                    }
+
                     jumping = true;
                     sourceX += 16;
                 }
@@ -181,12 +188,11 @@ int main() {
                 al_scale_transform(&camera, scale, scale);
                 al_use_transform(&camera);
 
-                std::cout << WIDTH << " + " << al_get_display_width(disp) << std::endl;
-
                 WIDTH = al_get_display_width(disp);
                 HEIGHT = al_get_display_height(disp);
 
                 piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
+                qbert.resize(&piramide);
                 // TODO: establecer bien la posicion de Q*Bert (y futuros objetos) despues del resize
 
                 break;
@@ -203,8 +209,12 @@ int main() {
             //TODO MAP FUNCTION OR SOMETHING
 
             piramide.drawMap();
-            al_draw_bitmap_region(qbert.getDraw(), sourceX + (qbert.getDir() * 2 * framePixels), 0, framePixels, framePixels,
+            //piramide.algo(scale);
+
+            al_draw_bitmap_region(qbert.getDraw(), sourceX + (qbert.getDir() * 2 * framePixels), 0, framePixels,
+                                  framePixels,
                                   qbert.getX(), qbert.getY(), 0);
+
 
             al_flip_display();
 
@@ -221,8 +231,4 @@ int main() {
     al_destroy_event_queue(queue);
 
     return 0;
-}
-
-void destroy_all(){
-
 }

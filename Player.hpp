@@ -43,6 +43,11 @@ public:
     void setDir(Direction dir) {
         Player::dir = dir;
     }
+
+    void resize(Piramide *piramide) override {
+        setX(piramide->map[getI()][getJ()].x+9);
+        setY(piramide->map[getI()][getJ()].y-8);
+    }
 };
 
 

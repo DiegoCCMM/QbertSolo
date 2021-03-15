@@ -58,9 +58,7 @@ public:
         Character::draw = draw;
     }
 
-    void resize(Piramide *piramide){
-
-    }
+    virtual void resize(Piramide *piramide) {}
 };
 
 #endif //ALLEGRO5TUTORIAL_CHARACTER_HPP
