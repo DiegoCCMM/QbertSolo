@@ -12,6 +12,19 @@ class Character{
     float y;
     ALLEGRO_BITMAP *draw;   //sprite
     bool jumping = false;
+    int airTimer = 0;
+public:
+    int getAirTimer() const {
+        return airTimer;
+    }
+
+    void setAirTimer(int airTimer) {
+        Character::airTimer = airTimer;
+    }
+    void airTimerplusplus(){
+        airTimer++;
+    }
+
 public:
     bool isJumping() const {
         return jumping;

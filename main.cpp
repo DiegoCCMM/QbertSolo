@@ -31,8 +31,8 @@ void must_init(bool test, const char *description) {
 
 void destroy_all();
 
-void movement(Player &qbert, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airTimer);
-void movement2(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airTimer);
+void movementPlayer(Player &qbert, Piramide &piramide, ALLEGRO_SAMPLE *jumpSound);
+void movementBlobEnemies(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jumpSound);
 
 
 int main() {
@@ -65,7 +65,7 @@ int main() {
     must_init(player, "player");
     must_init(Redblob, "redblob");
     Player qbert = Player(WIDTH/2-6, 144-8, player, 0, 0, DOWNRIGHT);
-    Enemy redblob = Enemy(WIDTH/2-6, 144-8, Redblob, 0, 0, DOWNRIGHT);
+    Enemy redblob = Enemy(WIDTH/2-6, 144, Redblob, 0, 0, DOWNRIGHT);
 
     int sourceY = 2;
 
@@ -83,8 +83,11 @@ int main() {
     al_install_audio();
     al_init_acodec_addon();
     al_reserve_samples(10);
-    ALLEGRO_SAMPLE *jump = NULL;
-    jump = al_load_sample("../sounds/jump-3.ogg");
+    ALLEGRO_SAMPLE *jumpSound = NULL;
+    jumpSound = al_load_sample("../sounds/jump-3.ogg");
+    ALLEGRO_SAMPLE *playerJumpSound = NULL;
+    playerJumpSound = al_load_sample("../sounds/jump.ogg");
+    must_init(playerJumpSound, "playerJumpSound");
 
     std::vector<int> source;
     std::vector<int> width;
@@ -129,9 +132,10 @@ int main() {
                 redraw = true;
                 if(enemyTimer % 120 == 0){
                     redblob.randomMovement();
+                    enemyTimer = 0;
                 }
-                movement(qbert, piramide, jump, airTimer);
-                movement2(redblob, piramide, jump, airTimer);
+                movementPlayer(qbert, piramide, playerJumpSound);
+                movementBlobEnemies(redblob, piramide, jumpSound);
                 enemyTimer++;
                 break;
 
@@ -203,7 +207,8 @@ int main() {
     }
 
     piramide.destroy();
-    al_destroy_sample(jump);
+    al_destroy_sample(playerJumpSound);
+    al_destroy_sample(jumpSound);
     al_destroy_bitmap(qbert.getDraw());
     al_destroy_bitmap(redblob.getDraw());
     al_destroy_font(font);
@@ -214,10 +219,10 @@ int main() {
     return 0;
 }
 
-void movement(Player &qbert, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airTimer) {
+void movementPlayer(Player &qbert, Piramide &piramide, ALLEGRO_SAMPLE *playerJumpSound) {
     if (qbert.isJumping()) {
-        airTimer++;
-        if(airTimer < airTime/2){
+        qbert.airTimerplusplus();
+        if(qbert.getAirTimer() < airTime/2){
             //GO UP AND DIRECTION
             if(qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
                 qbert.setX(movementX + qbert.getX());
@@ -225,7 +230,7 @@ void movement(Player &qbert, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airT
                 qbert.setX(qbert.getX() - movementX);
             if(qbert.getDir() != DOWNRIGHT && qbert.getDir() != DOWNLEFT)
                 qbert.setY(qbert.getY()-movementY);
-        }else if (airTimer > airTime/2 && airTimer < airTime){
+        }else if (qbert.getAirTimer() > airTime/2 && qbert.getAirTimer() < airTime){
             //GO DOWN AND DIRECTION
             if(qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
                 qbert.setX(movementX + qbert.getX());
@@ -233,22 +238,22 @@ void movement(Player &qbert, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airT
                 qbert.setX(qbert.getX() - movementX);
             if(qbert.getDir() == DOWNRIGHT || qbert.getDir() == DOWNLEFT)
                 qbert.setY(qbert.getY() + movementY);
-        }else if (airTimer > airTime) {
+        }else if (qbert.getAirTimer() > airTime) {
             //WE LANDED
-            al_play_sample(jump, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+            al_play_sample(playerJumpSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
             piramide.changeCube(qbert.getI(), qbert.getJ());
 
-            airTimer = 0;
+            qbert.setAirTimer(0);
             qbert.setJumping(false);
             qbert.setSourceX(qbert.getSourceX() - 16);
         }
     }
 }
 
-void movement2(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airTimer) {
+void movementBlobEnemies(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jumpSound) {
     if (blob.isJumping()) {
-        airTimer++;
-        if(airTimer < airTime/2){
+        blob.airTimerplusplus();
+        if(blob.getAirTimer() < airTime/2){
             //GO UP AND DIRECTION
             if(blob.getDir() == TOPRIGHT || blob.getDir() == DOWNRIGHT)
                 blob.setX(movementX + blob.getX());
@@ -256,7 +261,7 @@ void movement2(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airTi
                 blob.setX(blob.getX() - movementX);
             if(blob.getDir() != DOWNRIGHT && blob.getDir() != DOWNLEFT)
                 blob.setY(blob.getY()-movementY);
-        }else if (airTimer > airTime/2 && airTimer < airTime){
+        }else if (blob.getAirTimer() > airTime/2 && blob.getAirTimer() < airTime){
             //GO DOWN AND DIRECTION
             if(blob.getDir() == TOPRIGHT || blob.getDir() == DOWNRIGHT)
                 blob.setX(movementX + blob.getX());
@@ -264,13 +269,15 @@ void movement2(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jump, int &airTi
                 blob.setX(blob.getX() - movementX);
             if(blob.getDir() == DOWNRIGHT || blob.getDir() == DOWNLEFT)
                 blob.setY(blob.getY() + movementY);
-        }else if (airTimer > airTime) {
+        }else if (blob.getAirTimer() > airTime) {
             //WE LANDED
-            al_play_sample(jump, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
-            piramide.changeCube(blob.getI(), blob.getJ());
-
-            airTimer = 0;
+            al_play_sample(jumpSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+            if(blob.hasChangingGroundPower()) {
+                piramide.changeCube(blob.getI(), blob.getJ());
+            }
+            blob.setAirTimer(0);
             blob.setJumping(false);
+            blob.assignIJ();
             blob.setSourceX(blob.getSourceX() + 16);
         }
     }

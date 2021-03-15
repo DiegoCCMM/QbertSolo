@@ -9,6 +9,7 @@
 #define ALLEGRO5TUTORIAL_ENEMY_HPP
 class Enemy : public Character{
     Direction dir;
+    bool changingGroundPower = false;
     int sourceX = 16;
 public:
     int getSourceX() const {
@@ -20,8 +21,13 @@ public:
     }
 
 public:
-    Enemy(float x, float y, ALLEGRO_BITMAP *draw, int i, int j, Direction dir) : Character(x, y, draw, i, j),
-                                                                                 dir(dir) {}
+    Enemy(float x, float y, ALLEGRO_BITMAP *draw, int i, int j,
+          Direction dir, bool changingGroundPower = false) : Character(x, y, draw, i, j),
+                                                                                 dir(dir), changingGroundPower(changingGroundPower) {}
+
+    bool hasChangingGroundPower() const {
+        return changingGroundPower;
+    }
 
     Direction getDir() const {
         return dir;
@@ -39,6 +45,15 @@ public:
 
         setJumping(true);
         sourceX -= 16;
+    }
+    void assignIJ(){
+        if(dir == DOWNRIGHT){
+            setI(getI()+1);
+            setJ(getJ()+1);
+
+        }else{//dir == DOWNLEFT
+            setI(getI()+1);
+        }
     }
 };
 #endif //ALLEGRO5TUTORIAL_ENEMY_HPP
