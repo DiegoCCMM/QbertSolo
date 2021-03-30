@@ -160,6 +160,14 @@ int main() {
                             qbert.setI(qbert.getI()+1);
                             break;
                     }
+
+                    if(qbert.getJ()<0 || qbert.getJ() > qbert.getI() || qbert.getI()>=7){
+                        // TODO: Si no hay platillo Q*Bert cae al vacio y pierde 1 vida
+                        // Reiniciar posiciones Q*Bert
+                        qbert.setDir(DOWNRIGHT);
+                        qbert.setI(0), qbert.setJ(0);
+                        qbert.setX(piramide.map[0][0].x-6), qbert.setY(piramide.map[0][0].y-32);
+                    }
                     qbert.setJumping(true);
                     qbert.setSourceX(qbert.getSourceX()+16);
                 }
@@ -181,6 +189,7 @@ int main() {
                 HEIGHT = al_get_display_height(disp);
 
                 piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
+                qbert.resize(&piramide);
                 // TODO: establecer bien la posicion de Q*Bert (y futuros objetos) despues del resize
 
                 break;
