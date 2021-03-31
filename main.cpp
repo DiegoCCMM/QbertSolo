@@ -272,7 +272,7 @@ void movementPlayer(QBert &qbert, Piramide &piramide, ALLEGRO_SAMPLE *playerJump
             if(qbert.getY() <= HEIGHT){
                 qbert.setY(qbert.getY() + movementY);
             } else {
-                qbert.reset(piramide);
+                qbert.reset(&piramide);
             }
         }
     }

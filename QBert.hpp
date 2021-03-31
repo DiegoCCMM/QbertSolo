@@ -49,14 +49,15 @@ public:
     /*
      * Reinicia la posicion de Q*Bert al inicio de la piramide
      * */
-    void reset(Piramide piramide){
+    void reset(Piramide *piramide){
         QBert::setFalling(false);
         QBert::setJumping(false);
         QBert::setAirTimer(0);
         QBert::setSourceX(QBert::getSourceX() - 16);
         QBert::setDir(DOWNLEFT);
         QBert::setI(0), QBert::setJ(0);
-        QBert::setX(piramide.map[0][0].x+getXRespectCube()), QBert::setY(piramide.map[0][0].y+getYRespectCube());
+        QBert::setX(piramide->map[0][0].x+getXRespectCube()), QBert::setY(piramide->map[0][0].y+getYRespectCube());
+        piramide->changeCube(0, 0);
     }
 };
 
