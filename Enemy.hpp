@@ -2,7 +2,7 @@
 // Created by diego on 13/3/21.
 //
 #include "Character.hpp"
-#include "Player.hpp"
+#include "QBert.hpp"
 #include <random>
 
 #ifndef ALLEGRO5TUTORIAL_ENEMY_HPP
@@ -21,9 +21,8 @@ public:
     }
 
 public:
-    Enemy(float x, float y, ALLEGRO_BITMAP *draw, int i, int j,
-          Direction dir, bool changingGroundPower = false) : Character(x, y, draw, i, j),
-                                                                                 dir(dir), changingGroundPower(changingGroundPower) {}
+    Enemy(Piramide piramide, std::string nom, int i, int j, int xRespectCube, int yRespectCube) :
+                                            Character(piramide, nom, i, j, DOWNRIGHT, xRespectCube, yRespectCube) {}
 
     bool hasChangingGroundPower() const {
         return changingGroundPower;

@@ -7,11 +7,54 @@
 
 #include <allegro5/allegro.h>
 
+enum Direction {
+    TOPRIGHT, TOPLEFT, DOWNRIGHT, DOWNLEFT
+};
+
 class Character{
-    float x;    // display coordinates
-    float y;
+    float x, y;             // display coordinates
     ALLEGRO_BITMAP *draw;   //sprite
-    bool jumping = false;
+    bool jumping = false,
+         falling = false;
+    Direction dir;
+    float xRespectCube, yRespectCube;
+
+public:
+    float getXRespectCube() const {
+        return xRespectCube;
+    }
+
+    void setXRespectCube(float xRespectCube) {
+        Character::xRespectCube = xRespectCube;
+    }
+
+    float getYRespectCube() const {
+        return yRespectCube;
+    }
+
+    void setYRespectCube(float yRespectCube) {
+        Character::yRespectCube = yRespectCube;
+    }
+
+public:
+    Direction getDir() const {
+        return dir;
+    }
+
+    void setDir(Direction dir) {
+        Character::dir = dir;
+    }
+
+public:
+    bool isFalling() const {
+        return falling;
+    }
+
+    void setFalling(bool falling) {
+        Character::falling = falling;
+    }
+
+private:
     int airTimer = 0;
 public:
     int getAirTimer() const {
@@ -38,13 +81,30 @@ private:
     int i, j; // coordenada cubo
 
 public:
-    Character(float x, float y, ALLEGRO_BITMAP *draw) : x(x), y(y), draw(draw) {}
+    Character(float x, float y, ALLEGRO_BITMAP *draw, Direction dir) : x(x), y(y), draw(draw), dir(dir) {}
 
     void setX(float x) {
         Character::x = x;
     }
 
-    Character(float x, float y, ALLEGRO_BITMAP *draw, int i, int j) : x(x), y(y), draw(draw), i(i), j(j) {}
+    void must_init(bool test, const char *description) {
+        if (test) return;
+
+        printf("couldn't initialize %s\n", description);
+        exit(1);
+    }
+
+    Character(Piramide piramide, std::string nom, int i, int j, Direction dir, int xRespectCube, int yRespectCube) {
+        this->x = piramide.map[i][j].x + xRespectCube, this->y =piramide.map[i][j].y + yRespectCube;
+        this->i = i, this->j = j;
+        this->dir = dir;
+        this->xRespectCube = xRespectCube, this->yRespectCube = yRespectCube;
+
+        std::string path = "../sprites/" + nom + ".png";
+        ALLEGRO_BITMAP *player = al_load_bitmap(path.c_str());
+        must_init(player, nom.c_str());
+        this->draw = player;
+    }
 
     int getI() const {
         return i;
@@ -82,7 +142,10 @@ public:
         Character::draw = draw;
     }
 
-    virtual void resize(Piramide *piramide) {}
+    virtual void resize(Piramide *piramide) {
+        Character::setX(piramide->map[getI()][getJ()].x+this->xRespectCube);
+        Character::setY(piramide->map[getI()][getJ()].y+this->yRespectCube);
+    }
 };
 
 #endif //ALLEGRO5TUTORIAL_CHARACTER_HPP

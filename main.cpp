@@ -10,7 +10,7 @@
 
 #include "Piramide.hpp"
 #include "Character.hpp"
-#include "Player.hpp"
+#include "QBert.hpp"
 #include "Enemy.hpp"
 #include "Coily.hpp"
 
@@ -21,6 +21,7 @@
 #define movementY 12.0f
 
 float scale = 1.0f;
+float WIDTH = 640, HEIGHT = 480;
 
 void must_init(bool test, const char *description) {
     if (test) return;
@@ -29,9 +30,7 @@ void must_init(bool test, const char *description) {
     exit(1);
 }
 
-void destroy_all();
-
-void movementPlayer(Player &qbert, Piramide &piramide, ALLEGRO_SAMPLE *jumpSound);
+void movementPlayer(QBert &qbert, Piramide &piramide, ALLEGRO_SAMPLE *jumpSound, ALLEGRO_SAMPLE *qbertFallingSound);
 void movementBlobEnemies(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jumpSound);
 
 
@@ -48,47 +47,48 @@ int main() {
     must_init(queue, "queue");
 
     al_set_new_display_flags(ALLEGRO_RESIZABLE);
-    float WIDTH = 640, HEIGHT = 480;
     ALLEGRO_DISPLAY *disp = al_create_display(WIDTH, HEIGHT);
     al_set_window_title(disp, "Q*Bert");
-    int prev_disp[2];
     must_init(disp, "display");
+    int prev_disp[2];
 
     ALLEGRO_FONT *font = al_create_builtin_font();
     must_init(font, "font");
 
     ALLEGRO_KEYBOARD_STATE keyState;
-
-    must_init(al_init_image_addon(), "image addon");
-    ALLEGRO_BITMAP *player = al_load_bitmap("../sprites/qbert.png");
-    ALLEGRO_BITMAP *Redblob = al_load_bitmap("../sprites/Redblob.png");
-    must_init(player, "player");
-    must_init(Redblob, "redblob");
-    Player qbert = Player(WIDTH/2-6, 144-8, player, 0, 0, DOWNRIGHT);
-    Enemy redblob = Enemy(WIDTH/2-6, 144, Redblob, 0, 0, DOWNRIGHT);
-
-    int sourceY = 2;
-
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
+    must_init(al_init_image_addon(), "image addon");
+
     // TODO: crear el resto de .txt de todos los niveles y sus rondas
     // CARGAR MAPA
     Piramide piramide;
-    piramide.loadMap(2, 4, WIDTH, HEIGHT);
+    piramide.loadMap(1, 4, WIDTH, HEIGHT);
     // END MAPA
+
+    // CARGAR PERSONAJES
+    QBert qbert = QBert(piramide);
+    Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 10, 0); // X e Y posicion respecto al cubo[i,j]
+    // FIN PERSONAJES
 
     // CARGAR SONIDO
     al_install_audio();
     al_init_acodec_addon();
     al_reserve_samples(10);
-    ALLEGRO_SAMPLE *jumpSound = NULL;
-    jumpSound = al_load_sample("../sounds/jump-3.ogg");
-    ALLEGRO_SAMPLE *playerJumpSound = NULL;
-    playerJumpSound = al_load_sample("../sounds/jump.ogg");
+
+    ALLEGRO_SAMPLE *jumpSound = al_load_sample("../sounds/jump-3.ogg");
+
+    ALLEGRO_SAMPLE *playerJumpSound = al_load_sample("../sounds/jump.ogg");
     must_init(playerJumpSound, "playerJumpSound");
 
+    ALLEGRO_SAMPLE *qbertFallingSound = al_load_sample("../sounds/qbert-falling.ogg");
+    must_init(qbertFallingSound, "qbertFallingSound");
+    // FIN SONIDO
+
+
+    // TODO: el codigo que abarca desde aqui
     std::vector<int> source;
     std::vector<int> width;
 
@@ -113,10 +113,10 @@ int main() {
             lastPixel = pixel;
         }
     }
+    // TODO: hasta aqui, poner en otro lado, si es algo de Q*Bert poner en una funcion dentro del fichero QBert
 
     bool done = false, redraw = true;
-    int airTimer = 0;
-    int enemyTimer = 0;
+    int enemyTimer = 0; // TODO: poner en otro lado (dentro del fichero enemy?)
     ALLEGRO_EVENT event;
 
     //GAME LOOP
@@ -134,7 +134,7 @@ int main() {
                     redblob.randomMovement();
                     enemyTimer = 0;
                 }
-                movementPlayer(qbert, piramide, playerJumpSound);
+                movementPlayer(qbert, piramide, playerJumpSound, qbertFallingSound);
                 movementBlobEnemies(redblob, piramide, jumpSound);
                 enemyTimer++;
                 break;
@@ -161,13 +161,6 @@ int main() {
                             break;
                     }
 
-                    if(qbert.getJ()<0 || qbert.getJ() > qbert.getI() || qbert.getI()>=7){
-                        // TODO: Si no hay platillo Q*Bert cae al vacio y pierde 1 vida
-                        // Reiniciar posiciones Q*Bert
-                        qbert.setDir(DOWNRIGHT);
-                        qbert.setI(0), qbert.setJ(0);
-                        qbert.setX(piramide.map[0][0].x-6), qbert.setY(piramide.map[0][0].y-32);
-                    }
                     qbert.setJumping(true);
                     qbert.setSourceX(qbert.getSourceX()+16);
                 }
@@ -188,8 +181,10 @@ int main() {
                 WIDTH = al_get_display_width(disp);
                 HEIGHT = al_get_display_height(disp);
 
+                // Resize all
                 piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
                 qbert.resize(&piramide);
+                redblob.resize(&piramide);
                 // TODO: establecer bien la posicion de Q*Bert (y futuros objetos) despues del resize
 
                 break;
@@ -203,9 +198,17 @@ int main() {
         if (redraw && al_is_event_queue_empty(queue)) {
             //REDRAW THE IMAGE WITH EVERYTHING
             al_clear_to_color(al_map_rgb(0, 0, 0));
-            piramide.drawMap();
-            al_draw_bitmap_region(qbert.getDraw(), qbert.getSourceX() + (qbert.getDir() * 2 * framePixels), 0, framePixels, framePixels,
-                                  qbert.getX(), qbert.getY(), 0);
+            if(qbert.isFalling()) { // Si QBert esta cayendo primero se dibuja la piramide y luego a QBert
+                al_draw_bitmap_region(qbert.getDraw(), qbert.getSourceX() + (qbert.getDir() * 2 * framePixels), 0,
+                                      framePixels, framePixels,
+                                      qbert.getX(), qbert.getY(), 0);
+                piramide.drawMap();
+            } else {
+                piramide.drawMap();
+                al_draw_bitmap_region(qbert.getDraw(), qbert.getSourceX() + (qbert.getDir() * 2 * framePixels), 0,
+                                      framePixels, framePixels,
+                                      qbert.getX(), qbert.getY(), 0);
+            }
 
             al_draw_bitmap_region(redblob.getDraw(), redblob.getSourceX(), 0, framePixels, framePixels,
                                   redblob.getX(), redblob.getY(), 0);
@@ -217,6 +220,7 @@ int main() {
 
     piramide.destroy();
     al_destroy_sample(playerJumpSound);
+    al_destroy_sample(qbertFallingSound);
     al_destroy_sample(jumpSound);
     al_destroy_bitmap(qbert.getDraw());
     al_destroy_bitmap(redblob.getDraw());
@@ -228,37 +232,55 @@ int main() {
     return 0;
 }
 
-void movementPlayer(Player &qbert, Piramide &piramide, ALLEGRO_SAMPLE *playerJumpSound) {
+void movementPlayer(QBert &qbert, Piramide &piramide, ALLEGRO_SAMPLE *playerJumpSound, ALLEGRO_SAMPLE *qbertFallingSound) {
     if (qbert.isJumping()) {
         qbert.airTimerplusplus();
-        if(qbert.getAirTimer() < airTime/2){
-            //GO UP AND DIRECTION
-            if(qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
-                qbert.setX(movementX + qbert.getX());
-            else
-                qbert.setX(qbert.getX() - movementX);
-            if(qbert.getDir() != DOWNRIGHT && qbert.getDir() != DOWNLEFT)
-                qbert.setY(qbert.getY()-movementY);
-        }else if (qbert.getAirTimer() > airTime/2 && qbert.getAirTimer() < airTime){
-            //GO DOWN AND DIRECTION
-            if(qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
-                qbert.setX(movementX + qbert.getX());
-            else
-                qbert.setX(qbert.getX() - movementX);
-            if(qbert.getDir() == DOWNRIGHT || qbert.getDir() == DOWNLEFT)
-                qbert.setY(qbert.getY() + movementY);
-        }else if (qbert.getAirTimer() > airTime) {
-            //WE LANDED
-            al_play_sample(playerJumpSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
-            piramide.changeCube(qbert.getI(), qbert.getJ());
+        if(!qbert.isFalling()) {
+            if (qbert.getAirTimer() < airTime / 2) {
+                //GO UP AND DIRECTION
+                if (qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
+                    qbert.setX(movementX + qbert.getX());
+                else
+                    qbert.setX(qbert.getX() - movementX);
+                if (qbert.getDir() != DOWNRIGHT && qbert.getDir() != DOWNLEFT)
+                    qbert.setY(qbert.getY() - movementY);
+            } else if (qbert.getAirTimer() > airTime / 2 && qbert.getAirTimer() < airTime) {
+                //GO DOWN AND DIRECTION
+                if (qbert.getDir() == TOPRIGHT || qbert.getDir() == DOWNRIGHT)
+                    qbert.setX(movementX + qbert.getX());
+                else
+                    qbert.setX(qbert.getX() - movementX);
+                if (qbert.getDir() == DOWNRIGHT || qbert.getDir() == DOWNLEFT)
+                    qbert.setY(qbert.getY() + movementY);
+            } else if (qbert.getAirTimer() > airTime) {
+                if(qbert.getJ()<0 || qbert.getJ() > qbert.getI() || qbert.getI()>=7){
+                    // TODO: Si no hay platillo Q*Bert cae al vacio y pierde 1 vida
+                    qbert.setFalling(true);
+                    // Reproducir sonido caida
+                    al_play_sample(qbertFallingSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+                } else {
+                    //WE LANDED
+                    al_play_sample(playerJumpSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+                    piramide.changeCube(qbert.getI(), qbert.getJ());
 
-            qbert.setAirTimer(0);
-            qbert.setJumping(false);
-            qbert.setSourceX(qbert.getSourceX() - 16);
+                    qbert.setAirTimer(0);
+                    qbert.setJumping(false);
+                    qbert.setSourceX(qbert.getSourceX() - 16);
+                }
+            }
+        } else { // Esta cayendo
+            if(qbert.getY() <= HEIGHT){
+                qbert.setY(qbert.getY() + movementY);
+            } else {
+                qbert.reset(piramide);
+            }
         }
     }
 }
 
+/* TODO: hay un problema al hacer el resize, al estar implementado respecto a la posicion (X,Y) del objeto y no
+ del cubo de la piramide, si justo esta en movimiento se posicionara en un (X,Y) erroneo, por tanto habria que
+ implementar todo esto respecto a los cubos de la piramide */
 void movementBlobEnemies(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jumpSound) {
     if (blob.isJumping()) {
         blob.airTimerplusplus();
@@ -290,9 +312,4 @@ void movementBlobEnemies(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jumpSo
             blob.setSourceX(blob.getSourceX() + 16);
         }
     }
-}
-
-
-void destroy_all(){
-
 }
