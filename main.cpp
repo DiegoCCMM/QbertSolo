@@ -15,10 +15,19 @@
 #include "Coily.hpp"
 
 /* Q*BERT */
+
 #define framePixels 16
 #define airTime 6
 #define movementX 4.0f
 #define movementY 12.0f
+
+// airtime 6 --> se ejecuta 4 veces en X (16 pixeles mas en x) y 2 (24 pixeles mas en y)
+// airtime 10 --> en x 8 y 4 en y
+// airtime 12 --> 10 y 7
+/*#define framePixels 16
+#define airTime 16
+#define movementX 2.0f // pixelesX/nºejecucionesX
+#define movementY 3.42f // pixelesY/nºejecucionesY*/
 
 float scale = 1.0f;
 float WIDTH = 640, HEIGHT = 480;
@@ -70,7 +79,7 @@ int main() {
 
     // CARGAR PERSONAJES
     QBert qbert = QBert(piramide);
-    Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 10, 0); // X e Y posicion respecto al cubo[i,j]
+    Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y posicion respecto al cubo[i,j]
     // FIN PERSONAJES
 
     // CARGAR SONIDO
@@ -176,8 +185,6 @@ int main() {
                 al_scale_transform(&camera, scale, scale);
                 al_use_transform(&camera);
 
-                std::cout << WIDTH << " + " << al_get_display_width(disp) << std::endl;
-
                 WIDTH = al_get_display_width(disp);
                 HEIGHT = al_get_display_height(disp);
 
@@ -185,7 +192,6 @@ int main() {
                 piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
                 qbert.resize(&piramide);
                 redblob.resize(&piramide);
-                // TODO: establecer bien la posicion de Q*Bert (y futuros objetos) despues del resize
 
                 break;
 
@@ -200,18 +206,16 @@ int main() {
             al_clear_to_color(al_map_rgb(0, 0, 0));
             if(qbert.isFalling()) { // Si QBert esta cayendo primero se dibuja la piramide y luego a QBert
                 al_draw_bitmap_region(qbert.getDraw(), qbert.getSourceX() + (qbert.getDir() * 2 * framePixels), 0,
-                                      framePixels, framePixels,
-                                      qbert.getX(), qbert.getY(), 0);
+                                      framePixels, framePixels, qbert.getX(), qbert.getY(), 0);
                 piramide.drawMap();
             } else {
                 piramide.drawMap();
                 al_draw_bitmap_region(qbert.getDraw(), qbert.getSourceX() + (qbert.getDir() * 2 * framePixels), 0,
-                                      framePixels, framePixels,
-                                      qbert.getX(), qbert.getY(), 0);
+                                      framePixels, framePixels, qbert.getX(), qbert.getY(), 0);
+                al_draw_bitmap_region(redblob.getDraw(), redblob.getSourceX(), 0, framePixels, framePixels,
+                                      redblob.getX(), redblob.getY(), 0);
             }
 
-            al_draw_bitmap_region(redblob.getDraw(), redblob.getSourceX(), 0, framePixels, framePixels,
-                                  redblob.getX(), redblob.getY(), 0);
             al_flip_display();
 
             redraw = false;
@@ -263,6 +267,8 @@ void movementPlayer(QBert &qbert, Piramide &piramide, ALLEGRO_SAMPLE *playerJump
                     al_play_sample(playerJumpSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
                     piramide.changeCube(qbert.getI(), qbert.getJ());
 
+                    //qbert.setX(piramide.map[qbert.getI()][qbert.getJ()].x+qbert.getXRespectCube());
+                    //qbert.setY(piramide.map[qbert.getI()][qbert.getJ()].y+qbert.getYRespectCube());
                     qbert.setAirTimer(0);
                     qbert.setJumping(false);
                     qbert.setSourceX(qbert.getSourceX() - 16);
@@ -278,9 +284,6 @@ void movementPlayer(QBert &qbert, Piramide &piramide, ALLEGRO_SAMPLE *playerJump
     }
 }
 
-/* TODO: hay un problema al hacer el resize, al estar implementado respecto a la posicion (X,Y) del objeto y no
- del cubo de la piramide, si justo esta en movimiento se posicionara en un (X,Y) erroneo, por tanto habria que
- implementar todo esto respecto a los cubos de la piramide */
 void movementBlobEnemies(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jumpSound) {
     if (blob.isJumping()) {
         blob.airTimerplusplus();
@@ -306,6 +309,8 @@ void movementBlobEnemies(Enemy &blob, Piramide &piramide, ALLEGRO_SAMPLE *jumpSo
             if(blob.hasChangingGroundPower()) {
                 piramide.changeCube(blob.getI(), blob.getJ());
             }
+            blob.setX(piramide.map[blob.getI()][blob.getJ()].x+blob.getXRespectCube());
+            blob.setY(piramide.map[blob.getI()][blob.getJ()].y+blob.getYRespectCube());
             blob.setAirTimer(0);
             blob.setJumping(false);
             blob.assignIJ();

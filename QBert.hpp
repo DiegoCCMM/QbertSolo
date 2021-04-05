@@ -39,7 +39,7 @@ public:
 public:
     //QBert(float x, float y, ALLEGRO_BITMAP *draw, Direction dir) : Character(x, y, draw, dir) {}
 
-    QBert(Piramide piramide) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 6, -8) {}
+    QBert(Piramide piramide) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 7, -8) {}
 
     /*void resize(Piramide *piramide) override {
         setX(piramide->map[getI()][getJ()].x+6);
