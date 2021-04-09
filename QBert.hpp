@@ -38,6 +38,36 @@ public:
 
 public:
     //QBert(float x, float y, ALLEGRO_BITMAP *draw, Direction dir) : Character(x, y, draw, dir) {}
+    /*
+     * Cut the bitmap to get the different frames
+     */
+    void managementSpriteQbert() {
+        std::vector<int> source;
+        std::vector<int> width;
+
+        ALLEGRO_COLOR pixel, lastPixel, separatorColor;
+
+        source.push_back(0);
+
+        for (int i = 0; i < al_get_bitmap_width(getDraw()); i++) {
+            separatorColor = al_map_rgba(0, 0, 255, 255);
+            pixel = al_get_pixel(getDraw(), i, 0);
+
+            if (memcmp(&pixel, &lastPixel, sizeof(ALLEGRO_COLOR))) {
+                if (!memcmp(&pixel, &separatorColor, sizeof(ALLEGRO_COLOR))) {
+                    source.push_back(i);
+                    if (source.size() == 2)
+                        width.push_back(i);
+                    else
+                        width.push_back(i - width[width.size() - 1]);
+                }
+            } else if (i == al_get_bitmap_width(getDraw()) - 1) {
+                width.push_back(i - width[width.size() - 1]);
+                lastPixel = pixel;
+            }
+        }
+    }
+
 
     QBert(Piramide piramide) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 7, -8) {}
 
