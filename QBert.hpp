@@ -91,14 +91,12 @@ public:
                         // TODO: Si no hay platillo Q*Bert cae al vacio y pierde 1 vida
                         setFalling(true);
                         // Reproducir sonido caida
-                        al_play_sample(fallingSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+                        playOnce(fallingSound);
                     } else {
                         //WE LANDED
                         playOnce(getJumpSound());
                         piramide->changeCube(getI(), getJ());
 
-                        //setX(piramide.map[getI()][getJ()].x+getXRespectCube());
-                        //setY(piramide.map[getI()][getJ()].y+getYRespectCube());
                         setAirTimer(0);
                         setJumping(false);
                         setSourceX(getSourceX() - 16);
