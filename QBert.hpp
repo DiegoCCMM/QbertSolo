@@ -31,7 +31,7 @@ public:
 
         source.push_back(0);
 
-        for (int i = 0; i < al_get_bitmap_width(getDraw()); i++) {
+        for (int i = 0; i < al_get_bitmap_width(getDraw()) - 1; i++) {
             separatorColor = al_map_rgba(0, 0, 255, 255);
             pixel = al_get_pixel(getDraw(), i, 0);
 
