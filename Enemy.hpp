@@ -12,67 +12,49 @@
 #define MAX 120
 
 class Enemy : public Character{
-    Direction dir;
     bool changingGroundPower = false;
-    int sourceX = 16;
     int randMoveTimer = 0;
     int randMovePeriod;
-public:
-    int getRandMoveTimer() const {
-        return randMoveTimer;
-    }
-    void resetRandomMoveTimer(){
-        randMoveTimer = 0;
-    }
-    void randomMoveTimerplusplus() {
-        Enemy::randMoveTimer = randMoveTimer++;
-    }
 
 public:
-    int getSourceX() const {
-        return sourceX;
-    }
 
-    void setSourceX(int sourceX) {
-        Enemy::sourceX = sourceX;
-    }
-
-public:
+    /* Constructor */
     Enemy(Piramide piramide, std::string nom, int i, int j, int xRespectCube, int yRespectCube) :
-                                            Character(piramide, nom, i, j, DOWNRIGHT, xRespectCube, yRespectCube) {
+            Character(piramide, nom, i, j, DOWNRIGHT, xRespectCube, yRespectCube) {
+
+        Enemy::setSourceX(16);
         std::random_device rd;
         std::mt19937 mt(rd());
         std::uniform_int_distribution<int> dist(MIN, MAX);
-        randMovePeriod = dist(mt);
+        Enemy::randMovePeriod = dist(mt);
     }
 
-    int getRandMovePeriod() const {
-        return randMovePeriod;
-    }
+    int getRandMoveTimer() const { return randMoveTimer; }
+    void randomMoveTimerplusplus() { Enemy::randMoveTimer++; }
+    void resetRandomMoveTimer(){ Enemy::randMoveTimer = 0; }
 
-    bool hasChangingGroundPower() const {
-        return changingGroundPower;
-    }
+    int getRandMovePeriod() const { return randMovePeriod; }
 
-    Direction getDir() const {
-        return dir;
-    }
+    bool hasChangingGroundPower() const { return changingGroundPower; }
 
     void randomMovement(){
+        // TODO: revisar, no parece haber aleatoriedad
         std::random_device rd;
         std::mt19937 mt(rd());
         std::uniform_int_distribution<int> dist(1, 2);
         if(dist(mt) == 1){
-            dir = DOWNRIGHT;
+            setDir(DOWNRIGHT);
         }else{
-            dir = DOWNLEFT;
+            setDir(DOWNLEFT);
         }
 
-        setJumping(true);
-        sourceX -= 16;
+        Enemy::setJumping(true);
+        Enemy::setSourceX(getSourceX()-16);
     }
+
     void assignIJ(){
-        if(dir == DOWNRIGHT){
+        // TODO: crear resto de direcciones para un futuro los siguientes enemigos (ej: Ugg y Wrong-way, o Coily)
+        if(getDir() == DOWNRIGHT){
             setI(getI()+1);
             setJ(getJ()+1);
 
@@ -80,5 +62,43 @@ public:
             setI(getI()+1);
         }
     }
+
+    void movement(Piramide *piramide, int HEIGHT) override {
+        if (isJumping()) {
+            airTimerplusplus();
+            if (getAirTimer() < airTime / 2) {
+                //GO UP AND DIRECTION
+                if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
+                    setX(movementX + getX());
+                else
+                    setX(getX() - movementX);
+                if (getDir() != DOWNRIGHT && getDir() != DOWNLEFT)
+                    setY(getY() - movementY);
+            } else if (getAirTimer() > airTime / 2 && getAirTimer() < airTime) {
+                //GO DOWN AND DIRECTION
+                if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
+                    setX(movementX + getX());
+                else
+                    setX(getX() - movementX);
+                if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
+                    setY(getY() + movementY);
+            } else if (getAirTimer() > airTime) {
+                //WE LANDED
+                playOnce(getJumpSound());
+                if (hasChangingGroundPower()) {
+                    piramide->changeCube(getI(), getJ());
+                }
+                setX(piramide->map[getI()][getJ()].x + getXRespectCube());
+                setY(piramide->map[getI()][getJ()].y + getYRespectCube());
+                setAirTimer(0);
+                setJumping(false);
+                assignIJ();
+                setSourceX(getSourceX() + 16);
+            }
+        }
+        //randomMoveTimerplusplus();
+    }
+
 };
+
 #endif //ALLEGRO5TUTORIAL_ENEMY_HPP

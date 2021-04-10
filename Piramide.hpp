@@ -7,6 +7,8 @@
 
 #include <fstream>
 
+constexpr static const float cubeSize = 32.0;
+
 struct Cube {
     float x, y;
     int color;
@@ -14,13 +16,11 @@ struct Cube {
 };
 
 class Piramide {
-private:
-    constexpr static const float cubeSize = 32.0;
     float sx[3], sy[3];
     int sigCubo[3];
 
 public:
-    Cube map[7][7];
+    Cube map[7][7]; // Ha de ser publico
 
     /* Carga el mapa de la piramide de un .txt según el nivel y la ronda */
     void loadMap(int level, int round, float width, float height){
@@ -38,7 +38,7 @@ public:
         for(int i=0; i<7; i++){ // Fila
             width -= cubeSize/2;
             for(int j=0; j<i+1; j++){ // Columna
-                Cube cubo{width + j*cubeSize, height, 0, cubes};
+                Cube cubo{width + (float)j*cubeSize, height, 0, cubes};
                 map[i][j] = cubo;
             }
             height += cubeSize*3/4;
@@ -46,11 +46,11 @@ public:
     }
 
     /* Muestra por pantalla todos los cubos formando la piramide */
-    void drawMap() {
+    void drawBitmap() {
         for(int i=0; i<7; i++){ // Fila
             for(int j=0; j<i+1; j++){ // Columna
-                al_draw_bitmap_region(map[i][j].draw, sx[map[i][j].color], sy[map[i][j].color], cubeSize, cubeSize,
-                                      map[i][j].x, map[i][j].y, 0);
+                al_draw_bitmap_region(map[i][j].draw, sx[map[i][j].color], sy[map[i][j].color],
+                                      cubeSize, cubeSize, map[i][j].x, map[i][j].y, 0);
             }
         }
     }
@@ -61,7 +61,7 @@ public:
         for(int i=0; i<7; i++){ // Fila
             width -= cubeSize/2;
             for(int j=0; j<i+1; j++){ // Columna
-                map[i][j].x = width + j*cubeSize;
+                map[i][j].x = width + (float)j*cubeSize;
                 map[i][j].y = height;
             }
             height += cubeSize*3/4;
@@ -73,7 +73,7 @@ public:
         map[i][j].color = sigCubo[map[i][j].color];
     }
 
-    void must_init(bool test, const char *description) {
+    static void must_init(bool test, const char *description) {
         if (test) return;
 
         printf("couldn't initialize %s\n", description);
