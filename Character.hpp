@@ -8,6 +8,7 @@
 #include <vector>
 #include <allegro5/allegro.h>
 #include <iostream>
+#include "Objeto.hpp"
 
 constexpr static const float movementX = 4.0;
 constexpr static const float movementY = 12.0;
@@ -18,14 +19,10 @@ enum Direction {
     TOPRIGHT, TOPLEFT, DOWNRIGHT, DOWNLEFT
 };
 
-class Character{
-    float x, y;             // display coordinates
-    float xRespectCube, yRespectCube;
-    ALLEGRO_BITMAP *draw;   // sprite
+class Character : public Objeto {
     bool jumping = false,
          falling = false;
     Direction dir;
-    int sourceX = 0;
     int airTimer = 0;
     int i, j; // coordenada cubo
 
@@ -80,15 +77,6 @@ public:
      * GETTER'S AND SETTER'S *
      *************************/
 
-    int getSourceX() const { return sourceX; }
-    void setSourceX(int _sourceX) { Character::sourceX = _sourceX; }
-
-    float getXRespectCube() const { return xRespectCube; }
-    void setXRespectCube(float _xRespectCube) { Character::xRespectCube = _xRespectCube; }
-
-    float getYRespectCube() const { return yRespectCube; }
-    void setYRespectCube(float _yRespectCube) { Character::yRespectCube = _yRespectCube; }
-
     virtual Direction getDir() const { return dir; }
     void setDir(Direction _dir) { Character::dir = _dir; }
 
@@ -107,15 +95,6 @@ public:
 
     int getJ() const { return j; }
     void setJ(int _j) { Character::j = _j; }
-
-    float getX() const { return x; }
-    void setX(float _x) { Character::x = _x; }
-
-    float getY() const { return y; }
-    void setY(float _y) { Character::y = _y; }
-
-    ALLEGRO_BITMAP *getDraw() const { return draw; }
-    void setDraw(ALLEGRO_BITMAP *_draw) { Character::draw = _draw; }
 
     ALLEGRO_SAMPLE *getJumpSound() const { return jumpSound; }
     void CsetJumpSound(std::string nom) {

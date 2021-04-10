@@ -14,6 +14,7 @@
 #include "QBert.hpp"
 #include "Enemy.hpp"
 #include "Coily.hpp"
+#include "Platillo.hpp"
 
 
 float scale = 1.0f;
@@ -73,6 +74,7 @@ int main() {
 
     // CARGAR COMPONENTES RESTANTES
     // TODO: guardarlo todos en una lista (como enemies)
+    //Platillo plato = Platillo(piramide, 0, "izq");
     // platillos
     // letras
     // puntos
@@ -173,6 +175,7 @@ int main() {
                 qbert.drawBitmap();
                 drawEnemies(enemies);
                 // TODO: dibujar resto de componentes de la pantalla
+                //plato.drawBitmap();
             }
 
             al_flip_display();
@@ -239,6 +242,6 @@ void destroyEnemies(std::list<Enemy> &enemies){
 void must_init(bool test, const char *description) {
     if (test) return;
 
-    printf("couldn't initialize %s\n", description);
+    printf("No se ha podido inicializar: %s\n", description);
     exit(1);
 }
