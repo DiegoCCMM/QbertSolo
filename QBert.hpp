@@ -52,7 +52,6 @@ public:
     void reset(Piramide *piramide){
         QBert::setFalling(false);
         QBert::setJumping(false);
-        QBert::setAirTimer(0);
         QBert::setSourceX(QBert::getSourceX() - 16);
         QBert::setDir(DOWNLEFT);
         QBert::setI(0), QBert::setJ(0);
@@ -71,7 +70,7 @@ public:
         if (isJumping()) {
             airTimerplusplus();
             if(!isFalling()) {
-                if (getAirTimer() < airTime / 2) {
+                if (getTimer() < airTime / 2) {
                     //GO UP AND DIRECTION
                     if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
                         setX(movementX + getX());
@@ -79,7 +78,7 @@ public:
                         setX(getX() - movementX);
                     if (getDir() != DOWNRIGHT && getDir() != DOWNLEFT)
                         setY(getY() - movementY);
-                } else if (getAirTimer() > airTime / 2 && getAirTimer() < airTime) {
+                } else if (getTimer() > airTime / 2 && getTimer() < airTime) {
                     //GO DOWN AND DIRECTION
                     if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
                         setX(movementX + getX());
@@ -87,7 +86,7 @@ public:
                         setX(getX() - movementX);
                     if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
                         setY(getY() + movementY);
-                } else if (getAirTimer() > airTime) {
+                } else if (getTimer() > airTime) {
                     if(getJ()<0 || getJ() > getI() || getI()>=7){
                         // TODO: Si no hay platillo Q*Bert cae al vacio y pierde 1 vida
                         setFalling(true);
@@ -98,7 +97,7 @@ public:
                         playOnce(getJumpSound());
                         piramide->changeCube(getI(), getJ());
 
-                        setAirTimer(0);
+                        setTimer(0);
                         setJumping(false);
                         setSourceX(getSourceX() - 16);
                     }

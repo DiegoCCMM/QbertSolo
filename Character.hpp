@@ -22,7 +22,6 @@ class Character : public Objeto {
     bool jumping = false,
          falling = false;
     Direction dir;
-    int airTimer = 0;
     int i, j; // coordenada cubo
 
     ALLEGRO_SAMPLE *jumpSound = nullptr;
@@ -45,9 +44,9 @@ public:
         CsetJumpSound(nom);
     }
 
-    void resize(Piramide piramide) override {
-        Character::setX(piramide.map[getI()][getJ()].x+this->xRespectCube);
-        Character::setY(piramide.map[getI()][getJ()].y+this->yRespectCube);
+    void resize(Piramide *piramide) override {
+        Character::setX(piramide->map[getI()][getJ()].x+this->xRespectCube);
+        Character::setY(piramide->map[getI()][getJ()].y+this->yRespectCube);
     }
 
     virtual void movement(Piramide *piramide, int HEIGHT) {}
@@ -61,6 +60,7 @@ public:
         al_destroy_sample(getJumpSound());
     }
 
+    void airTimerplusplus(){ Character::timer++; }
 
     /*************************
      * GETTER'S AND SETTER'S *
@@ -71,10 +71,6 @@ public:
 
     bool isFalling() const { return falling; }
     void setFalling(bool _falling) { Character::falling = _falling; }
-
-    int getAirTimer() const { return airTimer; }
-    void setAirTimer(int _airTimer) { Character::airTimer = _airTimer; }
-    void airTimerplusplus(){ Character::airTimer++; }
 
     bool isJumping() const { return jumping; }
     void setJumping(bool _jumping) { Character::jumping = _jumping; }

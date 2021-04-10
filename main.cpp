@@ -61,7 +61,7 @@ int main() {
     // TODO: crear el resto de .txt de todos los niveles y sus rondas
     // CARGAR MAPA
     Piramide piramide;
-    piramide.loadMap(1, 4, WIDTH, HEIGHT);
+    piramide.loadMap(2, 3, WIDTH, HEIGHT);
     // END MAPA
 
     // CARGAR PERSONAJES
@@ -73,7 +73,7 @@ int main() {
 
     // CARGAR COMPONENTES RESTANTES
     // TODO: guardarlo todos en una lista (como enemies)
-    Platillo plato = Platillo(piramide, 1, DER);
+    Platillo plato = Platillo(piramide, 6, IZQ);
     // platillos
     // letras
     // puntos
@@ -103,6 +103,7 @@ int main() {
                 checkRandMovementEnemies(enemies);
                 qbert.movement(&piramide, HEIGHT);
                 movementEnemies(enemies, piramide);
+                plato.movement();
                 break;
                 
             case ALLEGRO_EVENT_KEY_DOWN:
@@ -148,9 +149,9 @@ int main() {
 
                 // TODO: RESIZE ALL ITEMS (+ para un futuro)
                 piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
-                qbert.resize(piramide);
+                qbert.resize(&piramide);
                 resizeEnemies(enemies, piramide);
-                plato.resize(piramide);
+                plato.resize(&piramide);
 
                 break;
 
@@ -223,7 +224,7 @@ void movementEnemies(std::list<Enemy> &enemies, Piramide &piramide) {
 
 void resizeEnemies(std::list<Enemy> &enemies, Piramide &piramide){
     for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
-        it->resize(piramide);
+        it->resize(&piramide);
     }
 }
 

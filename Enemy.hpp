@@ -66,7 +66,7 @@ public:
     void movement(Piramide *piramide, int HEIGHT) override {
         if (isJumping()) {
             airTimerplusplus();
-            if (getAirTimer() < airTime / 2) {
+            if (getTimer() < airTime / 2) {
                 //GO UP AND DIRECTION
                 if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
                     setX(movementX + getX());
@@ -74,7 +74,7 @@ public:
                     setX(getX() - movementX);
                 if (getDir() != DOWNRIGHT && getDir() != DOWNLEFT)
                     setY(getY() - movementY);
-            } else if (getAirTimer() > airTime / 2 && getAirTimer() < airTime) {
+            } else if (getTimer() > airTime / 2 && getTimer() < airTime) {
                 //GO DOWN AND DIRECTION
                 if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
                     setX(movementX + getX());
@@ -82,7 +82,7 @@ public:
                     setX(getX() - movementX);
                 if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
                     setY(getY() + movementY);
-            } else if (getAirTimer() > airTime) {
+            } else if (getTimer() > airTime) {
                 //WE LANDED
                 playOnce(getJumpSound());
                 if (hasChangingGroundPower()) {
@@ -90,7 +90,7 @@ public:
                 }
                 setX(piramide->map[getI()][getJ()].x + getXRespectCube());
                 setY(piramide->map[getI()][getJ()].y + getYRespectCube());
-                setAirTimer(0);
+                setTimer(0);
                 setJumping(false);
                 assignIJ();
                 setSourceX(getSourceX() + 16);

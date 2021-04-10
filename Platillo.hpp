@@ -14,44 +14,41 @@ enum Posicion {
 class Platillo : public Objeto {
     bool jumping = false,
          falling = false;
-    Direction dir;
-    int airTimer = 0;
     int i, j; // coordenada respecto piramide (cubo)
     Posicion pos;
 
 public:
-    // Rango donde puede estar ubicado -> [i, -1] izq y [i, j] der tq. i=(-1:5), j=(i+1:6)
+    // Rango fila [0,6]
 
     /* Constructor */
     Platillo(Piramide piramide, int fila, Posicion pos) {
         this->yRespectCube = -16;
-        this->i = fila;
+        this->i = fila-1;
         if(pos == IZQ){
             this->xRespectCube = -8;
-            this->x = piramide.map[i][0].x + xRespectCube, this->y = piramide.map[i][0].y + yRespectCube;
             this->j = -1;
-
         } else { // "der"
             this->xRespectCube = 24;
-            this->x = piramide.map[i][i%6].x + xRespectCube, this->y = piramide.map[i][i%6].y + yRespectCube;
-            this->j = i+1;
+            this->j = i+2;
         }
+        this->x = piramide.map[i+1][j+1].x + xRespectCube, this->y = piramide.map[i+1][j+1].y + yRespectCube;
 
         ALLEGRO_BITMAP *bitmap = al_load_bitmap("../sprites/platillos.png");
         must_init(bitmap, "platillo");
         this->draw = bitmap;
 
-        sourceX = 0;
         this-> sizePixels = 16;
     }
 
-    void resize(Piramide piramide) override {
-        if(pos == IZQ){
-            setX(piramide.map[i][0].x+this->xRespectCube);
-            setY(piramide.map[i][0].y+this->yRespectCube);
-        } else { // "der"
-            setX(piramide.map[i][i%6].x+this->xRespectCube);
-            setY(piramide.map[i][i%6].y+this->yRespectCube);
+    void resize(Piramide *piramide) override {
+        setX(piramide->map[i+1][j+1].x + xRespectCube);
+        setY(piramide->map[i+1][j+1].y + yRespectCube);
+    }
+
+    void movement() override{
+        if(++timer > 2) {
+            if(++sourceJ > 3) sourceJ = 0;
+            timer = 0;
         }
     }
 
@@ -61,22 +58,16 @@ public:
      *************************/
 
     bool isJumping() const { return jumping; }
-    void setJumping(bool jumping) { Platillo::jumping = jumping; }
+    void setJumping(bool _jumping) { Platillo::jumping = _jumping; }
 
     bool isFalling() const { return falling; }
-    void setFalling(bool falling) { Platillo::falling = falling; }
-
-    const Direction &getDir() const { return dir; }
-    void setDir(const Direction &dir) { Platillo::dir = dir; }
-
-    int getAirTimer() const { return airTimer; }
-    void setAirTimer(int airTimer) { Platillo::airTimer = airTimer; }
+    void setFalling(bool _falling) { Platillo::falling = _falling; }
 
     int getI() const { return i; }
-    void setI(int i) { Platillo::i = i; }
+    void setI(int _i) { Platillo::i = _i; }
 
     int getJ() const { return j; }
-    void setJ(int j) { Platillo::j = j; }
+    void setJ(int _j) { Platillo::j = _j; }
 
 };
 
