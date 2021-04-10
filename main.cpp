@@ -10,7 +10,6 @@
 //#include <iostream>
 
 #include "Piramide.hpp"
-#include "Character.hpp"
 #include "QBert.hpp"
 #include "Enemy.hpp"
 #include "Coily.hpp"
@@ -22,7 +21,7 @@ float WIDTH = 640, HEIGHT = 480;
 
 void checkRandMovementEnemies(std::list<Enemy> &enemies);
 void movementEnemies(std::list<Enemy> &enemies, Piramide &piramide);
-void resizeEnemies(std::list<Enemy> &enemies, Piramide *piramide);
+void resizeEnemies(std::list<Enemy> &enemies, Piramide &piramide);
 void drawEnemies(std::list<Enemy> &enemies);
 void destroyEnemies(std::list<Enemy> &enemies);
 
@@ -74,7 +73,7 @@ int main() {
 
     // CARGAR COMPONENTES RESTANTES
     // TODO: guardarlo todos en una lista (como enemies)
-    //Platillo plato = Platillo(piramide, 0, "izq");
+    Platillo plato = Platillo(piramide, 1, DER);
     // platillos
     // letras
     // puntos
@@ -149,8 +148,9 @@ int main() {
 
                 // TODO: RESIZE ALL ITEMS (+ para un futuro)
                 piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
-                qbert.resize(&piramide);
-                resizeEnemies(enemies, &piramide);
+                qbert.resize(piramide);
+                resizeEnemies(enemies, piramide);
+                plato.resize(piramide);
 
                 break;
 
@@ -175,7 +175,7 @@ int main() {
                 qbert.drawBitmap();
                 drawEnemies(enemies);
                 // TODO: dibujar resto de componentes de la pantalla
-                //plato.drawBitmap();
+                plato.drawBitmap();
             }
 
             al_flip_display();
@@ -221,7 +221,7 @@ void movementEnemies(std::list<Enemy> &enemies, Piramide &piramide) {
     }
 }
 
-void resizeEnemies(std::list<Enemy> &enemies, Piramide *piramide){
+void resizeEnemies(std::list<Enemy> &enemies, Piramide &piramide){
     for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
         it->resize(piramide);
     }

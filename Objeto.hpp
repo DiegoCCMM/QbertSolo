@@ -11,8 +11,23 @@ protected:
     float xRespectCube, yRespectCube;
     ALLEGRO_BITMAP *draw;   // sprite
     int sourceX;
+    int sizePixels;
 
 public:
+
+    virtual void drawBitmap(){
+        al_draw_bitmap_region(getDraw(), getSourceX(), 0, sizePixels, sizePixels,
+                              getX(), getY(), 0);
+    }
+
+    virtual void resize(Piramide piramide) {
+        setX(piramide.map[0][0].x+this->xRespectCube);
+        setY(piramide.map[0][0].y+this->yRespectCube);
+    }
+
+    virtual void destroy() {
+        al_destroy_bitmap(getDraw());
+    }
 
     int getSourceX() const { return sourceX; }
     void setSourceX(int _sourceX) { Objeto::sourceX = _sourceX; }
@@ -31,6 +46,13 @@ public:
 
     ALLEGRO_BITMAP *getDraw() const { return draw; }
     void setDraw(ALLEGRO_BITMAP *_draw) { Objeto::draw = _draw; }
+
+    void must_init(bool test, const char *description) {
+        if (test) return;
+
+        printf("No se ha podido inicializar: %s\n", description);
+        exit(1);
+    }
 
 };
 

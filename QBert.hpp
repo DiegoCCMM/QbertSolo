@@ -63,8 +63,8 @@ public:
 
     /* Dibuja la figura de Q*Bert */
     void drawBitmap() override {
-        al_draw_bitmap_region(QBert::getDraw(), QBert::getSourceX() + (QBert::getDir() * 2 * framePixels),
-                              0, framePixels, framePixels, QBert::getX(), QBert::getY(), 0);
+        al_draw_bitmap_region(QBert::getDraw(), QBert::getSourceX() + (QBert::getDir() * 2 * sizePixels),
+                              0, sizePixels, sizePixels, QBert::getX(), QBert::getY(), 0);
     }
 
     void movement(Piramide *piramide, int HEIGHT) override {

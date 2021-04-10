@@ -12,7 +12,6 @@
 
 constexpr static const float movementX = 4.0;
 constexpr static const float movementY = 12.0;
-constexpr static const int framePixels = 16;
 constexpr static const int airTime = 6;
 
 enum Direction {
@@ -32,9 +31,10 @@ public:
 
     /* Constructor */
     Character(Piramide piramide, std::string nom, int i, int j, Direction dir, int xRespectCube, int yRespectCube) {
-        this->x = piramide.map[i][j].x + xRespectCube, this->y =piramide.map[i][j].y + yRespectCube;
+        this->x = piramide.map[i][j].x + xRespectCube, this->y = piramide.map[i][j].y + yRespectCube;
         this->i = i, this->j = j;
         this->dir = dir;
+        this-> sizePixels = 16;
         this->xRespectCube = xRespectCube, this->yRespectCube = yRespectCube;
 
         std::string path = "../sprites/" + nom + ".png";
@@ -45,33 +45,22 @@ public:
         CsetJumpSound(nom);
     }
 
-    virtual void resize(Piramide *piramide) {
-        Character::setX(piramide->map[getI()][getJ()].x+this->xRespectCube);
-        Character::setY(piramide->map[getI()][getJ()].y+this->yRespectCube);
+    void resize(Piramide piramide) override {
+        Character::setX(piramide.map[getI()][getJ()].x+this->xRespectCube);
+        Character::setY(piramide.map[getI()][getJ()].y+this->yRespectCube);
     }
 
     virtual void movement(Piramide *piramide, int HEIGHT) {}
-
-    virtual void drawBitmap(){
-        al_draw_bitmap_region(Character::getDraw(), Character::getSourceX(), 0, framePixels, framePixels,
-                              Character::getX(), Character::getY(), 0);
-    }
 
     void playOnce(ALLEGRO_SAMPLE *sound){
         al_play_sample(sound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
     }
 
-    virtual void destroy() {
+    void destroy() override {
         al_destroy_bitmap(getDraw());
         al_destroy_sample(getJumpSound());
     }
 
-    void must_init(bool test, const char *description) {
-        if (test) return;
-
-        printf("No se ha podido inicializar: %s\n", description);
-        exit(1);
-    }
 
     /*************************
      * GETTER'S AND SETTER'S *
