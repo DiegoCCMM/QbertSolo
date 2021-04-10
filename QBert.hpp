@@ -8,6 +8,10 @@
 #ifndef ALLEGRO5TUTORIAL_PLAYER_HPP
 #define ALLEGRO5TUTORIAL_PLAYER_HPP
 
+enum PosPlatillo {
+    DESPEGANDO, MOVIMIENTO, ATERRIZANDO
+};
+
 class QBert : public Character{
     int lives = 3;
     int score = 0;

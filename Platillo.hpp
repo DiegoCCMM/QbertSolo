@@ -44,8 +44,8 @@ public:
     }
 
     void movement() override{
-        setX(getX()+1.75);
-        setY(getY()-2);
+        /*setX(getX()+1.75);
+        setY(getY()-2);*/
         if(++timer > 2) {
             if(++sourceJ > 3) {
                 sourceJ = 0;
