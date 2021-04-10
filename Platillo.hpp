@@ -5,8 +5,6 @@
 #ifndef QBERT_PLATILLO_HPP
 #define QBERT_PLATILLO_HPP
 
-constexpr static const float platilloSize = 16.0;
-
 enum Posicion {
     IZQ, DER
 };
@@ -46,8 +44,12 @@ public:
     }
 
     void movement() override{
+        setX(getX()+1.75);
+        setY(getY()-2);
         if(++timer > 2) {
-            if(++sourceJ > 3) sourceJ = 0;
+            if(++sourceJ > 3) {
+                sourceJ = 0;
+            }
             timer = 0;
         }
     }

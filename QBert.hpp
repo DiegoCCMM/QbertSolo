@@ -3,6 +3,8 @@
 //
 
 #include "Character.hpp"
+#include "Platillo.hpp"
+
 #ifndef ALLEGRO5TUTORIAL_PLAYER_HPP
 #define ALLEGRO5TUTORIAL_PLAYER_HPP
 
@@ -58,6 +60,7 @@ public:
         QBert::setX(piramide->map[0][0].x+getXRespectCube());
         QBert::setY(piramide->map[0][0].y+getYRespectCube());
         piramide->changeCube(0, 0);
+        setTimer(0);
     }
 
     /* Dibuja la figura de Q*Bert */
@@ -66,7 +69,7 @@ public:
                               0, sizePixels, sizePixels, QBert::getX(), QBert::getY(), 0);
     }
 
-    void movement(Piramide *piramide, int HEIGHT) override {
+    void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos) {
         if (isJumping()) {
             airTimerplusplus();
             if(!isFalling()) {
@@ -87,11 +90,33 @@ public:
                     if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
                         setY(getY() + movementY);
                 } else if (getTimer() > airTime) {
-                    if(getJ()<0 || getJ() > getI() || getI()>=7){
-                        // TODO: Si no hay platillo Q*Bert cae al vacio y pierde 1 vida
-                        setFalling(true);
-                        // Reproducir sonido caida
-                        playOnce(fallingSound);
+                    if(getJ()<0 || getJ() > getI() || getI()>6){
+                        //if(!enPlatillo) {
+                            bool hayPlatillo = false;
+                            for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+                                if (it->getI() == getI() && it->getJ() == getJ()) {
+                                    hayPlatillo = true;
+                                    // TODO: subir el platillo con Q*Bert
+
+
+                                    break;
+                                }
+                            }
+
+                            if (!hayPlatillo) {
+                                // TODO: perder vida
+                                setFalling(true);
+                                playOnce(fallingSound);
+                            } else {
+                                if(getY() <= HEIGHT){
+                                    setY(getY() + movementY);
+                                }
+                            }
+                        /*} else {
+                            if(getY() <= HEIGHT){
+                                setY(getY() + movementY);
+                            }
+                        }*/
                     } else {
                         //WE LANDED
                         playOnce(getJumpSound());

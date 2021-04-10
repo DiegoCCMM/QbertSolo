@@ -68,12 +68,14 @@ int main() {
     QBert qbert = QBert(piramide);
     std::list <Enemy> enemies;
     Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-    enemies.push_back(redblob);
+    //enemies.push_back(redblob);
     // FIN PERSONAJES
 
     // CARGAR COMPONENTES RESTANTES
     // TODO: guardarlo todos en una lista (como enemies)
+    std::list <Platillo> platillos;
     Platillo plato = Platillo(piramide, 6, IZQ);
+    platillos.push_back(plato);
     // platillos
     // letras
     // puntos
@@ -101,7 +103,7 @@ int main() {
 
                 redraw = true;
                 checkRandMovementEnemies(enemies);
-                qbert.movement(&piramide, HEIGHT);
+                qbert.movement(&piramide, HEIGHT, platillos);
                 movementEnemies(enemies, piramide);
                 plato.movement();
                 break;
