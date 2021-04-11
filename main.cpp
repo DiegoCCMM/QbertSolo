@@ -15,10 +15,11 @@
 #include "Coily.hpp"
 #include "Platillo.hpp"
 
-
+#define periodoEnemigos 12
 float scale = 1.0f;
 float WIDTH = 640, HEIGHT = 480;
 
+void generarEnemigos(int & timer, std::list<Enemy> &enemies);
 void checkRandMovementEnemies(std::list<Enemy> &enemies);
 void movementEnemies(std::list<Enemy> &enemies, Piramide &piramide);
 void resizeEnemies(std::list<Enemy> &enemies, Piramide &piramide);
@@ -67,8 +68,6 @@ int main() {
     // CARGAR PERSONAJES
     QBert qbert = QBert(piramide);
     std::list <Enemy> enemies;
-    Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-    //enemies.push_back(redblob);
     // FIN PERSONAJES
 
     // CARGAR COMPONENTES RESTANTES
@@ -88,6 +87,7 @@ int main() {
     bool done = false, redraw = true;
     ALLEGRO_EVENT event;
     al_start_timer(timer);
+    int periodEnemies = 0;
 
     /*************************
      *       GAME LOOP       *
@@ -105,6 +105,7 @@ int main() {
                 checkRandMovementEnemies(enemies);
                 qbert.movement(&piramide, HEIGHT, platillos);
                 movementEnemies(enemies, piramide);
+                generarEnemigos(periodEnemies, enemies);
                 for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
                     it->movement();
                 }
@@ -223,6 +224,35 @@ void checkRandMovementEnemies(std::list<Enemy> &enemies) {
 
         it->randomMoveTimerplusplus();
     }
+}
+
+void generarEnemigos(int & timer, std::list<Enemy> &enemies){
+
+    if(timer == periodoEnemigos){
+        //genera un enemigo aleatorio
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_int_distribution<int> dist(0, 60);
+        int eleccion = dist(mt);
+        if(eleccion >= 0 && eleccion <= 14){
+            //redblob o poder
+
+        }else if(eleccion >= 15 && eleccion <= 29){
+            //coily
+
+            //if(std::find(enemies.begin(), enemies.end(), ) != enemies.end())
+        }else if(eleccion >= 30 && eleccion <= 44){
+            //ugg o wrong way
+        }else if(eleccion >= 45 && eleccion <= 60){
+            //slick o sam
+        }
+
+
+        timer = 0;
+    }else{
+        timer++;
+    }
+
 }
 
 void movementEnemies(std::list<Enemy> &enemies, Piramide &piramide) {
