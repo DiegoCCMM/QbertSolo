@@ -20,10 +20,10 @@ float scale = 1.0f;
 float WIDTH = 640, HEIGHT = 480;
 
 void checkRandMovementEnemies(std::list<Enemy> &enemies);
-void movementEnemies(std::list<Enemy> &enemies, Piramide &piramide);
-void resizeEnemies(std::list<Enemy> &enemies, Piramide &piramide);
-void drawEnemies(std::list<Enemy> &enemies);
-void destroyEnemies(std::list<Enemy> &enemies);
+void movementAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
+void drawAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
+void resizAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
+void destroyAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
 
 void must_init(bool test, const char *description);
 
@@ -74,7 +74,7 @@ int main() {
     // CARGAR COMPONENTES RESTANTES
     // TODO: guardarlo todos en una lista (como enemies)
     std::list <Platillo> platillos;
-    Platillo plato = Platillo(piramide, 6, IZQ);
+    Platillo plato = Platillo(piramide, 3, IZQ);
     platillos.push_back(plato);
     // platillos
     // letras
@@ -102,12 +102,7 @@ int main() {
             case ALLEGRO_EVENT_TIMER:
 
                 redraw = true;
-                checkRandMovementEnemies(enemies);
-                qbert.movement(&piramide, HEIGHT, platillos);
-                movementEnemies(enemies, piramide);
-                for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-                    it->movement();
-                }
+                movementAll(piramide, qbert, enemies, platillos);
                 break;
                 
             case ALLEGRO_EVENT_KEY_DOWN:
@@ -151,14 +146,8 @@ int main() {
                 WIDTH = al_get_display_width(disp);
                 HEIGHT = al_get_display_height(disp);
 
-                // TODO: RESIZE ALL ITEMS (+ para un futuro)
-                piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
-                resizeEnemies(enemies, piramide);
-                for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-                    it->resize(&piramide);
-                }
-
-                qbert.resize(&piramide);
+                // RESIZE ALL ITEMS
+                resizAll(piramide, qbert, enemies, platillos);
 
                 break;
 
@@ -172,21 +161,7 @@ int main() {
             //REDRAW THE IMAGE WITH EVERYTHING
             al_clear_to_color(al_map_rgb(0, 0, 0));
 
-            if(qbert.isFalling()) { // Si QBert esta cayendo primero se dibuja a QBert y luego la piramide
-                qbert.drawBitmap();
-                piramide.drawBitmap();
-                // TODO: dibujar resto de componentes de la pantalla MENOS los enemigos
-                // Recordar que mientras cae el resto de elementos dejan de moverse
-                enemies.clear();
-            } else {
-                piramide.drawBitmap();
-                for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-                    it->drawBitmap();
-                }
-                qbert.drawBitmap();
-                drawEnemies(enemies);
-                // TODO: dibujar resto de componentes de la pantalla
-            }
+            drawAll(piramide, qbert, enemies, platillos);
 
             al_flip_display();
             redraw = false;
@@ -199,9 +174,7 @@ int main() {
      *************************/
 
     // DESTRUIR OBJETOS ESCENA
-    piramide.destroy();
-    qbert.destroy();
-    destroyEnemies(enemies);
+    destroyAll(piramide, qbert, enemies, platillos);
     // destroy resto elementos
     //**************************
 
@@ -213,6 +186,73 @@ int main() {
     return 0;
 }
 
+// TODO: en referencia a un todo de arriba, probar a meter todo en una lista y pasarla?
+void movementAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos) {
+    qbert.movement(&piramide, HEIGHT, platillos);
+    
+    if(!qbert.isFalling()) {
+        checkRandMovementEnemies(enemies);
+        for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
+            it->movement(&piramide, HEIGHT);
+        }
+
+        for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+            it->movement();
+        }
+    }
+}
+
+void drawAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos){
+
+    if(qbert.isFalling()) { // Si QBert esta cayendo primero se dibuja a QBert y luego la piramide
+        qbert.drawBitmap();
+        piramide.drawBitmap();
+        // TODO: dibujar resto de componentes de la pantalla MENOS los enemigos
+        // Recordar que mientras cae el resto de elementos dejan de moverse
+        enemies.clear();
+        for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+            it->drawBitmap();
+        }
+    } else {
+        piramide.drawBitmap();
+        for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+            it->drawBitmap();
+        }
+        qbert.drawBitmap();
+        for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++){
+            it->drawBitmap();
+        }
+
+        // TODO: dibujar resto de componentes de la pantalla
+    }
+}
+
+void resizAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos){
+    piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
+
+    for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
+        it->resize(&piramide);
+    }
+
+    for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+        it->resize(&piramide);
+    }
+
+    qbert.resize(&piramide);
+}
+
+void destroyAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos){
+    piramide.destroy();
+    qbert.destroy();
+
+    for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++){
+        it->destroy();
+    }
+
+    for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+        it->destroy();
+    }
+}
 
 void checkRandMovementEnemies(std::list<Enemy> &enemies) {
     for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++){
@@ -225,29 +265,6 @@ void checkRandMovementEnemies(std::list<Enemy> &enemies) {
     }
 }
 
-void movementEnemies(std::list<Enemy> &enemies, Piramide &piramide) {
-    for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
-        it->movement(&piramide, HEIGHT);
-    }
-}
-
-void resizeEnemies(std::list<Enemy> &enemies, Piramide &piramide){
-    for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
-        it->resize(&piramide);
-    }
-}
-
-void drawEnemies(std::list<Enemy> &enemies){
-    for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++){
-        it->drawBitmap();
-    }
-}
-
-void destroyEnemies(std::list<Enemy> &enemies){
-    for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++){
-        it->destroy();
-    }
-}
 
 void must_init(bool test, const char *description) {
     if (test) return;

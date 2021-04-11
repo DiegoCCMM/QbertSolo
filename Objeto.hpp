@@ -34,6 +34,10 @@ public:
 
     virtual void movement() {}
 
+    void playOnce(ALLEGRO_SAMPLE *sound){
+        al_play_sample(sound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+    }
+
 
     /*************************
      * GETTER'S AND SETTER'S *

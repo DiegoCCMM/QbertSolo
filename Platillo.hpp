@@ -13,12 +13,15 @@ enum PosicionQBert {
     NONE, MONTANDO, SUBIENDO, MOVIMIENTO, BAJANDO
 };
 
+constexpr static const float velocidad[7] = {0.15, 0.3, 0.4, 0.55, 0.7, 0.85, 1};
+
 class Platillo : public Objeto {
     bool jumping = false,
          falling = false;
     int i, j; // coordenada respecto piramide (cubo)
     Posicion pos;
     PosicionQBert posQBert = NONE;
+    ALLEGRO_SAMPLE *moveSound = al_load_sample("../sounds/platillo.ogg");
 
 public:
     // Rango fila [0,6]
@@ -71,13 +74,10 @@ public:
                 _y += 5;
             } else {
                 posQBert = SUBIENDO;
+                playOnce(moveSound);
             }
         } else if(posQBert == SUBIENDO){
-            std::cout << piramide->map[i+1][0].y << std::endl;
-            std::cout << getY() << std::endl;
             if(getY() > piramide->map[i+1][0].y-30){
-                std::cout << piramide->map[i+1][0].y << std::endl;
-                std::cout << getY() << std::endl;
                 yRespectCube -= 2.5;
                 setY(getY()-2.5);
             } else {
@@ -85,24 +85,25 @@ public:
             }
 
         } else if(posQBert == MOVIMIENTO){
+            float aux_x = 1.75*velocidad[i+1], aux_y = 2.5*velocidad[i+1];
             if(pos == IZQ){
                 if(piramide->map[0][0].x+8 > getX()){
-                    xRespectCube += 1.75;
-                    setX(getX()+1.75);
+                    xRespectCube += aux_x;
+                    setX(getX()+aux_x);
                 } else {
                     posQBert = BAJANDO;
                 }
             } else {
                 if(piramide->map[0][0].x+8 < getX()){
-                    xRespectCube -= 1.75;
-                    setX(getX()-1.75);
+                    xRespectCube -= aux_x;
+                    setX(getX()-aux_x);
                 } else {
                     posQBert = BAJANDO;
                 }
             }
 
-            yRespectCube -= 2.5;
-            setY(getY()-2.5);
+            yRespectCube -= aux_y;
+            setY(getY()-aux_y);
 
         } else if(posQBert == BAJANDO){
             if(_y < piramide->map[0][0].y-8){
@@ -111,6 +112,11 @@ public:
                 posQBert = NONE;
             }
         }
+    }
+
+    void destroy() override {
+        al_destroy_bitmap(getDraw());
+        al_destroy_sample(moveSound);
     }
 
 

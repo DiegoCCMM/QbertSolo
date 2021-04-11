@@ -51,10 +51,6 @@ public:
 
     virtual void movement(Piramide *piramide, int HEIGHT) {}
 
-    void playOnce(ALLEGRO_SAMPLE *sound){
-        al_play_sample(sound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
-    }
-
     void destroy() override {
         al_destroy_bitmap(getDraw());
         al_destroy_sample(getJumpSound());

@@ -13,7 +13,6 @@ class QBert : public Character{
     int score = 0;
     ALLEGRO_SAMPLE *fallingSound = al_load_sample("../sounds/qbert-falling.ogg");
     bool enPlatillo = false;
-    //Platillo *platillo = nullptr;
     std::list<Platillo>::iterator platillo;
 
 public:
