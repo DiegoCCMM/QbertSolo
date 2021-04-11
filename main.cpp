@@ -74,7 +74,7 @@ int main() {
     // CARGAR COMPONENTES RESTANTES
     // TODO: guardarlo todos en una lista (como enemies)
     std::list <Platillo> platillos;
-    Platillo plato = Platillo(piramide, 6, IZQ);
+    Platillo plato = Platillo(piramide, 6, DER);
     platillos.push_back(plato);
     // platillos
     // letras
@@ -105,7 +105,9 @@ int main() {
                 checkRandMovementEnemies(enemies);
                 qbert.movement(&piramide, HEIGHT, platillos);
                 movementEnemies(enemies, piramide);
-                plato.movement();
+                for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+                    it->movement();
+                }
                 break;
                 
             case ALLEGRO_EVENT_KEY_DOWN:
@@ -151,9 +153,12 @@ int main() {
 
                 // TODO: RESIZE ALL ITEMS (+ para un futuro)
                 piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
-                qbert.resize(&piramide);
                 resizeEnemies(enemies, piramide);
-                plato.resize(&piramide);
+                for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+                    it->resize(&piramide);
+                }
+
+                qbert.resize(&piramide);
 
                 break;
 
@@ -175,10 +180,12 @@ int main() {
                 enemies.clear();
             } else {
                 piramide.drawBitmap();
+                for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+                    it->drawBitmap();
+                }
                 qbert.drawBitmap();
                 drawEnemies(enemies);
                 // TODO: dibujar resto de componentes de la pantalla
-                plato.drawBitmap();
             }
 
             al_flip_display();

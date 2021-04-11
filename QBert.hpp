@@ -8,14 +8,12 @@
 #ifndef ALLEGRO5TUTORIAL_PLAYER_HPP
 #define ALLEGRO5TUTORIAL_PLAYER_HPP
 
-enum PosPlatillo {
-    DESPEGANDO, MOVIMIENTO, ATERRIZANDO
-};
-
 class QBert : public Character{
     int lives = 3;
     int score = 0;
     ALLEGRO_SAMPLE *fallingSound = al_load_sample("../sounds/qbert-falling.ogg");
+    bool enPlatillo = false;
+    Platillo *platillo = nullptr;
 
 public:
 
@@ -95,32 +93,35 @@ public:
                         setY(getY() + movementY);
                 } else if (getTimer() > airTime) {
                     if(getJ()<0 || getJ() > getI() || getI()>6){
-                        //if(!enPlatillo) {
-                            bool hayPlatillo = false;
+                        if(!enPlatillo) {
                             for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
                                 if (it->getI() == getI() && it->getJ() == getJ()) {
-                                    hayPlatillo = true;
+                                    enPlatillo = true;
+                                    platillo = it.operator->();
+                                    platillo->setPosQBert(MONTANDO);
                                     // TODO: subir el platillo con Q*Bert
-
 
                                     break;
                                 }
                             }
 
-                            if (!hayPlatillo) {
+                            if (!enPlatillo) {
                                 // TODO: perder vida
                                 setFalling(true);
                                 playOnce(fallingSound);
-                            } else {
-                                if(getY() <= HEIGHT){
-                                    setY(getY() + movementY);
-                                }
                             }
-                        /*} else {
-                            if(getY() <= HEIGHT){
-                                setY(getY() + movementY);
+
+                        } else {
+                            float _x = getX(), _y = getY();
+                            platillo->updateWithQBert(_x, _y, piramide);
+                            if(platillo->getPosQBert() != NONE){ // Q*Bert sigue en platillo
+                                QBert::setX(platillo->getX());
+                                QBert::setY(platillo->getY()-6);
+                            } else
+                                { // Q*Bert ha salido del platillo, esta en el primer cubo
+                                reset(piramide);
                             }
-                        }*/
+                        }
                     } else {
                         //WE LANDED
                         playOnce(getJumpSound());
@@ -138,6 +139,16 @@ public:
                     reset(piramide);
                 }
             }
+        }
+    }
+
+    void resize(Piramide *piramide) override {
+        if(enPlatillo){
+            QBert::setX(platillo->getX());
+            QBert::setY(platillo->getY()-6);
+        } else {
+            QBert::setX(piramide->map[getI()][getJ()].x+this->xRespectCube);
+            QBert::setY(piramide->map[getI()][getJ()].y+this->yRespectCube);
         }
     }
 
