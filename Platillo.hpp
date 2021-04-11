@@ -73,13 +73,11 @@ public:
                 posQBert = SUBIENDO;
             }
         } else if(posQBert == SUBIENDO){
-            int aux_j;
-            if(pos == IZQ) aux_j = j+1;
-            else aux_j = j;
-
-            if(getY() < piramide->map[i+1][aux_j].y-40){
-                //std::cout << piramide->map[i+1][aux_j].y << std::endl;
-                //std::cout << getY() << std::endl;
+            std::cout << piramide->map[i+1][0].y << std::endl;
+            std::cout << getY() << std::endl;
+            if(getY() > piramide->map[i+1][0].y-30){
+                std::cout << piramide->map[i+1][0].y << std::endl;
+                std::cout << getY() << std::endl;
                 yRespectCube -= 2.5;
                 setY(getY()-2.5);
             } else {
@@ -88,14 +86,14 @@ public:
 
         } else if(posQBert == MOVIMIENTO){
             if(pos == IZQ){
-                if(piramide->map[0][0].x > getX()){
+                if(piramide->map[0][0].x+8 > getX()){
                     xRespectCube += 1.75;
                     setX(getX()+1.75);
                 } else {
                     posQBert = BAJANDO;
                 }
             } else {
-                if(piramide->map[0][0].x < getX()){
+                if(piramide->map[0][0].x+8 < getX()){
                     xRespectCube -= 1.75;
                     setX(getX()-1.75);
                 } else {
@@ -108,8 +106,6 @@ public:
 
         } else if(posQBert == BAJANDO){
             if(_y < piramide->map[0][0].y-8){
-                std::cout << piramide->map[0][0].y-8 << std::endl;
-                std::cout << _y << std::endl;
                 _y += 5;
             } else {
                 posQBert = NONE;

@@ -13,7 +13,8 @@ class QBert : public Character{
     int score = 0;
     ALLEGRO_SAMPLE *fallingSound = al_load_sample("../sounds/qbert-falling.ogg");
     bool enPlatillo = false;
-    Platillo *platillo = nullptr;
+    //Platillo *platillo = nullptr;
+    std::list<Platillo>::iterator platillo;
 
 public:
 
@@ -97,9 +98,8 @@ public:
                             for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
                                 if (it->getI() == getI() && it->getJ() == getJ()) {
                                     enPlatillo = true;
-                                    platillo = it.operator->();
+                                    platillo = it;
                                     platillo->setPosQBert(MONTANDO);
-                                    // TODO: subir el platillo con Q*Bert
 
                                     break;
                                 }
@@ -114,12 +114,17 @@ public:
                         } else {
                             float _x = getX(), _y = getY();
                             platillo->updateWithQBert(_x, _y, piramide);
-                            if(platillo->getPosQBert() != NONE){ // Q*Bert sigue en platillo
+
+                            if(platillo->getPosQBert() == NONE) { // Q*Bert ha salido del platillo, esta en el primer cubo
+                                reset(piramide);
+                                enPlatillo = false;
+                                // TODO: eliminar platillo de la lista
+                                platillos.erase(platillo);
+                            } else if(platillo->getPosQBert() == BAJANDO) {
+                                QBert::setY(_y);
+                            } else { // Q*Bert sigue en platillo
                                 QBert::setX(platillo->getX());
                                 QBert::setY(platillo->getY()-6);
-                            } else
-                                { // Q*Bert ha salido del platillo, esta en el primer cubo
-                                reset(piramide);
                             }
                         }
                     } else {

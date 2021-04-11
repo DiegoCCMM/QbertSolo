@@ -74,7 +74,7 @@ int main() {
     // CARGAR COMPONENTES RESTANTES
     // TODO: guardarlo todos en una lista (como enemies)
     std::list <Platillo> platillos;
-    Platillo plato = Platillo(piramide, 6, DER);
+    Platillo plato = Platillo(piramide, 6, IZQ);
     platillos.push_back(plato);
     // platillos
     // letras
