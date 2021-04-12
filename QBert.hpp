@@ -5,8 +5,8 @@
 #include "Character.hpp"
 #include "Platillo.hpp"
 
-#ifndef ALLEGRO5TUTORIAL_PLAYER_HPP
-#define ALLEGRO5TUTORIAL_PLAYER_HPP
+#ifndef ALLEGRO5TUTORIAL_QBERT_HPP
+#define ALLEGRO5TUTORIAL_QBERT_HPP
 
 class QBert : public Character{
     int lives = 3;
@@ -174,4 +174,4 @@ public:
 
 };
 
-#endif //ALLEGRO5TUTORIAL_PLAYER_HPP
+#endif //ALLEGRO5TUTORIAL_QBERT_HPP

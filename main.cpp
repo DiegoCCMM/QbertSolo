@@ -15,10 +15,11 @@
 #include "Coily.hpp"
 #include "Platillo.hpp"
 
-
+#define periodoEnemigos 12
 float scale = 1.0f;
 float WIDTH = 640, HEIGHT = 480;
 
+void generarEnemigos(int & timer, std::list<Enemy> &enemies);
 void checkRandMovementEnemies(std::list<Enemy> &enemies);
 void movementAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
 void drawAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
@@ -67,8 +68,6 @@ int main() {
     // CARGAR PERSONAJES
     QBert qbert = QBert(piramide);
     std::list <Enemy> enemies;
-    Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-    //enemies.push_back(redblob);
     // FIN PERSONAJES
 
     // CARGAR COMPONENTES RESTANTES
@@ -88,6 +87,7 @@ int main() {
     bool done = false, redraw = true;
     ALLEGRO_EVENT event;
     al_start_timer(timer);
+    int periodEnemies = 0;
 
     /*************************
      *       GAME LOOP       *
@@ -103,6 +103,8 @@ int main() {
 
                 redraw = true;
                 movementAll(piramide, qbert, enemies, platillos);
+                generarEnemigos(periodEnemies, enemies);
+
                 break;
                 
             case ALLEGRO_EVENT_KEY_DOWN:
@@ -186,6 +188,34 @@ int main() {
     return 0;
 }
 
+void generarEnemigos(int & timer, std::list<Enemy> &enemies){
+
+    if(timer == periodoEnemigos){
+        //genera un enemigo aleatorio
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_int_distribution<int> dist(0, 60);
+        int eleccion = dist(mt);
+        if(eleccion >= 0 && eleccion <= 14){
+            //redblob o poder
+
+        }else if(eleccion >= 15 && eleccion <= 29){
+            //coily
+
+            //if(std::find(enemies.begin(), enemies.end(), ) != enemies.end())
+        }else if(eleccion >= 30 && eleccion <= 44){
+            //ugg o wrong way
+        }else if(eleccion >= 45 && eleccion <= 60){
+            //slick o sam
+        }
+
+
+        timer = 0;
+    }else{
+        timer++;
+    }
+}
+
 // TODO: en referencia a un todo de arriba, probar a meter todo en una lista y pasarla?
 void movementAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos) {
     qbert.movement(&piramide, HEIGHT, platillos);
@@ -202,9 +232,9 @@ void movementAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, st
     }
 }
 
-void drawAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos){
+void drawAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos) {
 
-    if(qbert.isFalling()) { // Si QBert esta cayendo primero se dibuja a QBert y luego la piramide
+    if (qbert.isFalling()) { // Si QBert esta cayendo primero se dibuja a QBert y luego la piramide
         qbert.drawBitmap();
         piramide.drawBitmap();
         // TODO: dibujar resto de componentes de la pantalla MENOS los enemigos
@@ -219,7 +249,7 @@ void drawAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::l
             it->drawBitmap();
         }
         qbert.drawBitmap();
-        for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++){
+        for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
             it->drawBitmap();
         }
 
@@ -264,7 +294,6 @@ void checkRandMovementEnemies(std::list<Enemy> &enemies) {
         it->randomMoveTimerplusplus();
     }
 }
-
 
 void must_init(bool test, const char *description) {
     if (test) return;

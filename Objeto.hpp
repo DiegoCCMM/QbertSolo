@@ -2,8 +2,8 @@
 // Created by patri on 10/04/2021.
 //
 
-#ifndef QBERT_OBJETO_HPP
-#define QBERT_OBJETO_HPP
+#ifndef ALLEGRO5TUTORIAL_OBJETO_HPP
+#define ALLEGRO5TUTORIAL_OBJETO_HPP
 
 class Objeto {
 protected:
@@ -82,4 +82,4 @@ public:
 
 };
 
-#endif //QBERT_OBJETO_HPP
+#endif //ALLEGRO5TUTORIAL_OBJETO_HPP
