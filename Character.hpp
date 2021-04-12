@@ -44,6 +44,17 @@ public:
         CsetJumpSound(nom);
     }
 
+    /* Constructor 2 */
+    Character(std::string nom, Direction dir){
+        this->dir = dir;
+        this-> sizePixels = 16;
+
+        std::string path = "../sprites/" + nom + ".png";
+        ALLEGRO_BITMAP *player = al_load_bitmap(path.c_str());
+        must_init(player, nom.c_str());
+        this->draw = player;
+    }
+
     void resize(Piramide *piramide) override {
         Character::setX(piramide->map[getI()][getJ()].x+this->xRespectCube);
         Character::setY(piramide->map[getI()][getJ()].y+this->yRespectCube);
@@ -55,8 +66,6 @@ public:
         al_destroy_bitmap(getDraw());
         al_destroy_sample(getJumpSound());
     }
-
-    void airTimerplusplus(){ Character::timer++; }
 
     /*************************
      * GETTER'S AND SETTER'S *

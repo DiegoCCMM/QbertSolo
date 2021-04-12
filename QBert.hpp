@@ -24,6 +24,9 @@ public:
         managementSpriteQbert();
     }
 
+    /* Constructor 2 */
+    QBert() : Character("qbert", DOWNRIGHT) {}
+
     /* Cut the bitmap to get the different frames */
     void managementSpriteQbert() {
         std::vector<int> source;
@@ -73,7 +76,7 @@ public:
 
     void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos) {
         if (isJumping()) {
-            airTimerplusplus();
+            timerplusplus();
             if(!isFalling()) {
                 if (getTimer() < airTime / 2) {
                     //GO UP AND DIRECTION

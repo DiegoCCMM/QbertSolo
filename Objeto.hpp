@@ -38,6 +38,8 @@ public:
         al_play_sample(sound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
     }
 
+    void timerplusplus(){ Objeto::timer++; }
+
 
     /*************************
      * GETTER'S AND SETTER'S *

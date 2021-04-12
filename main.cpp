@@ -14,10 +14,11 @@
 #include "Enemy.hpp"
 #include "Coily.hpp"
 #include "Platillo.hpp"
+#include "PantallaInicial.hpp"
 
 #define periodoEnemigos 12
 float scale = 1.0f;
-float WIDTH = 640, HEIGHT = 480;
+float WIDTH = 330, HEIGHT = 280;
 
 void generarEnemigos(int & timer, std::list<Enemy> &enemies);
 void checkRandMovementEnemies(std::list<Enemy> &enemies);
@@ -27,6 +28,11 @@ void resizAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::
 void destroyAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
 
 void must_init(bool test, const char *description);
+
+enum Pantalla{
+    // TODO: ir actualizando con todas las pantallas si es necesario
+    INICIO, INFONIVEL, JUEGO, REGNOM, HIGHSCORES, CLOSE
+};
 
 int main() {
     must_init(al_init(), "allegro");
@@ -84,7 +90,8 @@ int main() {
 
 
 
-    bool done = false, redraw = true;
+    Pantalla pantalla = INICIO;
+    bool redraw = true;
     ALLEGRO_EVENT event;
     al_start_timer(timer);
     int periodEnemies = 0;
@@ -93,80 +100,136 @@ int main() {
      *       GAME LOOP       *
      *************************/
 
-
-    while (!done) {
+    // Pantalla inicial e instrucciones
+    PantallaInicial init = PantallaInicial(WIDTH, HEIGHT);
+    // Comienzo juego
+    while (pantalla != CLOSE) {
         al_wait_for_event(queue, &event);
         al_get_keyboard_state(&keyState);
 
-        switch (event.type) {
-            case ALLEGRO_EVENT_TIMER:
+        if(pantalla == INICIO){
+            switch (event.type) {
+                case ALLEGRO_EVENT_TIMER:
 
-                redraw = true;
-                movementAll(piramide, qbert, enemies, platillos);
-                generarEnemigos(periodEnemies, enemies);
-                
-                break;
-                
-            case ALLEGRO_EVENT_KEY_DOWN:
+                    redraw = true;
+                    init.movement();
 
-                if (!qbert.isJumping()) {
-                    switch (event.keyboard.keycode) {
-                        case ALLEGRO_KEY_LEFT:
-                            qbert.setDir(TOPLEFT);
-                            qbert.setI(qbert.getI()-1), qbert.setJ(qbert.getJ()-1);
-                            break;
-                        case ALLEGRO_KEY_RIGHT:
-                            qbert.setDir(DOWNRIGHT);
-                            qbert.setI(qbert.getI()+1), qbert.setJ(qbert.getJ()+1);
-                            break;
-                        case ALLEGRO_KEY_UP:
-                            qbert.setDir(TOPRIGHT) ;
-                            qbert.setI(qbert.getI()-1);
-                            break;
-                        case ALLEGRO_KEY_DOWN:
-                            qbert.setDir(DOWNLEFT);
-                            qbert.setI(qbert.getI()+1);
-                            break;
+                    break;
+
+                case ALLEGRO_EVENT_KEY_DOWN:
+
+                    if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+                        pantalla = JUEGO;
+                        resizAll(piramide, qbert, enemies, platillos);
                     }
 
-                    qbert.setJumping(true);
-                    qbert.setSourceX(qbert.getSourceX()+16);
-                }
-                break;
+                    break;
 
-            case ALLEGRO_EVENT_DISPLAY_RESIZE:
+                case ALLEGRO_EVENT_DISPLAY_RESIZE:
 
-                al_identity_transform(&camera);
+                    al_identity_transform(&camera);
 
-                int prev_disp;
-                prev_disp = al_get_display_width(disp);
-                al_acknowledge_resize(disp);
-                scale +=((float)al_get_display_width(disp) - (float)prev_disp)*0.001f;
-                al_scale_transform(&camera, scale, scale);
-                al_use_transform(&camera);
+                    int prev_disp;
+                    prev_disp = al_get_display_width(disp);
+                    al_acknowledge_resize(disp);
+                    scale +=((float)al_get_display_width(disp) - (float)prev_disp)*0.001f;
+                    al_scale_transform(&camera, scale, scale);
+                    al_use_transform(&camera);
 
-                WIDTH = al_get_display_width(disp);
-                HEIGHT = al_get_display_height(disp);
+                    WIDTH = al_get_display_width(disp);
+                    HEIGHT = al_get_display_height(disp);
 
-                // RESIZE ALL ITEMS
-                resizAll(piramide, qbert, enemies, platillos);
+                    // RESIZE ALL ITEMS
+                    init.resize(WIDTH/scale, HEIGHT/scale);
 
-                break;
+                    break;
 
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                    pantalla = CLOSE;
+                    break;
 
-                done = true;
-                break;
+            }
+            if (redraw && al_is_event_queue_empty(queue)) {
+                //REDRAW THE IMAGE WITH EVERYTHING
+                al_clear_to_color(al_map_rgb(49, 33, 121));
 
+                init.drawBitmap();
+
+                al_flip_display();
+                redraw = false;
+            }
         }
-        if (redraw && al_is_event_queue_empty(queue)) {
-            //REDRAW THE IMAGE WITH EVERYTHING
-            al_clear_to_color(al_map_rgb(0, 0, 0));
+        else if(pantalla == JUEGO){
+            switch (event.type) {
+                case ALLEGRO_EVENT_TIMER:
 
-            drawAll(piramide, qbert, enemies, platillos);
+                    redraw = true;
+                    movementAll(piramide, qbert, enemies, platillos);
+                    generarEnemigos(periodEnemies, enemies);
 
-            al_flip_display();
-            redraw = false;
+                    break;
+
+                case ALLEGRO_EVENT_KEY_DOWN:
+
+                    if (!qbert.isJumping()) {
+                        switch (event.keyboard.keycode) {
+                            case ALLEGRO_KEY_LEFT:
+                                qbert.setDir(TOPLEFT);
+                                qbert.setI(qbert.getI()-1), qbert.setJ(qbert.getJ()-1);
+                                break;
+                            case ALLEGRO_KEY_RIGHT:
+                                qbert.setDir(DOWNRIGHT);
+                                qbert.setI(qbert.getI()+1), qbert.setJ(qbert.getJ()+1);
+                                break;
+                            case ALLEGRO_KEY_UP:
+                                qbert.setDir(TOPRIGHT) ;
+                                qbert.setI(qbert.getI()-1);
+                                break;
+                            case ALLEGRO_KEY_DOWN:
+                                qbert.setDir(DOWNLEFT);
+                                qbert.setI(qbert.getI()+1);
+                                break;
+                        }
+
+                        qbert.setJumping(true);
+                        qbert.setSourceX(qbert.getSourceX()+16);
+                    }
+                    break;
+
+                case ALLEGRO_EVENT_DISPLAY_RESIZE:
+
+                    al_identity_transform(&camera);
+
+                    int prev_disp;
+                    prev_disp = al_get_display_width(disp);
+                    al_acknowledge_resize(disp);
+                    scale +=((float)al_get_display_width(disp) - (float)prev_disp)*0.001f;
+                    al_scale_transform(&camera, scale, scale);
+                    al_use_transform(&camera);
+
+                    WIDTH = al_get_display_width(disp);
+                    HEIGHT = al_get_display_height(disp);
+
+                    // RESIZE ALL ITEMS
+                    resizAll(piramide, qbert, enemies, platillos);
+
+                    break;
+
+                case ALLEGRO_EVENT_DISPLAY_CLOSE:
+
+                    pantalla = CLOSE;
+                    break;
+
+            }
+            if (redraw && al_is_event_queue_empty(queue)) {
+                //REDRAW THE IMAGE WITH EVERYTHING
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+
+                drawAll(piramide, qbert, enemies, platillos);
+
+                al_flip_display();
+                redraw = false;
+            }
         }
     }
 

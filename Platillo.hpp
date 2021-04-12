@@ -48,6 +48,24 @@ public:
         this-> sizePixels = 16;
     }
 
+    /* Constructor */
+    Platillo(float width, float height) {
+        ALLEGRO_BITMAP *bitmap = al_load_bitmap("../sprites/platillos.png");
+        must_init(bitmap, "platillo");
+        this->draw = bitmap;
+
+        this-> sizePixels = 16;
+    }
+
+    void drawBitmap() override {
+        al_draw_bitmap_region(getDraw(), getSourceX() + (sourceJ * sizePixels),
+                              getSourceY() + (sourceI * sizePixels), sizePixels, sizePixels,
+                              getX(), getY(), 0);
+        if(posQBert == MONTANDO) {
+            al_clear_to_color(al_map_rgb(0, 223, 0));
+        }
+    }
+
     void resize(Piramide *piramide) override {
         if(pos == IZQ){
             setX(piramide->map[i+1][j+1].x + xRespectCube);

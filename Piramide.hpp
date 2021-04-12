@@ -33,7 +33,7 @@ public:
         }
         file.close();
 
-        width /= 2, height = height/2 - cubeSize*3;
+        width /= 2, height = height/2 - cubeSize*3 + cubeSize;
 
         for(int i=0; i<7; i++){ // Fila
             width -= cubeSize/2;
@@ -57,7 +57,7 @@ public:
 
     /* Establece la posicion correspondiente de la piramide segun el nuevo tamaño de la ventana */
     void resizeMap(float width, float height) {
-        width /= 2, height = height/2 - cubeSize*3;
+        width /= 2, height = height/2 - cubeSize*3 + cubeSize;
         for(int i=0; i<7; i++){ // Fila
             width -= cubeSize/2;
             for(int j=0; j<i+1; j++){ // Columna

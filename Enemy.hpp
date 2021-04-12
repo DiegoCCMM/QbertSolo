@@ -65,7 +65,7 @@ public:
 
     void movement(Piramide *piramide, int HEIGHT) override {
         if (isJumping()) {
-            airTimerplusplus();
+            timerplusplus();
             if (getTimer() < airTime / 2) {
                 //GO UP AND DIRECTION
                 if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
