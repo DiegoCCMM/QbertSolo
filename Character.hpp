@@ -53,6 +53,8 @@ public:
         ALLEGRO_BITMAP *player = al_load_bitmap(path.c_str());
         must_init(player, nom.c_str());
         this->draw = player;
+
+        CsetJumpSound(nom);
     }
 
     void resize(Piramide *piramide) override {
