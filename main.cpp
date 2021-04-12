@@ -20,7 +20,7 @@
 float scale = 1.0f;
 float WIDTH = 330, HEIGHT = 280;
 
-void generarEnemigos(int & timer, std::list<Enemy> &enemies);
+void generarEnemigos(int & timer, std::list<Enemy> &enemies, Piramide pir);
 void checkRandMovementEnemies(std::list<Enemy> &enemies);
 void movementAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
 void drawAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
@@ -113,7 +113,6 @@ int main() {
 
                     redraw = true;
                     init.movement();
-
                     break;
 
                 case ALLEGRO_EVENT_KEY_DOWN:
@@ -165,8 +164,7 @@ int main() {
 
                     redraw = true;
                     movementAll(piramide, qbert, enemies, platillos);
-                    generarEnemigos(periodEnemies, enemies);
-
+                    generarEnemigos(periodEnemies, enemies, piramide);
                     break;
 
                 case ALLEGRO_EVENT_KEY_DOWN:
@@ -251,7 +249,7 @@ int main() {
     return 0;
 }
 
-void generarEnemigos(int & timer, std::list<Enemy> &enemies){
+void generarEnemigos(int & timer, std::list<Enemy> &enemies, Piramide pir){
 
     if(timer == periodoEnemigos){
         //genera un enemigo aleatorio
@@ -261,11 +259,11 @@ void generarEnemigos(int & timer, std::list<Enemy> &enemies){
         int eleccion = dist(mt);
         if(eleccion >= 0 && eleccion <= 14){
             //redblob o poder
-
+            Enemy redblob = Enemy(pir, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
+            enemies.push_back(redblob);
         }else if(eleccion >= 15 && eleccion <= 29){
             //coily
 
-            //if(std::find(enemies.begin(), enemies.end(), ) != enemies.end())
         }else if(eleccion >= 30 && eleccion <= 44){
             //ugg o wrong way
         }else if(eleccion >= 45 && eleccion <= 60){
