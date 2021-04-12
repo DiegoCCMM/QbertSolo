@@ -104,7 +104,7 @@ int main() {
                 redraw = true;
                 movementAll(piramide, qbert, enemies, platillos);
                 generarEnemigos(periodEnemies, enemies);
-
+                
                 break;
                 
             case ALLEGRO_EVENT_KEY_DOWN:
