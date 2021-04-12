@@ -175,23 +175,28 @@ int main() {
                             case ALLEGRO_KEY_LEFT:
                                 qbert.setDir(TOPLEFT);
                                 qbert.setI(qbert.getI()-1), qbert.setJ(qbert.getJ()-1);
+                                qbert.setJumping(true);
+                                qbert.setSourceX(qbert.getSourceX()+16);
                                 break;
                             case ALLEGRO_KEY_RIGHT:
                                 qbert.setDir(DOWNRIGHT);
                                 qbert.setI(qbert.getI()+1), qbert.setJ(qbert.getJ()+1);
+                                qbert.setJumping(true);
+                                qbert.setSourceX(qbert.getSourceX()+16);
                                 break;
                             case ALLEGRO_KEY_UP:
                                 qbert.setDir(TOPRIGHT) ;
                                 qbert.setI(qbert.getI()-1);
+                                qbert.setJumping(true);
+                                qbert.setSourceX(qbert.getSourceX()+16);
                                 break;
                             case ALLEGRO_KEY_DOWN:
                                 qbert.setDir(DOWNLEFT);
                                 qbert.setI(qbert.getI()+1);
+                                qbert.setJumping(true);
+                                qbert.setSourceX(qbert.getSourceX()+16);
                                 break;
                         }
-
-                        qbert.setJumping(true);
-                        qbert.setSourceX(qbert.getSourceX()+16);
                     }
                     break;
 
