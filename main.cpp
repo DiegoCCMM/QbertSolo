@@ -10,7 +10,6 @@
 //#include <iostream>
 
 #include "Piramide.hpp"
-#include "QBert.hpp"
 #include "Enemy.hpp"
 #include "Coily.hpp"
 #include "Platillo.hpp"
@@ -215,8 +214,8 @@ int main() {
 
                     break;
 
-                case ALLEGRO_EVENT_DISPLAY_CLOSE:
 
+                case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     pantalla = CLOSE;
                     break;
 

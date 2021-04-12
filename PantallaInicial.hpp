@@ -5,9 +5,9 @@
 #ifndef QBERT_PANTALLAINICIAL_HPP
 #define QBERT_PANTALLAINICIAL_HPP
 
+
+
 #define topTimer 80
-
-
 
 class PantallaInicial{
     enum Estado {
@@ -28,15 +28,29 @@ class PantallaInicial{
 public:
 
     PantallaInicial(float width, float height) : width(width), height(height) {
-        platillo.setX(width/2-175);
-        platillo.setY(height/2+100);
+        escenarioInit();
+    }
+
+    void escenarioInit(){
+        platillo.setXRespectCube(-175);
+        platillo.setYRespectCube(100);
+        platillo.setX(width/2+platillo.getXRespectCube());
+        platillo.setY(height/2+platillo.getYRespectCube());
         qbert.setX(platillo.getX());
         qbert.setY(platillo.getY()-6);
     }
 
+    void escenarioInstruc(){
+        estado = INSTRUCCIONES;
+        timer = 0;
+        qbert.setXRespectCube(20);
+        qbert.setYRespectCube(50);
+        qbert.setX(width/2-165+qbert.getXRespectCube());
+        qbert.setY(height/2-140+qbert.getYRespectCube());
+    }
+
     void movement() {
         if(estado == INICIO) {
-            //estado = INSTRUCCIONES;
             platillo.timerplusplus();
             if (platillo.getTimer() > 2) {
                 platillo.setSourceJ(platillo.getSourceJ() + 1);
@@ -46,20 +60,17 @@ public:
                 platillo.setTimer(0);
             }
 
+            platillo.setXRespectCube(platillo.getXRespectCube()+ 1.75);
             platillo.setX(platillo.getX() + 1.75);
             qbert.setX(platillo.getX());
-            if(platillo.getX() > width/2+4*32){
-                estado = INSTRUCCIONES;
-                qbert.setXRespectCube(20);
-                qbert.setYRespectCube(50);
-                qbert.setX(width/2-165+qbert.getXRespectCube());
-                qbert.setY(height/2-140+qbert.getYRespectCube());
-            }
-        } else { // INSTRUCCIONES
+
+            if(platillo.getX() > width/2+4*32) escenarioInstruc();
+        }
+        else { // INSTRUCCIONES
             // TODO: revisar --> esta mal
-            if(timer%topTimer==0){
-                qbert.timerplusplus();
-            }
+            if(timer!=0 && timer%topTimer == 0 && timer <= topTimer*5) qbert.setJumping(true);
+            if(timer >= topTimer*6) escenarioInit();
+            qbert.movementInstr();
             timer++;
         }
     }
@@ -140,6 +151,8 @@ public:
                 }
                 x += 8;
             }
+
+            qbert.setJ(0);
         }
 
         if(timer > topTimer*2){
@@ -159,6 +172,8 @@ public:
                 }
                 x += 8;
             }
+
+            qbert.setJ(1);
         }
 
         if(timer > topTimer*3){
@@ -178,6 +193,8 @@ public:
                 }
                 x += 8;
             }
+
+            qbert.setJ(2);
         }
 
         if(timer > topTimer*4){
@@ -196,6 +213,8 @@ public:
                 }
                 x += 8;
             }
+
+            qbert.setJ(3);
         }
 
         if(timer > topTimer*5){
@@ -217,6 +236,8 @@ public:
                 }
                 x += 8;
             }
+
+            qbert.setJ(4);
         }
 
         if(timer > topTimer*6){ // TODO: Cae el blob rojo
@@ -224,7 +245,9 @@ public:
         }
 
         // TODO: despues de todas las animaciones volver a INICIO
-        // estado = INICIO;
+        if(timer > topTimer*6){
+            estado = INICIO;
+        }
     }
 
     void resize(float _width, float _height){
@@ -232,8 +255,8 @@ public:
         height = _height;
 
         if(estado == INICIO){
-            platillo.setX(width/2-175);
-            platillo.setY(height/2+100);
+            platillo.setX(width/2+platillo.getXRespectCube());
+            platillo.setY(height/2+platillo.getYRespectCube());
             qbert.setY(platillo.getY()-6);
         } else { // INSTRUCCIONES
             qbert.setX(width/2-165+qbert.getXRespectCube());

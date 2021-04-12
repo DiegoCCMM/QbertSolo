@@ -149,6 +149,30 @@ public:
         }
     }
 
+    void movementInstr() {
+        float moveX = 3.0;
+        float moveY[5] = {9.0, 25.0, 22.0, 20.0, 22.0};
+
+        if (isJumping()) {
+            timerplusplus();
+            if (getTimer() < airTime / 2) {
+                setX(moveX + getX());
+                setXRespectCube(getXRespectCube()+moveX);
+            } else if (getTimer() > airTime / 2 && getTimer() < airTime) {
+                setX(moveX + getX());
+                setXRespectCube(getXRespectCube()+moveX);
+                setY(getY() + moveY[getJ()]);
+                setYRespectCube(getYRespectCube()+moveY[getJ()]);
+            } else if (getTimer() > airTime) {
+                //WE LANDED
+                playOnce(getJumpSound());
+
+                setTimer(0);
+                setJumping(false);
+            }
+        }
+    }
+
     void resize(Piramide *piramide) override {
         if(enPlatillo){
             QBert::setX(platillo->getX());
