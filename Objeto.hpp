@@ -63,7 +63,7 @@ public:
     float getY() const { return y; }
     void setY(float _y) { Objeto::y = _y; }
 
-    ALLEGRO_BITMAP *getDraw() const { return draw; }
+    virtual ALLEGRO_BITMAP *getDraw() const { return draw; }
     void setDraw(ALLEGRO_BITMAP *_draw) { Objeto::draw = _draw; }
 
     int getTimer() const { return timer; }
