@@ -9,21 +9,40 @@ enum State{
 #ifndef ALLEGRO5TUTORIAL_COILY_HPP
 #define ALLEGRO5TUTORIAL_COILY_HPP
 class Coily : public Enemy{
-    State state;
+
+    State state = GOING_DOWN;
+    ALLEGRO_BITMAP* ballDraw;
+
 public:
+    Coily(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube) : Enemy(
+            piramide, nom, i, j, xRespectCube, yRespectCube) {
+        ALLEGRO_BITMAP *draw = al_load_bitmap("../sprites/coilyBola.png");
+        must_init(draw, nom.c_str());
+        ballDraw = draw;
+    }
 
-    void changeState(){
-        //TODO CHANGE FROM THE DIFFERENT STATES
+    void setState(State s){
+        state = s;
+    }
 
-        //GOING DOWN
-        //sprite in the ball move
-        //executing the randomMovement
+    void AIMovement(){
+        //TODO HACER LA IA
+    }
 
-        //REACHED DOWN, STREACHING INTO AI MODE
-        //sprite in snake mode
-        //moving in AiMovement
+    void randomMovement(){
+        if(state == GOING_DOWN){
+            Enemy::randomMovement();
+        }else{
+            Coily::AIMovement();
+        }
+    }
 
-
+    ALLEGRO_BITMAP* getDraw()  {
+        if(state == GOING_DOWN){
+            return(ballDraw);
+        }else{
+            return(draw);
+        }
     }
 };
 #endif //ALLEGRO5TUTORIAL_COILY_HPP
