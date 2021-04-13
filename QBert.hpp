@@ -21,7 +21,7 @@ public:
     QBert(Piramide piramide) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 7, -8) {
         must_init(fallingSound, "qbert-FallingSound");
         setSourceX(0);
-        managementSpriteQbert();
+        //managementSpriteQbert();
     }
 
     /* Constructor 2 */

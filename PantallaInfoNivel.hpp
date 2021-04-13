@@ -12,9 +12,7 @@ class PantallaInfoNivel{
 
     int level;
 
-    ALLEGRO_BITMAP *drawLevel = al_load_bitmap("../sprites/fonts.png");
-    ALLEGRO_BITMAP *drawCircle = al_load_bitmap("../sprites/circle.png");
-    ALLEGRO_BITMAP *drawNumber = al_load_bitmap("../sprites/fonts.png");
+    ALLEGRO_BITMAP *infoLevel = al_load_bitmap("../sprites/infonivel.png");
 
     ALLEGRO_SAMPLE *musicSound;
     ALLEGRO_SAMPLE *coinSound = al_load_sample("../sounds/coin.ogg");
@@ -43,34 +41,34 @@ public:
 
     void movement() {
         // level 1 --> 2, 1, 3, 0
-        if(timer%20==0 && timer < 25) {
-            if(level == 1) ;//qbert.setMove(DOWNRIGHT);
+        if(timer > 140 && timer < 142) {
+            if(level == 1) qbert.setMove(DOWNRIGHT);
             else {
 
             }
-        }/*
-        else if(timer%50==0 && timer < 220) {
+        }
+        else if(timer > 160 && timer < 162) {
             if(level == 1) qbert.setMove(TOPLEFT);
             else {
 
             }
         }
-        else if(timer%50==0 && timer < 320) {
+        else if(timer > 180 && timer < 182) {
             if(level == 1) qbert.setMove(DOWNLEFT);
             else {
 
             }
         }
-        else if(timer%50==0 && timer < 420) {
+        else if(timer > 200 && timer < 202) {
             if(level == 1) qbert.setMove(TOPRIGHT);
             else {
 
             }
-        }*/
+        }
 
         qbert.movement_IN(&piramide);
         timer++;
-        if(timer > 200) finish = true;
+        if(timer > 340) finish = true;
     }
 
     void drawBitmap() {
@@ -81,20 +79,22 @@ public:
 
         // Cargar Q*Bert
         qbert.drawBitmap();
-/*
+
         // Cargar letras level
-        al_draw_bitmap_region(drawLevel, 0, 4 * 8,
-                              12*8, 2*8, x, y, 0); // CAMBIAR
+        int sourceX = 220, sourceY = 50;
+        al_draw_bitmap_region(infoLevel, 0, 32*2,
+                              sourceX, sourceY, width/2-sourceX/2, height/2, 0);
 
         // Cargar circulo
-        al_draw_bitmap_region(drawCircle, 0, 4 * 8,
-                              12*8, 2*8, x, y, 0); // CAMBIAR
+        sourceX = 40, sourceY = 40;
+        al_draw_bitmap_region(infoLevel, 0, 20,
+                              sourceX, sourceY, width/2-sourceX/2+3,height/2+70, 0);
 
         // Cargar numero --> parpadeante
-        if(timer < 200 && timer%20==0){
-            al_draw_bitmap_region(drawNumber, 0, 4 * 8,
-                                  12*8, 2*8, x, y, 0); // CAMBIAR
-        }*/
+        if( (timer>10 && timer<30) || (timer > 60 && timer<80) || timer > 100) {
+            al_draw_bitmap_region(infoLevel, 17 * (level - 1), 0,
+                                  12, 20, width / 2 - sourceX / 2 + 12, height / 2 + 79, 0);
+        }
     }
 
     void resize(float _width, float _height){
@@ -111,9 +111,7 @@ public:
         qbert.destroy();
         piramide.destroy_IN();
 
-        al_destroy_bitmap(drawLevel);
-        al_destroy_bitmap(drawCircle);
-        al_destroy_bitmap(drawNumber);
+        al_destroy_bitmap(infoLevel);
 
         al_destroy_sample(musicSound);
         al_destroy_sample(coinSound);
