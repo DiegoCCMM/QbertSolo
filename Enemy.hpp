@@ -53,14 +53,10 @@ public:
     }
 
     void assignIJ(){
-        // TODO: crear resto de direcciones para un futuro los siguientes enemigos (ej: Ugg y Wrong-way, o Coily)
-        if(getDir() == DOWNRIGHT){
-            setI(getI()+1);
-            setJ(getJ()+1);
-
-        }else{//dir == DOWNLEFT
-            setI(getI()+1);
-        }
+        if(getDir() == TOPLEFT) setI(getI() - 1), setJ(getJ() - 1);
+        else if(getDir() == DOWNRIGHT) setI(getI() + 1), setJ(getJ() + 1);
+        else if(getDir() == TOPRIGHT) setI(getI() - 1);
+        else if(getDir() == DOWNLEFT) setI(getI() + 1);
     }
 
     void movement(Piramide *piramide, int HEIGHT) override {
@@ -88,11 +84,11 @@ public:
                 if (hasChangingGroundPower()) {
                     piramide->changeCube(getI(), getJ());
                 }
+                assignIJ();
                 setX(piramide->map[getI()][getJ()].x + getXRespectCube());
                 setY(piramide->map[getI()][getJ()].y + getYRespectCube());
                 setTimer(0);
                 setJumping(false);
-                assignIJ();
                 setSourceX(getSourceX() + 16);
             }
         }

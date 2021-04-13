@@ -330,18 +330,18 @@ void generarEnemigos(int & timer, std::list<Enemy> &enemies, Piramide pir){
         int eleccion = dist(mt);
         if(eleccion >= 0 && eleccion <= 14){
             //redblob o poder
-            Enemy redblob = Enemy(pir, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-            enemies.push_back(redblob);
+            //Enemy redblob = Enemy(pir, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
+            //enemies.push_back(redblob);
         }else if(eleccion >= 15 && eleccion <= 29){
             //coily
-
+            Coily coily = Coily(pir, "coilyBola", 1, 0, 9, -3);
+            enemies.push_back(coily);
         }else if(eleccion >= 30 && eleccion <= 44){
             //ugg o wrong way
         }else if(eleccion >= 45 && eleccion <= 60){
             //slick o sam
         }
-
-
+        //reinicio timer
         timer = 0;
     }else{
         timer++;
@@ -421,9 +421,9 @@ void checkRandMovementEnemies(std::list<Enemy> &enemies) {
         if(it->getRandMoveTimer() == it->getRandMovePeriod()){
             it->randomMovement();
             it->resetRandomMoveTimer();
+        }else {
+            it->randomMoveTimerplusplus();
         }
-
-        it->randomMoveTimerplusplus();
     }
 }
 

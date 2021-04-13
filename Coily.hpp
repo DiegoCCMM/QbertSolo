@@ -11,14 +11,14 @@ enum State{
 class Coily : public Enemy{
 
     State state = GOING_DOWN;
-    ALLEGRO_BITMAP* ballDraw;
+    ALLEGRO_BITMAP* secondPhaseDraw;
 
 public:
     Coily(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube) : Enemy(
             piramide, nom, i, j, xRespectCube, yRespectCube) {
-        ALLEGRO_BITMAP *draw = al_load_bitmap("../sprites/coilyBola.png");
+        ALLEGRO_BITMAP *draw = al_load_bitmap("../sprites/coilyEstirado.png");
         must_init(draw, nom.c_str());
-        ballDraw = draw;
+        secondPhaseDraw = draw;
     }
 
     void setState(State s){
@@ -37,11 +37,11 @@ public:
         }
     }
 
-    ALLEGRO_BITMAP* getDraw()  {
+    ALLEGRO_BITMAP* getDraw() const override {
         if(state == GOING_DOWN){
-            return(ballDraw);
-        }else{
             return(draw);
+        }else{
+            return(secondPhaseDraw);
         }
     }
 };
