@@ -118,6 +118,7 @@ int main() {
                 case ALLEGRO_EVENT_KEY_DOWN:
 
                     if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+                        init.destroy();
                         pantalla = JUEGO;
                         resizAll(piramide, qbert, enemies, platillos);
                     }
@@ -144,6 +145,7 @@ int main() {
                     break;
 
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                    init.destroy();
                     pantalla = CLOSE;
                     break;
 

@@ -19,7 +19,7 @@ class PantallaInicial{
 
     Estado estado = INICIO;
     ALLEGRO_BITMAP *drawInit = al_load_bitmap("../sprites/fonts.png");
-    ALLEGRO_SAMPLE *initSound = al_load_sample("../sounds/platillo.ogg");
+    ALLEGRO_SAMPLE *helloSound = al_load_sample("../sounds/qbert-hello.ogg");
     QBert qbert = QBert();
     Platillo platillo = Platillo(width, height);
 
@@ -29,6 +29,7 @@ public:
 
     PantallaInicial(float width, float height) : width(width), height(height) {
         escenarioInit();
+        al_play_sample(helloSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
     }
 
     void escenarioInit(){
@@ -262,6 +263,13 @@ public:
             qbert.setX(width/2-165+qbert.getXRespectCube());
             qbert.setY(height/2-140+qbert.getYRespectCube());
         }
+    }
+
+    void destroy(){
+        qbert.destroy();
+        platillo.destroy();
+        al_destroy_bitmap(drawInit);
+        al_destroy_sample(helloSound);
     }
 };
 
