@@ -104,7 +104,7 @@ int main() {
     PantallaInicial init = PantallaInicial(WIDTH/scale, HEIGHT/scale);
     inicio:
     {
-        goto infonivelIntro;
+        //goto infonivelIntro;
         al_wait_for_event(queue, &event);
         al_get_keyboard_state(&keyState);
 
