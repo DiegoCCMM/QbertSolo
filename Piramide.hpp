@@ -73,6 +73,14 @@ public:
         map[i][j].color = sigCubo[map[i][j].color];
     }
 
+    void destroy(){
+        for(int i=0; i<7; i++){ // Fila
+            for(int j=0; j<i+1; j++){ // Columna
+                al_destroy_bitmap(map[i][j].draw);
+            }
+        }
+    }
+
     static void must_init(bool test, const char *description) {
         if (test) return;
 
@@ -80,10 +88,67 @@ public:
         exit(1);
     }
 
-    void destroy(){
-        for(int i=0; i<7; i++){ // Fila
+    /** Funciones explicitas para crear la piramide de la pantalla de 'Subir nivel/Info Nivel(IN)' **/
+
+    /* Carga el mapa de la piramide de un .txt según el nivel y la ronda */
+    void loadMap_IN(int level, int round, float width, float height){
+        ALLEGRO_BITMAP *cubes = al_load_bitmap("../sprites/cubos.png");
+        must_init(cubes, "cubes");
+
+        std::ifstream file("../levels/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt");
+        for(int i=0; !file.eof(); i++) {
+            file >> sx[i] >> sy[i] >> sigCubo[i];
+        }
+        file.close();
+
+        width /= 2, height = height/2 - cubeSize*3 + cubeSize;
+
+        for(int i=0; i<3; i++){ // Fila
+            width -= cubeSize/2;
             for(int j=0; j<i+1; j++){ // Columna
-                al_destroy_bitmap(map[i][j].draw);
+                if(i==2 && (j==0 || j==2)) ;
+                else {
+                    Cube cubo{width + (float) j * cubeSize, height-30, 0, cubes};
+                    map[i][j] = cubo;
+                }
+            }
+            height += cubeSize*3/4;
+        }
+    }
+
+    /* Muestra por pantalla todos los cubos formando la piramide */
+    void drawBitmap_IN() {
+        for(int i=0; i<3; i++){ // Fila
+            for(int j=0; j<i+1; j++){ // Columna
+                if(i==2 && (j==0 || j==2)) ;
+                else
+                    al_draw_bitmap_region(map[i][j].draw, sx[map[i][j].color], sy[map[i][j].color],
+                                      cubeSize, cubeSize, map[i][j].x, map[i][j].y, 0);
+            }
+        }
+    }
+
+    /* Establece la posicion correspondiente de la piramide segun el nuevo tamaño de la ventana */
+    void resizeMap_IN(float width, float height) {
+        width /= 2, height = height/2 - cubeSize*3 + cubeSize;
+        for(int i=0; i<3; i++){ // Fila
+            width -= cubeSize/2;
+            for(int j=0; j<i+1; j++){ // Columna
+                if(i==2 && (j==0 || j==2)) ;
+                else {
+                    map[i][j].x = width + (float) j * cubeSize;
+                    map[i][j].y = height-30;
+                }
+            }
+            height += cubeSize*3/4;
+        }
+    }
+
+    void destroy_IN(){
+        for(int i=0; i<3; i++){ // Fila
+            for(int j=0; j<i+1; j++){ // Columna
+                if(i==2 && (j==0 || j==2)) ;
+                else al_destroy_bitmap(map[i][j].draw);
             }
         }
     }

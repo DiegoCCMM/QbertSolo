@@ -14,6 +14,7 @@
 #include "Coily.hpp"
 #include "Platillo.hpp"
 #include "PantallaInicial.hpp"
+#include "PantallaInfoNivel.hpp"
 
 #define periodoEnemigos 12
 float scale = 1.0f;
@@ -27,11 +28,6 @@ void resizAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::
 void destroyAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
 
 void must_init(bool test, const char *description);
-
-enum Pantalla{
-    // TODO: ir actualizando con todas las pantallas si es necesario
-    INICIO, INFONIVEL, JUEGO, REGNOM, HIGHSCORES, CLOSE
-};
 
 int main() {
     must_init(al_init(), "allegro");
@@ -64,6 +60,8 @@ int main() {
     al_init_acodec_addon();
     al_reserve_samples(10); // TODO: tener en cuenta a la hora de cuantos audios vamos a usar
 
+//********************************************************************************************************
+// TODO Si creamos la clase escena se quitarian todas estas funciones
     // TODO: crear el resto de .txt de todos los niveles y sus rondas
     // CARGAR MAPA
     Piramide piramide;
@@ -72,12 +70,12 @@ int main() {
 
     // CARGAR PERSONAJES
     QBert qbert = QBert(piramide);
-    std::list <Enemy> enemies;
+    std::list<Enemy> enemies;
     // FIN PERSONAJES
 
     // CARGAR COMPONENTES RESTANTES
     // TODO: guardarlo todos en una lista (como enemies)
-    std::list <Platillo> platillos;
+    std::list<Platillo> platillos;
     Platillo plato = Platillo(piramide, 3, IZQ);
     platillos.push_back(plato);
     // platillos
@@ -86,10 +84,10 @@ int main() {
     // vidas
     // etc
     // FIN COMPONENTES RESTANTES
+//********************************************************************************************************
 
+    int level = 1, round = 1;
 
-
-    Pantalla pantalla = INICIO;
     bool redraw = true;
     ALLEGRO_EVENT event;
     al_start_timer(timer);
@@ -99,27 +97,90 @@ int main() {
      *       GAME LOOP       *
      *************************/
 
+    // Pantallas:
+    // INICIO, INFONIVEL, JUEGO, REGNOM(registro nombre), HIGHSCORES, CLOSE
+
     // Pantalla inicial e instrucciones
-    PantallaInicial init = PantallaInicial(WIDTH, HEIGHT);
-    // Comienzo juego
-    while (pantalla != CLOSE) {
+    PantallaInicial init = PantallaInicial(WIDTH/scale, HEIGHT/scale);
+    inicio:
+    {
         al_wait_for_event(queue, &event);
         al_get_keyboard_state(&keyState);
 
-        if(pantalla == INICIO){
+        switch (event.type) {
+            case ALLEGRO_EVENT_TIMER:
+
+                redraw = true;
+                init.movement();
+                break;
+
+            case ALLEGRO_EVENT_KEY_DOWN:
+
+                if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+                    init.destroy();
+
+                    //goto juegoIntro;
+                    goto infonivelIntro;
+                }
+
+                break;
+
+            case ALLEGRO_EVENT_DISPLAY_RESIZE:
+
+                al_identity_transform(&camera);
+
+                int prev_disp;
+                prev_disp = al_get_display_width(disp);
+                al_acknowledge_resize(disp);
+                scale += ((float) al_get_display_width(disp) - (float) prev_disp) * 0.001f;
+                al_scale_transform(&camera, scale, scale);
+                al_use_transform(&camera);
+
+                WIDTH = al_get_display_width(disp);
+                HEIGHT = al_get_display_height(disp);
+
+                // RESIZE ALL ITEMS
+                init.resize(WIDTH / scale, HEIGHT / scale);
+
+                break;
+
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                init.destroy();
+                goto close;
+
+        }
+        if (redraw && al_is_event_queue_empty(queue)) {
+            //REDRAW THE IMAGE WITH EVERYTHING
+            al_clear_to_color(al_map_rgb(49, 33, 121));
+
+            init.drawBitmap();
+
+            al_flip_display();
+            redraw = false;
+        }
+
+        goto inicio;
+    };
+
+    infonivelIntro:
+    {
+        PantallaInfoNivel infonivel = PantallaInfoNivel(WIDTH/scale, HEIGHT/scale);
+        if(level == 1) infonivel.sonidoMoneda();
+        infonivel.startLevel(level);
+
+        infonivel:
+        {
+            al_wait_for_event(queue, &event);
+            al_get_keyboard_state(&keyState);
+
             switch (event.type) {
                 case ALLEGRO_EVENT_TIMER:
 
                     redraw = true;
-                    init.movement();
-                    break;
+                    infonivel.movement();
 
-                case ALLEGRO_EVENT_KEY_DOWN:
-
-                    if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-                        init.destroy();
-                        pantalla = JUEGO;
-                        resizAll(piramide, qbert, enemies, platillos);
+                    if (infonivel.fin()) {
+                        goto juegoIntro;
                     }
 
                     break;
@@ -131,7 +192,7 @@ int main() {
                     int prev_disp;
                     prev_disp = al_get_display_width(disp);
                     al_acknowledge_resize(disp);
-                    scale +=((float)al_get_display_width(disp) - (float)prev_disp)*0.001f;
+                    scale += ((float) al_get_display_width(disp) - (float) prev_disp) * 0.001f;
                     al_scale_transform(&camera, scale, scale);
                     al_use_transform(&camera);
 
@@ -139,27 +200,41 @@ int main() {
                     HEIGHT = al_get_display_height(disp);
 
                     // RESIZE ALL ITEMS
-                    init.resize(WIDTH/scale, HEIGHT/scale);
+                    infonivel.resize(WIDTH / scale, HEIGHT / scale);
 
                     break;
 
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    init.destroy();
-                    pantalla = CLOSE;
+                    goto close;
                     break;
 
             }
             if (redraw && al_is_event_queue_empty(queue)) {
                 //REDRAW THE IMAGE WITH EVERYTHING
-                al_clear_to_color(al_map_rgb(49, 33, 121));
+                al_clear_to_color(al_map_rgb(0, 0, 0));
 
-                init.drawBitmap();
+                infonivel.drawBitmap();
 
                 al_flip_display();
                 redraw = false;
             }
-        }
-        else if(pantalla == JUEGO){
+        };
+
+        goto infonivel;
+    };
+
+    juegoIntro:
+    {
+        // Crear el juego, escena (en caso de que creemos una clase ESCENA y metamos tod0 ahi--> diria que mejor)
+        // Por tanto no se necesitaria hacer el resize --> habria un constructor al que pasar width y height
+        // Y tod0 se crearia respecto a esos datos
+        resizAll(piramide, qbert, enemies, platillos);
+
+        juego:
+        {
+            al_wait_for_event(queue, &event);
+            al_get_keyboard_state(&keyState);
+
             switch (event.type) {
                 case ALLEGRO_EVENT_TIMER:
 
@@ -173,28 +248,16 @@ int main() {
                     if (!qbert.isJumping()) {
                         switch (event.keyboard.keycode) {
                             case ALLEGRO_KEY_LEFT:
-                                qbert.setDir(TOPLEFT);
-                                qbert.setI(qbert.getI()-1), qbert.setJ(qbert.getJ()-1);
-                                qbert.setJumping(true);
-                                qbert.setSourceX(qbert.getSourceX()+16);
+                                qbert.setMove(TOPLEFT);
                                 break;
                             case ALLEGRO_KEY_RIGHT:
-                                qbert.setDir(DOWNRIGHT);
-                                qbert.setI(qbert.getI()+1), qbert.setJ(qbert.getJ()+1);
-                                qbert.setJumping(true);
-                                qbert.setSourceX(qbert.getSourceX()+16);
+                                qbert.setMove(DOWNRIGHT);
                                 break;
                             case ALLEGRO_KEY_UP:
-                                qbert.setDir(TOPRIGHT) ;
-                                qbert.setI(qbert.getI()-1);
-                                qbert.setJumping(true);
-                                qbert.setSourceX(qbert.getSourceX()+16);
+                                qbert.setMove(TOPRIGHT);
                                 break;
                             case ALLEGRO_KEY_DOWN:
-                                qbert.setDir(DOWNLEFT);
-                                qbert.setI(qbert.getI()+1);
-                                qbert.setJumping(true);
-                                qbert.setSourceX(qbert.getSourceX()+16);
+                                qbert.setMove(DOWNLEFT);
                                 break;
                         }
                     }
@@ -207,7 +270,7 @@ int main() {
                     int prev_disp;
                     prev_disp = al_get_display_width(disp);
                     al_acknowledge_resize(disp);
-                    scale +=((float)al_get_display_width(disp) - (float)prev_disp)*0.001f;
+                    scale += ((float) al_get_display_width(disp) - (float) prev_disp) * 0.001f;
                     al_scale_transform(&camera, scale, scale);
                     al_use_transform(&camera);
 
@@ -221,7 +284,7 @@ int main() {
 
 
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    pantalla = CLOSE;
+                    goto close;
                     break;
 
             }
@@ -234,18 +297,19 @@ int main() {
                 al_flip_display();
                 redraw = false;
             }
-        }
-    }
+
+            goto juego;
+        };
+    };
 
 
+    close:
     /*************************
      *     END GAME LOOP     *
      *************************/
 
     // DESTRUIR OBJETOS ESCENA
-    destroyAll(piramide, qbert, enemies, platillos);
-    // destroy resto elementos
-    //**************************
+    destroyAll(piramide, qbert, enemies, platillos); // TODO Si creamos la clase escena se quitaria de aqui
 
     al_destroy_font(font);
     al_destroy_display(disp);
@@ -255,6 +319,7 @@ int main() {
     return 0;
 }
 
+// TODO Si creamos la clase escena se quitarian todas estas funciones
 void generarEnemigos(int & timer, std::list<Enemy> &enemies, Piramide pir){
 
     if(timer == periodoEnemigos){

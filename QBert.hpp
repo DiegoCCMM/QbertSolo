@@ -74,6 +74,17 @@ public:
                               0, sizePixels, sizePixels, QBert::getX(), QBert::getY(), 0);
     }
 
+    void setMove(Direction dir) {
+        setDir(dir);
+        setJumping(true);
+        setSourceX(getSourceX() + 16);
+
+        if(dir == TOPLEFT) setI(getI() - 1), setJ(getJ() - 1);
+        else if(dir == DOWNRIGHT) setI(getI() + 1), setJ(getJ() + 1);
+        else if(dir == TOPRIGHT) setI(getI() - 1);
+        else if(dir == DOWNLEFT) setI(getI() + 1);
+    }
+
     void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos) {
         if (isJumping()) {
             timerplusplus();
@@ -169,6 +180,37 @@ public:
 
                 setTimer(0);
                 setJumping(false);
+            }
+        }
+    }
+
+    void movement_IN(Piramide *piramide) {
+        if (isJumping()) {
+            timerplusplus();
+            if (getTimer() < airTime / 2) {
+                //GO UP AND DIRECTION
+                if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
+                    setX(movementX + getX());
+                else
+                    setX(getX() - movementX);
+                if (getDir() != DOWNRIGHT && getDir() != DOWNLEFT)
+                    setY(getY() - movementY);
+            } else if (getTimer() > airTime / 2 && getTimer() < airTime) {
+                //GO DOWN AND DIRECTION
+                if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
+                    setX(movementX + getX());
+                else
+                    setX(getX() - movementX);
+                if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
+                    setY(getY() + movementY);
+            } else if (getTimer() > airTime) {
+                //WE LANDED
+                playOnce(getJumpSound());
+                piramide->changeCube(getI(), getJ());
+
+                setTimer(0);
+                setJumping(false);
+                setSourceX(getSourceX() - 16);
             }
         }
     }

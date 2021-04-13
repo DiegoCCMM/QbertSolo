@@ -5,7 +5,7 @@
 #ifndef QBERT_PANTALLAINICIAL_HPP
 #define QBERT_PANTALLAINICIAL_HPP
 
-
+#include <unistd.h>
 
 #define topTimer 80
 
@@ -14,8 +14,8 @@ class PantallaInicial{
         INICIO, INSTRUCCIONES
     };
 
-    float width;
-    float height;
+    float width, height;
+    int timer = 0;
 
     Estado estado = INICIO;
     ALLEGRO_BITMAP *drawInit = al_load_bitmap("../sprites/fonts.png");
@@ -23,12 +23,11 @@ class PantallaInicial{
     QBert qbert = QBert();
     Platillo platillo = Platillo(width, height);
 
-    int timer = 0;
-
 public:
 
     PantallaInicial(float width, float height) : width(width), height(height) {
         escenarioInit();
+
         al_play_sample(helloSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
     }
 
