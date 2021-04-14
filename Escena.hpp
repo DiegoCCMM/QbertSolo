@@ -13,11 +13,14 @@ class Escena{
     float width, height;
 
 public:
+
     Piramide piramide;
     QBert qbert;
     std::list<Enemy> enemies;
     std::list<Platillo> platillos;
     int level, round, periodEnemies = 0;
+    int puntuacion;
+    bool gameover = false;
 
 
     /* Constructor */
@@ -25,9 +28,10 @@ public:
 
     void load(float _width, float _height){
         width = _width, height = _height;
+        puntuacion = 0;
 
         // Cargar mapa
-        piramide.loadMap(2, 3, width, height);
+        piramide.loadMap(level, round, width, height);
 
         // Cargar personajes
         qbert = QBert(piramide);
@@ -35,6 +39,10 @@ public:
         // TODO: implementar cuando aparecen los platillos
         //Platillo plato = Platillo(piramide, 3, IZQ);
         //platillos.push_back(plato);
+    }
+
+    bool piramideCompleta(){
+        return piramide.isPiramideCompleta();
     }
 
     void movementAll() {
@@ -153,6 +161,9 @@ public:
 
     int getRound() const { return round; }
     void setRound(int _round) { Escena::round = _round; }
+
+    bool isGameover() const { return gameover; }
+    void setGameover(bool gameover) { Escena::gameover = gameover; }
 
 };
 

@@ -6,6 +6,7 @@
 #define QBERT_PIRAMIDE_HPP
 
 #include <fstream>
+#include <iostream>
 
 constexpr static const float cubeSize = 32.0;
 
@@ -18,6 +19,7 @@ struct Cube {
 class Piramide {
     float sx[3], sy[3];
     int sigCubo[3];
+    bool piramideCompleta;
 
 public:
     Cube map[7][7]; // Ha de ser publico
@@ -43,6 +45,8 @@ public:
             }
             height += cubeSize*3/4;
         }
+
+        piramideCompleta = false;
     }
 
     /* Muestra por pantalla todos los cubos formando la piramide */
@@ -71,6 +75,15 @@ public:
     /* Cambia el cubo [i,j] al siguiente color correspondiente */
     void changeCube(int i, int j){
         map[i][j].color = sigCubo[map[i][j].color];
+
+        // Comprueba si todos los cuadrados estan en el color final
+        bool completa = true;
+        for(int h=0; h<7 && completa; h++){
+            for(int k=0; k<h+1 && completa; k++) { // Columna
+                completa = map[h][k].color == 2;
+            }
+        }
+        piramideCompleta = completa;
     }
 
     void destroy(){
@@ -153,7 +166,13 @@ public:
         }
     }
 
-};
+    /*************************
+     * GETTER'S AND SETTER'S *
+     *************************/
 
+    bool isPiramideCompleta() const { return piramideCompleta; }
+    void setPiramideCompleta(bool _piramideCompleta) { Piramide::piramideCompleta = _piramideCompleta; }
+
+};
 
 #endif //QBERT_PIRAMIDE_HPP

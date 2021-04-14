@@ -128,9 +128,11 @@ int main() {
         goto inicio;
     };
 
-    //PREVIO AL NIVEL
+    // PREVIO AL NIVEL
     infonivelIntro:
     {
+        if(escena.getLevel()>9) goto regnom;
+
         PantallaInfoNivel infonivel = PantallaInfoNivel(WIDTH/scale, HEIGHT/scale);
         if(escena.getLevel() == 1) infonivel.sonidoMoneda();
         infonivel.startLevel(escena.getLevel());
@@ -190,13 +192,32 @@ int main() {
         goto infonivel;
     };
 
-    //GAME LOOP
+    // GAME LOOP
     juegoIntro:
     {
         escena.load(WIDTH/scale, HEIGHT/scale);
 
         juego:
         {
+            if(escena.piramideCompleta()) {
+                escena.setRound(escena.getRound()+1);
+                if(escena.getRound() > 4){
+                    escena.setRound(1);
+                    escena.setLevel(escena.getLevel()+1);
+
+                    if(escena.getLevel() > 9){
+                        goto regnom;
+                    }
+
+                    goto infonivelIntro;
+                }
+
+                goto juegoIntro;
+            }
+            else if(escena.isGameover()){
+                goto regnom;
+            }
+
             al_wait_for_event(queue, &event);
             al_get_keyboard_state(&keyState);
 
@@ -265,6 +286,12 @@ int main() {
 
             goto juego;
         };
+    };
+
+    // REGISTRO DEL NOMBRE
+    regnom:
+    {
+
     };
 
 
