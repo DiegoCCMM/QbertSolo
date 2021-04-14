@@ -45,7 +45,8 @@ public:
         must_init(bitmap, "platillo");
         this->draw = bitmap;
 
-        this-> sizePixels = 16;
+        this-> sizePixelsX = 16;
+        this-> sizePixelsY = 16;
     }
 
     /* Constructor */
@@ -54,12 +55,13 @@ public:
         must_init(bitmap, "platillo");
         this->draw = bitmap;
 
-        this-> sizePixels = 16;
+        this-> sizePixelsX = 16;
+        this-> sizePixelsY = 16;
     }
 
     void drawBitmap() override {
-        al_draw_bitmap_region(getDraw(), getSourceX() + (sourceJ * sizePixels),
-                              getSourceY() + (sourceI * sizePixels), sizePixels, sizePixels,
+        al_draw_bitmap_region(getDraw(), getSourceX() + (sourceJ * sizePixelsX),
+                              getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY,
                               getX(), getY(), 0);
         if(posQBert == MONTANDO) {
             al_clear_to_color(al_map_rgb(0, 223, 0));

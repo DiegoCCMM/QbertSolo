@@ -70,8 +70,8 @@ public:
 
     /* Dibuja la figura de Q*Bert */
     void drawBitmap() override {
-        al_draw_bitmap_region(QBert::getDraw(), QBert::getSourceX() + (QBert::getDir() * 2 * sizePixels),
-                              0, sizePixels, sizePixels, QBert::getX(), QBert::getY(), 0);
+        al_draw_bitmap_region(QBert::getDraw(), QBert::getSourceX() + (QBert::getDir() * 2 * sizePixelsX),
+                              0, sizePixelsX, sizePixelsY, QBert::getX(), QBert::getY(), 0);
     }
 
     void setMove(Direction dir) {
