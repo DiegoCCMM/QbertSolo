@@ -18,7 +18,7 @@ class PantallaInfoNivel{
     ALLEGRO_SAMPLE *coinSound = al_load_sample("../sounds/coin.ogg");
 
     Piramide piramide;
-    QBert qbert; // ??
+    QBert qbert;
 
 public:
 
@@ -30,8 +30,13 @@ public:
 
     void startLevel(int _level){
         level = _level;
-        // TODO: si la musica se repite en algun nivel --> anyadir condiciones para el path (if's)
-        std::string path = "../sounds/level-" + std::to_string(level) + ".ogg";
+
+        std::string path;
+        if(level == 1 || level == 8) path = "../sounds/tune-1.ogg";
+        else if(level == 2 || level == 7) path = "../sounds/tune-2.ogg";
+        else if(level == 3 || level == 5 || level == 9) path = "../sounds/tune-3.ogg";
+        else if(level == 4 || level == 6) path = "../sounds/tune-4.ogg";
+
         musicSound = al_load_sample(path.c_str());
         al_play_sample(musicSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
 
@@ -41,34 +46,40 @@ public:
 
     void movement() {
         // level 1 --> 2, 1, 3, 0
-        if(timer > 140 && timer < 142) {
+        if(timer > 100 && timer < 102) {
             if(level == 1) qbert.setMove(DOWNRIGHT);
             else {
-
+                qbert.setMove(DOWNRIGHT);
+            }
+        }
+        else if(timer > 120 && timer < 122) {
+            if(level == 1) qbert.setMove(TOPLEFT);
+            else {
+                qbert.setMove(DOWNLEFT);
+            }
+        }
+        else if(timer > 140 && timer < 142) {
+            if(level == 1) qbert.setMove(DOWNLEFT);
+            else {
+                qbert.setMove(TOPLEFT);
             }
         }
         else if(timer > 160 && timer < 162) {
-            if(level == 1) qbert.setMove(TOPLEFT);
+            if(level == 1) qbert.setMove(TOPRIGHT);
             else {
-
+                qbert.setMove(DOWNRIGHT);
             }
         }
         else if(timer > 180 && timer < 182) {
-            if(level == 1) qbert.setMove(DOWNLEFT);
-            else {
-
-            }
+            if(level != 1) qbert.setMove(TOPRIGHT);
         }
         else if(timer > 200 && timer < 202) {
-            if(level == 1) qbert.setMove(TOPRIGHT);
-            else {
-
-            }
+            if(level != 1) qbert.setMove(DOWNLEFT);
         }
 
         qbert.movement_IN(&piramide);
         timer++;
-        if(timer > 340) finish = true;
+        if(timer > 240) finish = true;
     }
 
     void drawBitmap() {
@@ -91,9 +102,10 @@ public:
                               sourceX, sourceY, width/2-sourceX/2+3,height/2+70, 0);
 
         // Cargar numero --> parpadeante
+        sourceX = 16, sourceY = 20;
         if( (timer>10 && timer<30) || (timer > 60 && timer<80) || timer > 100) {
-            al_draw_bitmap_region(infoLevel, 17 * (level - 1), 0,
-                                  12, 20, width / 2 - sourceX / 2 + 12, height / 2 + 79, 0);
+            al_draw_bitmap_region(infoLevel, sourceX * (level - 1), 0,
+                                  sourceX, sourceY, width / 2 - sourceX / 2, height / 2 + 79, 0);
         }
     }
 
@@ -103,8 +115,6 @@ public:
 
         piramide.resizeMap_IN(width, height);
         qbert.resize(&piramide);
-
-        // TODO: Resize el resto de elementos
     }
 
     void destroy(){
