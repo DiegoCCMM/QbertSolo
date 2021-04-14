@@ -6,26 +6,18 @@
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
 #include <list>
-//#include <vector>
-//#include <iostream>
 
 #include "Piramide.hpp"
 #include "Enemy.hpp"
 #include "Coily.hpp"
-#include "Platillo.hpp"
 #include "PantallaInicial.hpp"
 #include "PantallaInfoNivel.hpp"
+#include "Escena.hpp"
+// TODO: tener en cuenta a la hora de cuantos audios vamos a usar
+#define NUMERODESAMPLES 10
 
-#define periodoEnemigos 12
 float scale = 1.0f;
 float WIDTH = 330, HEIGHT = 280;
-
-void generarEnemigos(int & timer, std::list<Enemy> &enemies, Piramide pir);
-void checkRandMovementEnemies(std::list<Enemy> &enemies);
-void movementAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
-void drawAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
-void resizAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
-void destroyAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos);
 
 void must_init(bool test, const char *description);
 
@@ -58,40 +50,13 @@ int main() {
 
     al_install_audio();
     al_init_acodec_addon();
-    al_reserve_samples(10); // TODO: tener en cuenta a la hora de cuantos audios vamos a usar
+    al_reserve_samples(NUMERODESAMPLES);
 
-//********************************************************************************************************
-// TODO Si creamos la clase escena se quitarian todas estas funciones
-    // TODO: crear el resto de .txt de todos los niveles y sus rondas
-    // CARGAR MAPA
-    Piramide piramide;
-    piramide.loadMap(2, 3, WIDTH, HEIGHT);
-    // END MAPA
 
-    // CARGAR PERSONAJES
-    QBert qbert = QBert(piramide);
-    std::list<Enemy> enemies;
-    // FIN PERSONAJES
-
-    // CARGAR COMPONENTES RESTANTES
-    // TODO: guardarlo todos en una lista (como enemies)
-    std::list<Platillo> platillos;
-    Platillo plato = Platillo(piramide, 3, IZQ);
-    platillos.push_back(plato);
-    // platillos
-    // letras
-    // puntos
-    // vidas
-    // etc
-    // FIN COMPONENTES RESTANTES
-//********************************************************************************************************
-
-    int level = 1, round = 1;
-
+    Escena escena = Escena(WIDTH/scale, HEIGHT/scale);
     bool redraw = true;
     ALLEGRO_EVENT event;
     al_start_timer(timer);
-    int periodEnemies = 0;
 
     /*************************
      *       GAME LOOP       *
@@ -163,11 +128,12 @@ int main() {
         goto inicio;
     };
 
+    //PREVIO AL NIVEL
     infonivelIntro:
     {
         PantallaInfoNivel infonivel = PantallaInfoNivel(WIDTH/scale, HEIGHT/scale);
-        if(level == 1) infonivel.sonidoMoneda();
-        infonivel.startLevel(level);
+        if(escena.getLevel() == 1) infonivel.sonidoMoneda();
+        infonivel.startLevel(escena.getLevel());
 
         infonivel:
         {
@@ -224,12 +190,10 @@ int main() {
         goto infonivel;
     };
 
+    //GAME LOOP
     juegoIntro:
     {
-        // Crear el juego, escena (en caso de que creemos una clase ESCENA y metamos tod0 ahi--> diria que mejor)
-        // Por tanto no se necesitaria hacer el resize --> habria un constructor al que pasar width y height
-        // Y tod0 se crearia respecto a esos datos
-        resizAll(piramide, qbert, enemies, platillos);
+        escena.load(WIDTH/scale, HEIGHT/scale);
 
         juego:
         {
@@ -240,25 +204,25 @@ int main() {
                 case ALLEGRO_EVENT_TIMER:
 
                     redraw = true;
-                    movementAll(piramide, qbert, enemies, platillos);
-                    generarEnemigos(periodEnemies, enemies, piramide);
+                    escena.movementAll();
+                    escena.generarEnemigos();
                     break;
 
                 case ALLEGRO_EVENT_KEY_DOWN:
 
-                    if (!qbert.isJumping()) {
+                    if (!escena.qbert.isJumping()) {
                         switch (event.keyboard.keycode) {
                             case ALLEGRO_KEY_LEFT:
-                                qbert.setMove(TOPLEFT);
+                                escena.qbert.setMove(TOPLEFT);
                                 break;
                             case ALLEGRO_KEY_RIGHT:
-                                qbert.setMove(DOWNRIGHT);
+                                escena.qbert.setMove(DOWNRIGHT);
                                 break;
                             case ALLEGRO_KEY_UP:
-                                qbert.setMove(TOPRIGHT);
+                                escena.qbert.setMove(TOPRIGHT);
                                 break;
                             case ALLEGRO_KEY_DOWN:
-                                qbert.setMove(DOWNLEFT);
+                                escena.qbert.setMove(DOWNLEFT);
                                 break;
                         }
                     }
@@ -279,7 +243,7 @@ int main() {
                     HEIGHT = al_get_display_height(disp);
 
                     // RESIZE ALL ITEMS
-                    resizAll(piramide, qbert, enemies, platillos);
+                    escena.resizAll(WIDTH/scale, HEIGHT/scale);
 
                     break;
 
@@ -293,7 +257,7 @@ int main() {
                 //REDRAW THE IMAGE WITH EVERYTHING
                 al_clear_to_color(al_map_rgb(0, 0, 0));
 
-                drawAll(piramide, qbert, enemies, platillos);
+                escena.drawAll();
 
                 al_flip_display();
                 redraw = false;
@@ -310,7 +274,7 @@ int main() {
      *************************/
 
     // DESTRUIR OBJETOS ESCENA
-    destroyAll(piramide, qbert, enemies, platillos); // TODO Si creamos la clase escena se quitaria de aqui
+    escena.destroyAll();
 
     al_destroy_font(font);
     al_destroy_display(disp);
@@ -318,114 +282,6 @@ int main() {
     al_destroy_event_queue(queue);
 
     return 0;
-}
-
-// TODO Si creamos la clase escena se quitarian todas estas funciones
-void generarEnemigos(int & timer, std::list<Enemy> &enemies, Piramide pir){
-
-    if(timer == periodoEnemigos){
-        //genera un enemigo aleatorio
-        std::random_device rd;
-        std::mt19937 mt(rd());
-        std::uniform_int_distribution<int> dist(0, 60);
-        int eleccion = dist(mt);
-        if(eleccion >= 0 && eleccion <= 14){
-            //redblob o poder
-            //Enemy redblob = Enemy(pir, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-            //enemies.push_back(redblob);
-        }else if(eleccion >= 15 && eleccion <= 29){
-            //coily
-            Coily coily = Coily(pir, "coilyBola", 1, 0, 9, -3);
-            enemies.push_back(coily);
-        }else if(eleccion >= 30 && eleccion <= 44){
-            //ugg o wrong way
-        }else if(eleccion >= 45 && eleccion <= 60){
-            //slick o sam
-        }
-        //reinicio timer
-        timer = 0;
-    }else{
-        timer++;
-    }
-}
-
-// TODO: en referencia a un todo de arriba, probar a meter todo en una lista y pasarla?
-void movementAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos) {
-    qbert.movement(&piramide, HEIGHT, platillos);
-    
-    if(!qbert.isFalling()) {
-        checkRandMovementEnemies(enemies);
-        for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
-            it->movement(&piramide, HEIGHT);
-        }
-
-        for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-            it->movement();
-        }
-    }
-}
-
-void drawAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos) {
-
-    if (qbert.isFalling()) { // Si QBert esta cayendo primero se dibuja a QBert y luego la piramide
-        qbert.drawBitmap();
-        piramide.drawBitmap();
-        // TODO: dibujar resto de componentes de la pantalla MENOS los enemigos
-        // Recordar que mientras cae el resto de elementos dejan de moverse
-        enemies.clear();
-        for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-            it->drawBitmap();
-        }
-    } else {
-        piramide.drawBitmap();
-        for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-            it->drawBitmap();
-        }
-        qbert.drawBitmap();
-        for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
-            it->drawBitmap();
-        }
-
-        // TODO: dibujar resto de componentes de la pantalla
-    }
-}
-
-void resizAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos){
-    piramide.resizeMap(WIDTH/scale, HEIGHT/scale);
-
-    for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
-        it->resize(&piramide);
-    }
-
-    for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-        it->resize(&piramide);
-    }
-
-    qbert.resize(&piramide);
-}
-
-void destroyAll(Piramide &piramide, QBert &qbert, std::list<Enemy> &enemies, std::list<Platillo> &platillos){
-    piramide.destroy();
-    qbert.destroy();
-
-    for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++){
-        it->destroy();
-    }
-
-    for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-        it->destroy();
-    }
-}
-
-void checkRandMovementEnemies(std::list<Enemy> &enemies) {
-    for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++){
-        if(it->getRandMoveTimer() == it->getRandMovePeriod()){
-            it->randomMovement();
-            it->resetRandomMoveTimer();
-        }else {
-            it->randomMoveTimerplusplus();
-        }
-    }
 }
 
 void must_init(bool test, const char *description) {
