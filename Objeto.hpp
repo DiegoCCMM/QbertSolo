@@ -11,15 +11,17 @@ protected:
     float xRespectCube, yRespectCube;
     ALLEGRO_BITMAP *draw;   // sprite
     int sourceX = 0, sourceY = 0;
-    int sourceI = 0, sourceJ = 0;
-    int sizePixels;
+    int sourceI = 0, sourceJ = 0; // en que fila y columna del sprite se coloca
+    int sizePixelsX, sizePixelsY;
+
+protected:
     int timer = 0;
 
 public:
 
     virtual void drawBitmap(){
-        al_draw_bitmap_region(getDraw(), getSourceX() + (sourceJ * sizePixels),
-                              getSourceY() + (sourceI * sizePixels), sizePixels, sizePixels,
+        al_draw_bitmap_region(getDraw(), getSourceX() + (sourceJ * sizePixelsX),
+                              getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY,
                               getX(), getY(), 0);
     }
 
@@ -32,7 +34,7 @@ public:
         al_destroy_bitmap(getDraw());
     }
 
-    virtual void movement() {}
+    virtual void movement() {timer++;}
 
     void playOnce(ALLEGRO_SAMPLE *sound){
         al_play_sample(sound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
@@ -74,6 +76,12 @@ public:
 
     int getSourceJ() const { return sourceJ; }
     void setSourceJ(int _sourceJ) { Objeto::sourceJ = _sourceJ; }
+
+    int getSizePixelsX() const { return sizePixelsX; }
+    void setSizePixelsX(int sizePixelsX) { Objeto::sizePixelsX = sizePixelsX; }
+
+    int getSizePixelsY() const { return sizePixelsY; }
+    void setSizePixelsY(int sizePixelsY) { Objeto::sizePixelsY = sizePixelsY; }
 
     void must_init(bool test, const char *description) {
         if (test) return;

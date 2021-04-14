@@ -33,7 +33,8 @@ public:
         this->x = piramide.map[i][j].x + xRespectCube, this->y = piramide.map[i][j].y + yRespectCube;
         this->i = i, this->j = j;
         this->dir = dir;
-        this-> sizePixels = 16;
+        this-> sizePixelsX = 16;
+        this-> sizePixelsY = 16;
         this->xRespectCube = xRespectCube, this->yRespectCube = yRespectCube;
 
         std::string path = "../sprites/" + nom + ".png";
@@ -47,7 +48,8 @@ public:
     /* Constructor 2 */
     Character(std::string nom, Direction dir){
         this->dir = dir;
-        this-> sizePixels = 16;
+        this-> sizePixelsX = 16;
+        this-> sizePixelsY = 16;
 
         std::string path = "../sprites/" + nom + ".png";
         ALLEGRO_BITMAP *player = al_load_bitmap(path.c_str());

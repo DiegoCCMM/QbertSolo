@@ -173,6 +173,9 @@ public:
     bool isPiramideCompleta() const { return piramideCompleta; }
     void setPiramideCompleta(bool _piramideCompleta) { Piramide::piramideCompleta = _piramideCompleta; }
 
+    const float getSx(int _i) const { return sx[_i]; }
+    const float getSy(int _i) const { return sy[_i]; }
+
 };
 
 #endif //QBERT_PIRAMIDE_HPP
