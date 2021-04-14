@@ -93,8 +93,9 @@ public:
 
         // Cargar letras level
         int sourceX = 220, sourceY = 50;
-        al_draw_bitmap_region(infoLevel, 0, 32*2,
-                              sourceX, sourceY, width/2-sourceX/2, height/2, 0);
+        if(level==1 || level==5 || level==9) al_draw_bitmap_region(infoLevel, 0, 32*2, sourceX, sourceY, width/2-sourceX/2, height/2, 0);
+        if(level==3 || level==7) al_draw_bitmap_region(infoLevel, 0, 32*2+55, sourceX, sourceY, width/2-sourceX/2, height/2, 0);
+        if(level==2 || level==4 || level==6 || level==8) al_draw_bitmap_region(infoLevel, 0, 32*2+55*2, sourceX, sourceY, width/2-sourceX/2, height/2, 0);
 
         // Cargar circulo
         sourceX = 40, sourceY = 40;
