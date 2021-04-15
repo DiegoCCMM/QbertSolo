@@ -23,12 +23,11 @@ public:
 
     Piramide piramide;
     QBert qbert;
-    std::list<Enemy> enemies;
+    std::list<Enemy*> enemies;
     std::list<Platillo> platillos;
     int level, round, periodEnemies = 0;
     int puntuacion;
-    bool gameover = false;
-
+    bool hasCoily = false, gameover = false;
 
     /* Constructor */
     Escena(float _width, float _height) : width(_width), height(_height), level(1), round(1) {
@@ -142,8 +141,8 @@ public:
 
         if(!qbert.isFalling()) {
             checkRandMovementEnemies();
-            for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
-                it->movement(&piramide, height);
+            for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
+                it.operator*()->movement(&piramide, height);
             }
 
             for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
@@ -176,8 +175,8 @@ public:
                 it->drawBitmap();
             }
             qbert.drawBitmap();
-            for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
-                it->drawBitmap();
+            for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
+                it.operator*()->drawBitmap();
             }
         }
         // TODO: dibujar resto de componentes de la pantalla
@@ -257,8 +256,11 @@ public:
                 //enemies.push_back(redblob);
             }else if(eleccion >= 15 && eleccion <= 29){
                 //coily
-                Coily coily = Coily(piramide, "coilyBola", 1, 0, 9, -3);
-                enemies.push_back(coily);
+                if(!hasCoily) {
+                    Coily coily = Coily(piramide, "coilyBola", 1, 0, 9, -3);
+                    enemies.push_back(&coily);
+                    hasCoily = true;
+                }
             }else if(eleccion >= 30 && eleccion <= 44){
                 //ugg o wrong way
             }else if(eleccion >= 45 && eleccion <= 60){
@@ -275,8 +277,8 @@ public:
         width = _width, height = _height;
         piramide.resizeMap(width, height);
 
-        for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++) {
-            it->resize(&piramide);
+        for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
+            it.operator*()->resize(&piramide);
         }
 
         for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
@@ -302,8 +304,8 @@ public:
         piramide.destroy();
         qbert.destroy();
 
-        for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++){
-            it->destroy();
+        for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++){
+            it.operator*()->destroy();
         }
 
         for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
@@ -315,12 +317,12 @@ public:
     }
 
     void checkRandMovementEnemies() {
-        for (std::_List_iterator<Enemy> it = enemies.begin(); it != enemies.end(); it++){
-            if(it->getRandMoveTimer() == it->getRandMovePeriod()){
-                it->randomMovement();
-                it->resetRandomMoveTimer();
+        for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++){
+            if(it.operator*()->getRandMoveTimer() == it.operator*()->getRandMovePeriod()){
+                it.operator*()->randomMovement();
+                it.operator*()->resetRandomMoveTimer();
             }else {
-                it->randomMoveTimerplusplus();
+                it.operator*()->randomMoveTimerplusplus();
             }
         }
     }
@@ -337,6 +339,10 @@ public:
 
     bool isGameover() const { return gameover; }
     void setGameover(bool gameover) { Escena::gameover = gameover; }
+
+    bool itHasCoily() const { return hasCoily; }
+
+    void setHasCoily(bool hasCoily) { Escena::hasCoily = hasCoily; }
 
 };
 

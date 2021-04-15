@@ -17,6 +17,9 @@ class Enemy : public Character{
     int randMovePeriod;
 
 public:
+    //de todos los sprites, el primer sprite, o el sprite a la izquierda de la pareja, tiene ancho leftSprite
+    //usado porque Coily tiene su primera pareja de tamaño 14, el resto es de tamaño 16
+    int leftSprite = 16;
 
     /* Constructor */
     Enemy(Piramide piramide, std::string nom, int i, int j, int xRespectCube, int yRespectCube) :
@@ -37,7 +40,7 @@ public:
 
     bool hasChangingGroundPower() const { return changingGroundPower; }
 
-    void randomMovement(){
+    virtual void randomMovement()  {
         // TODO: revisar, no parece haber aleatoriedad
         std::random_device rd;
         std::mt19937 mt(rd());
@@ -47,6 +50,7 @@ public:
         }else{
             setDir(DOWNLEFT);
         }
+        assignIJ();
 
         Enemy::setJumping(true);
         Enemy::setSourceX(getSourceX()-16);
@@ -84,12 +88,11 @@ public:
                 if (hasChangingGroundPower()) {
                     piramide->changeCube(getI(), getJ());
                 }
-                assignIJ();
                 setX(piramide->map[getI()][getJ()].x + getXRespectCube());
                 setY(piramide->map[getI()][getJ()].y + getYRespectCube());
                 setTimer(0);
                 setJumping(false);
-                setSourceX(getSourceX() + 16);
+                setSourceX(getSourceX() + leftSprite);
             }
         }
         //randomMoveTimerplusplus();

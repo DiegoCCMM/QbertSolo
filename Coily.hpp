@@ -19,6 +19,7 @@ public:
         ALLEGRO_BITMAP *draw = al_load_bitmap("../sprites/coilyEstirado.png");
         must_init(draw, nom.c_str());
         secondPhaseDraw = draw;
+        leftSprite = 16;
     }
 
     void setState(State s){
@@ -26,14 +27,38 @@ public:
     }
 
     void AIMovement(){
-        //TODO HACER LA IA
+
+        setDir(TOPLEFT);
+        assignIJ();
+
+        Enemy::setJumping(true);
+        Enemy::setSourceX(getSourceX()- leftSprite);
     }
 
-    void randomMovement(){
+    void randomMovement() override {
+
+        if(getI() == 6){
+            state = AI;
+            setSourceX(14);
+            setYRespectCube( 0 );
+        }
         if(state == GOING_DOWN){
             Enemy::randomMovement();
         }else{
             Coily::AIMovement();
+        }
+
+    }
+
+    void drawBitmap() override {
+        if(state == GOING_DOWN) {
+            al_draw_bitmap_region(getDraw(), getSourceX() + (sourceJ * sizePixelsX),
+                                  getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY,
+                                  getX(), getY(), 0);
+        }else{
+            al_draw_bitmap_region(getDraw(), getSourceX() + (getDir() * 2 * sizePixelsX),
+                                  getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY*2,
+                                  getX(), getY(), 0);
         }
     }
 
