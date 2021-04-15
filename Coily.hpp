@@ -40,7 +40,7 @@ public:
         if(getI() == 6){
             state = AI;
             setSourceX(14);
-            setYRespectCube( 0 );
+            setYRespectCube( -20 );
         }
         if(state == GOING_DOWN){
             Enemy::randomMovement();
