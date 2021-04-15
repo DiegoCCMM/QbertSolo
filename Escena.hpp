@@ -16,7 +16,7 @@ class Escena{
             puntuacionObj,
             changetoObj,
             flechaObj, cuadrObj,
-            numvidaObj, vidaObj,
+            vidaObj, numvidaObj,
             levelRoundObj, numLevelObj, numRoundObj;
 
 public:
@@ -68,6 +68,37 @@ public:
         cuadrObj.setXRespectCube(-3*32+17);
         cuadrObj.setYRespectCube(2);
 
+        vidaObj.setDraw(al_load_bitmap("../sprites/qbert-vida.png"));
+        vidaObj.setSizePixelsX(16);
+        vidaObj.setSizePixelsY(16);
+        vidaObj.setXRespectCube(-3*32);
+        vidaObj.setYRespectCube(32);
+
+        numvidaObj.setDraw(al_load_bitmap("../sprites/fonts.png"));
+        numvidaObj.setSourceI(2);
+        numvidaObj.setSizePixelsX(8);
+        numvidaObj.setSizePixelsY(8);
+        numvidaObj.setXRespectCube(-3*32+16);
+        numvidaObj.setYRespectCube(33);
+
+        levelRoundObj.setDraw(al_load_bitmap("../sprites/level-round-text.png"));
+        levelRoundObj.setSizePixelsX(40);
+        levelRoundObj.setSizePixelsY(16);
+        levelRoundObj.setXRespectCube(2*32);
+        levelRoundObj.setYRespectCube(-4);
+
+        numLevelObj.setDraw(al_load_bitmap("../sprites/fonts.png"));
+        numLevelObj.setSizePixelsX(8);
+        numLevelObj.setSizePixelsY(8);
+        numLevelObj.setXRespectCube(2*32+40);
+        numLevelObj.setYRespectCube(-4);
+
+        numRoundObj.setDraw(al_load_bitmap("../sprites/fonts.png"));
+        numRoundObj.setSizePixelsX(8);
+        numRoundObj.setSizePixelsY(8);
+        numRoundObj.setXRespectCube(2*32+40);
+        numRoundObj.setYRespectCube(4);
+
     }
 
     void load(float _width, float _height){
@@ -90,6 +121,12 @@ public:
         cuadrObj.resize(&piramide);
         cuadrObj.setSourceJ(piramide.getSx(2)/16+4);
         cuadrObj.setSourceI(piramide.getSy(2)/16);
+
+        vidaObj.resize(&piramide);
+        numvidaObj.resize(&piramide);
+        levelRoundObj.resize(&piramide);
+        numLevelObj.resize(&piramide);
+        numRoundObj.resize(&piramide);
 
         // TODO: implementar cuando aparecen los platillos
         //Platillo plato = Platillo(piramide, 3, IZQ);
@@ -171,6 +208,39 @@ public:
         }
 
         cuadrObj.drawBitmap();
+        vidaObj.drawBitmap();
+
+        numero = std::to_string(qbert.getLives());
+        aux_x = numvidaObj.getX();
+        for (std::string::size_type i = 0; i < numero.size(); i++) {
+            numvidaObj.setSourceJ((int(numero[i]) % 48));
+            numvidaObj.drawBitmap();
+            numvidaObj.setX(numvidaObj.getX()+8);
+        }
+        numvidaObj.setX(aux_x);
+
+        levelRoundObj.drawBitmap();
+
+        numLevelObj.resize(&piramide);
+        numero = std::to_string(level);
+        aux_x = numLevelObj.getX();
+        for (std::string::size_type i = 0; i < numero.size(); i++) {
+            numLevelObj.setSourceJ((int(numero[i]) % 48));
+            numLevelObj.drawBitmap();
+            numLevelObj.setX(numLevelObj.getX()+8);
+        }
+        numLevelObj.setX(aux_x);
+
+        numRoundObj.resize(&piramide);
+        numero = std::to_string(round);
+        aux_x = numRoundObj.getX();
+        for (std::string::size_type i = 0; i < numero.size(); i++) {
+            numRoundObj.setSourceJ((int(numero[i]) % 48));
+            numRoundObj.drawBitmap();
+            numRoundObj.setX(numRoundObj.getX()+8);
+        }
+        numRoundObj.setX(aux_x);
+
     }
 
     void generarEnemigos(){
@@ -221,6 +291,11 @@ public:
         changetoObj.resize(&piramide);
         flechaObj.resize(&piramide);
         cuadrObj.resize(&piramide);
+        vidaObj.resize(&piramide);
+        numvidaObj.resize(&piramide);
+        levelRoundObj.resize(&piramide);
+        numLevelObj.resize(&piramide);
+        numRoundObj.resize(&piramide);
     }
 
     void destroyAll(){
