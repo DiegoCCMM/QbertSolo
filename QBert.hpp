@@ -5,6 +5,7 @@
 #include "Character.hpp"
 #include "Platillo.hpp"
 
+
 #ifndef ALLEGRO5TUTORIAL_QBERT_HPP
 #define ALLEGRO5TUTORIAL_QBERT_HPP
 
@@ -84,8 +85,8 @@ public:
         else if(dir == TOPRIGHT) setI(getI() - 1);
         else if(dir == DOWNLEFT) setI(getI() + 1);
     }
-
-    void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos) {
+    //TODO AÑADIR LISTA DE ENEMIGOS ES NECESARIO
+    void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos, std::list<Enemies*> &enemies) {
         if (isJumping()) {
             timerplusplus();
             if(!isFalling()) {
@@ -144,8 +145,11 @@ public:
                         //WE LANDED
                         playOnce(getJumpSound());
                         piramide->changeCube(getI(), getJ());
-
-                        setTimer(0);
+                        //qbert landed on an enemie?
+                        for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
+                            if (it.) {}
+                        }
+                            setTimer(0);
                         setJumping(false);
                         setSourceX(getSourceX() - 16);
                     }

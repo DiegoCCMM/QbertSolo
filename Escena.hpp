@@ -166,7 +166,6 @@ public:
 
             // Recordar que mientras cae el resto de elementos dejan de moverse
             enemies.clear();
-            hasCoily = false;
             for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
                 it->drawBitmap();
             }
