@@ -85,8 +85,8 @@ public:
         else if(dir == TOPRIGHT) setI(getI() - 1);
         else if(dir == DOWNLEFT) setI(getI() + 1);
     }
-    //TODO AÑADIR LISTA DE ENEMIGOS ES NECESARIO
-    void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos, std::list<Enemies*> &enemies) {
+    //TODO AÑADIR LISTA DE ENEMIGOS ES NECESARIO std::list<Enemies*> &enemies
+    void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos) {
         if (isJumping()) {
             timerplusplus();
             if(!isFalling()) {
@@ -145,10 +145,10 @@ public:
                         //WE LANDED
                         playOnce(getJumpSound());
                         piramide->changeCube(getI(), getJ());
-                        //qbert landed on an enemie?
-                        for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
+                        //TODO qbert landed on an enemie?
+                        /*for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
                             if (it.) {}
-                        }
+                        }*/
                             setTimer(0);
                         setJumping(false);
                         setSourceX(getSourceX() - 16);
