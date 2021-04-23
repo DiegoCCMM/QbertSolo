@@ -13,6 +13,7 @@
 #include "PantallaInicial.hpp"
 #include "PantallaInfoNivel.hpp"
 #include "Escena.hpp"
+#include "Creditos.hpp"
 // TODO: tener en cuenta a la hora de cuantos audios vamos a usar
 #define NUMERODESAMPLES 10
 
@@ -52,7 +53,7 @@ int main() {
     al_init_acodec_addon();
     al_reserve_samples(NUMERODESAMPLES);
 
-
+    Creditos credit = Creditos();
     Escena escena = Escena(WIDTH/scale, HEIGHT/scale);
     bool redraw = true;
     ALLEGRO_EVENT event;
@@ -63,75 +64,78 @@ int main() {
      *************************/
 
     // Pantallas:
-    // INICIO, INFONIVEL, JUEGO, REGNOM(registro nombre), HIGHSCORES, CLOSE
+    // INICIO, INFONIVEL, JUEGO, CREDITOS(registro nombre y highscore), CLOSE
 
-    // Pantalla inicial e instrucciones
-    PantallaInicial init = PantallaInicial(WIDTH/scale, HEIGHT/scale);
-    inicio:
+    inicioIntro:
     {
-        goto juegoIntro;
-        al_wait_for_event(queue, &event);
-        al_get_keyboard_state(&keyState);
+        // Pantalla inicial e instrucciones
+        PantallaInicial init = PantallaInicial(WIDTH/scale, HEIGHT/scale);
+        inicio:
+        {
+            //goto juegoIntro; // Descomentar para ir directamente al juego
+            goto creditos; // Descomentar ir directamente a los creditos
+            al_wait_for_event(queue, &event);
+            al_get_keyboard_state(&keyState);
 
-        switch (event.type) {
-            case ALLEGRO_EVENT_TIMER:
+            switch (event.type) {
+                case ALLEGRO_EVENT_TIMER:
 
-                redraw = true;
-                init.movement();
-                break;
+                    redraw = true;
+                    init.movement();
+                    break;
 
-            case ALLEGRO_EVENT_KEY_DOWN:
+                case ALLEGRO_EVENT_KEY_DOWN:
 
-                if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+                    if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+                        init.destroy();
+
+                        goto infonivelIntro;
+                    }
+
+                    break;
+
+                case ALLEGRO_EVENT_DISPLAY_RESIZE:
+
+                    al_identity_transform(&camera);
+
+                    int prev_disp;
+                    prev_disp = al_get_display_width(disp);
+                    al_acknowledge_resize(disp);
+                    scale += ((float) al_get_display_width(disp) - (float) prev_disp) * 0.001f;
+                    al_scale_transform(&camera, scale, scale);
+                    al_use_transform(&camera);
+
+                    WIDTH = al_get_display_width(disp);
+                    HEIGHT = al_get_display_height(disp);
+
+                    // RESIZE ALL ITEMS
+                    init.resize(WIDTH / scale, HEIGHT / scale);
+
+                    break;
+
+                case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     init.destroy();
+                    goto close;
 
-                    //goto juegoIntro;
-                    goto infonivelIntro;
-                }
+            }
+            if (redraw && al_is_event_queue_empty(queue)) {
+                //REDRAW THE IMAGE WITH EVERYTHING
+                al_clear_to_color(al_map_rgb(49, 33, 121));
 
-                break;
+                init.drawBitmap();
 
-            case ALLEGRO_EVENT_DISPLAY_RESIZE:
+                al_flip_display();
+                redraw = false;
+            }
 
-                al_identity_transform(&camera);
-
-                int prev_disp;
-                prev_disp = al_get_display_width(disp);
-                al_acknowledge_resize(disp);
-                scale += ((float) al_get_display_width(disp) - (float) prev_disp) * 0.001f;
-                al_scale_transform(&camera, scale, scale);
-                al_use_transform(&camera);
-
-                WIDTH = al_get_display_width(disp);
-                HEIGHT = al_get_display_height(disp);
-
-                // RESIZE ALL ITEMS
-                init.resize(WIDTH / scale, HEIGHT / scale);
-
-                break;
-
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                init.destroy();
-                goto close;
-
-        }
-        if (redraw && al_is_event_queue_empty(queue)) {
-            //REDRAW THE IMAGE WITH EVERYTHING
-            al_clear_to_color(al_map_rgb(49, 33, 121));
-
-            init.drawBitmap();
-
-            al_flip_display();
-            redraw = false;
-        }
-
-        goto inicio;
+            goto inicio;
+        };
     };
 
     // PREVIO AL NIVEL
     infonivelIntro:
     {
-        if(escena.getLevel()>9) goto regnom;
+        if(escena.getLevel()>9) goto creditos;
 
         PantallaInfoNivel infonivel = PantallaInfoNivel(WIDTH/scale, HEIGHT/scale);
         if(escena.getLevel() == 1) infonivel.sonidoMoneda();
@@ -206,7 +210,7 @@ int main() {
                     escena.setLevel(escena.getLevel()+1);
 
                     if(escena.getLevel() > 9){
-                        goto regnom;
+                        goto creditosIntro;
                     }
 
                     goto infonivelIntro;
@@ -215,8 +219,7 @@ int main() {
                 goto juegoIntro;
             }
             else if(escena.isGameover()){
-                //goto regnom;
-                goto inicio;
+                goto creditosIntro;
             }
 
             al_wait_for_event(queue, &event);
@@ -289,12 +292,66 @@ int main() {
         };
     };
 
-    // REGISTRO DEL NOMBRE
-    regnom:
+    // CREDITOS
+    creditosIntro:
     {
+        creditos.loadPantalla(escena.get);
+        creditos:
+        {
+            al_wait_for_event(queue, &event);
+            al_get_keyboard_state(&keyState);
 
+            switch (event.type) {
+                case ALLEGRO_EVENT_TIMER:
+
+                    redraw = true;
+                    credit.movement();
+                    break;
+
+                case ALLEGRO_EVENT_KEY_DOWN:
+
+                    if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+
+                    }
+
+                    break;
+
+                case ALLEGRO_EVENT_DISPLAY_RESIZE:
+
+                    al_identity_transform(&camera);
+
+                    int prev_disp;
+                    prev_disp = al_get_display_width(disp);
+                    al_acknowledge_resize(disp);
+                    scale += ((float) al_get_display_width(disp) - (float) prev_disp) * 0.001f;
+                    al_scale_transform(&camera, scale, scale);
+                    al_use_transform(&camera);
+
+                    WIDTH = al_get_display_width(disp);
+                    HEIGHT = al_get_display_height(disp);
+
+                    // RESIZE ALL ITEMS
+                    credit.resize(WIDTH / scale, HEIGHT / scale);
+
+                    break;
+
+                case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                    goto close;
+
+            }
+            if (redraw && al_is_event_queue_empty(queue)) {
+                //REDRAW THE IMAGE WITH EVERYTHING
+                al_clear_to_color(al_map_rgb(49, 33, 121));
+
+                credit.drawBitmap();
+
+                al_flip_display();
+                redraw = false;
+            }
+
+            goto creditos;
+        };
     };
-
 
     close:
     /*************************
@@ -303,6 +360,7 @@ int main() {
 
     // DESTRUIR OBJETOS ESCENA
     escena.destroyAll();
+    credit.destroy();
 
     al_destroy_font(font);
     al_destroy_display(disp);

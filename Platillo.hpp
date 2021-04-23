@@ -87,7 +87,7 @@ public:
         }
     }
 
-    /* Actualiza las coordenadas (x,y) de Q*Bert respecto al platillo y su estado en el */
+    /* Actualiza las coordenadas (x,y) de Q*Bert respecto al platillo y su pant en el */
     void updateWithQBert(float &_x, float &_y, Piramide *piramide){
         if(posQBert == MONTANDO){
             if(_y <= getY()-11){

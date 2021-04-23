@@ -10,14 +10,14 @@
 #define topTimer 80
 
 class PantallaInicial{
-    enum Estado {
+    enum Pantalla {
         INICIO, INSTRUCCIONES
     };
 
     float width, height;
     int timer = 0;
 
-    Estado estado = INICIO;
+    Pantalla pant = INICIO;
     ALLEGRO_BITMAP *drawInit = al_load_bitmap("../sprites/fonts.png");
     ALLEGRO_SAMPLE *helloSound = al_load_sample("../sounds/qbert-hello.ogg");
     QBert qbert = QBert();
@@ -41,7 +41,7 @@ public:
     }
 
     void escenarioInstruc(){
-        estado = INSTRUCCIONES;
+        pant = INSTRUCCIONES;
         timer = 0;
         qbert.setXRespectCube(20);
         qbert.setYRespectCube(50);
@@ -50,7 +50,7 @@ public:
     }
 
     void movement() {
-        if(estado == INICIO) {
+        if(pant == INICIO) {
             platillo.timerplusplus();
             if (platillo.getTimer() > 2) {
                 platillo.setSourceJ(platillo.getSourceJ() + 1);
@@ -76,7 +76,7 @@ public:
     }
 
     void drawBitmap() {
-        if(estado == INICIO) pantallaInicial();
+        if(pant == INICIO) pantallaInicial();
         else pantallaInstruc();
     }
 
@@ -246,7 +246,7 @@ public:
 
         // TODO: despues de todas las animaciones volver a INICIO
         if(timer > topTimer*6){
-            estado = INICIO;
+            pant = INICIO;
         }
     }
 
@@ -254,7 +254,7 @@ public:
         width = _width;
         height = _height;
 
-        if(estado == INICIO){
+        if(pant == INICIO){
             platillo.setX(width/2+platillo.getXRespectCube());
             platillo.setY(height/2+platillo.getYRespectCube());
             qbert.setY(platillo.getY()-6);

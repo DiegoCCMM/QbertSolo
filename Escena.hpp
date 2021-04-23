@@ -406,8 +406,10 @@ public:
     bool isGameover() { return gameover; }
 
     bool itHasCoily() const { return hasCoily; }
-
     void setHasCoily(bool hasCoily) { Escena::hasCoily = hasCoily; }
+
+    const Objeto &getPuntuacionObj() const { return puntuacionObj; }
+    void setPuntuacionObj(const Objeto &puntuacionObj) { Escena::puntuacionObj = puntuacionObj; }
 
 };
 
