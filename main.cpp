@@ -69,7 +69,7 @@ int main() {
     PantallaInicial init = PantallaInicial(WIDTH/scale, HEIGHT/scale);
     inicio:
     {
-        //goto infonivelIntro;
+        goto juegoIntro;
         al_wait_for_event(queue, &event);
         al_get_keyboard_state(&keyState);
 
@@ -215,7 +215,8 @@ int main() {
                 goto juegoIntro;
             }
             else if(escena.isGameover()){
-                goto regnom;
+                //goto regnom;
+                goto inicio;
             }
 
             al_wait_for_event(queue, &event);
@@ -234,16 +235,16 @@ int main() {
                     if (!escena.qbert.isJumping()) {
                         switch (event.keyboard.keycode) {
                             case ALLEGRO_KEY_LEFT:
-                                escena.qbert.setMove(TOPLEFT);
+                                escena.setMoveQBert(TOPLEFT);
                                 break;
                             case ALLEGRO_KEY_RIGHT:
-                                escena.qbert.setMove(DOWNRIGHT);
+                                escena.setMoveQBert(DOWNRIGHT);
                                 break;
                             case ALLEGRO_KEY_UP:
-                                escena.qbert.setMove(TOPRIGHT);
+                                escena.setMoveQBert(TOPRIGHT);
                                 break;
                             case ALLEGRO_KEY_DOWN:
-                                escena.qbert.setMove(DOWNLEFT);
+                                escena.setMoveQBert(DOWNLEFT);
                                 break;
                         }
                     }

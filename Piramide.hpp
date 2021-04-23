@@ -21,6 +21,9 @@ class Piramide {
     int sigCubo[3];
     bool piramideCompleta;
 
+    int time;
+    ALLEGRO_SAMPLE *finishSound = al_load_sample("../sounds/levelup.ogg");
+
 public:
     Cube map[7][7]; // Ha de ser publico
 
@@ -47,6 +50,7 @@ public:
         }
 
         piramideCompleta = false;
+        time = 0;
     }
 
     /* Muestra por pantalla todos los cubos formando la piramide */
@@ -99,6 +103,14 @@ public:
 
         printf("couldn't initialize %s\n", description);
         exit(1);
+    }
+
+    void setAllColor(int cubo){
+        for(int i=0; i<7; i++){ // Fila
+            for(int j=0; j<i+1; j++){ // Columna
+                map[i][j].color = cubo;
+            }
+        }
     }
 
     /** Funciones explicitas para crear la piramide de la pantalla de 'Subir nivel/Info Nivel(IN)' **/
@@ -166,6 +178,7 @@ public:
         }
     }
 
+
     /*************************
      * GETTER'S AND SETTER'S *
      *************************/
@@ -175,6 +188,11 @@ public:
 
     const float getSx(int _i) const { return sx[_i]; }
     const float getSy(int _i) const { return sy[_i]; }
+
+    int getTime() const { return time; }
+    void setTime(int time) { Piramide::time = time; }
+
+    ALLEGRO_SAMPLE *getFinishSound() const { return finishSound; }
 
 };
 

@@ -17,7 +17,8 @@ class Escena{
             changetoObj,
             flechaObj, cuadrObj,
             vidaObj, numvidaObj,
-            levelRoundObj, numLevelObj, numRoundObj;
+            levelRoundObj, numLevelObj, numRoundObj,
+            gameoverObj;
 
 public:
 
@@ -98,17 +99,27 @@ public:
         numRoundObj.setXRespectCube(2*32+40);
         numRoundObj.setYRespectCube(4);
 
+        gameoverObj.setDraw(al_load_bitmap("../sprites/gameover.png"));
+        gameoverObj.setSizePixelsX(8);
+        gameoverObj.setSizePixelsY(8);
+        gameoverObj.setXRespectCube(-16);
+        gameoverObj.setYRespectCube(3*32);
+
     }
 
     void load(float _width, float _height){
         width = _width, height = _height;
         puntuacion = 0;
+        gameover = false;
 
         // Cargar mapa
         piramide.loadMap(level, round, width, height);
 
         // Cargar personajes
         qbert = QBert(piramide);
+
+        enemies.clear();
+        platillos.clear();
 
         // Establecer info del juego
         playerObj.resize(&piramide);
@@ -126,14 +137,35 @@ public:
         levelRoundObj.resize(&piramide);
         numLevelObj.resize(&piramide);
         numRoundObj.resize(&piramide);
+        gameoverObj.resize(&piramide);
 
         // TODO: implementar cuando aparecen los platillos
-        //Platillo plato = Platillo(piramide, 3, IZQ);
-        //platillos.push_back(plato);
+        Platillo plato = Platillo(piramide, 3, IZQ);
+        platillos.push_back(plato);
     }
 
     bool piramideCompleta(){
-        return piramide.isPiramideCompleta();
+        if(piramide.isPiramideCompleta()){
+            int time = piramide.getTime();
+            if(time == 0) {
+                al_play_sample(piramide.getFinishSound(), 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+            }
+
+            if(time>170) return true;
+
+            if(time%30<10){
+                piramide.setAllColor(0);
+            } else if(time%30>=10 && time%30<20){
+                piramide.setAllColor(1);
+            } else if(time%30>=20 && time%30<30){
+                piramide.setAllColor(2);
+            }
+
+            piramide.setTime(time+2);
+
+        }
+
+        return false;
     }
 
     void movementAll() {
@@ -170,13 +202,40 @@ public:
                 it->drawBitmap();
             }
         } else {
-            piramide.drawBitmap();
-            for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-                it->drawBitmap();
-            }
-            qbert.drawBitmap();
-            for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
-                it.operator*()->drawBitmap();
+            if(qbert.getLives()!=0) {
+                piramide.drawBitmap();
+                for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+                    it->drawBitmap();
+                }
+                qbert.drawBitmap();
+                for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
+                    it.operator*()->drawBitmap();
+                }
+            } else {
+                piramide.drawBitmap();
+                for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+                    it->drawBitmap();
+                }
+                enemies.clear();
+
+                std::string frase = "GAME OVER";
+                float aux_x = gameoverObj.getX();
+                for (std::string::size_type i = 0; i < frase.size(); i++) {
+                    if(int(frase[i]) != 32) {
+                        std::cout << int(frase[i]) % 65 << std::endl;
+                        gameoverObj.setSourceJ(int(frase[i]) % 65);
+                        gameoverObj.setSourceI(7);
+                    } else{
+                        gameoverObj.setSourceJ(0);
+                        gameoverObj.setSourceI(6);
+                    }
+                    gameoverObj.drawBitmap();
+                    gameoverObj.setX(gameoverObj.getX()+8);
+                }
+                gameoverObj.setX(aux_x);
+
+                if(gameoverObj.getTimer()>100) gameover = true;
+                gameoverObj.setTimer(gameoverObj.getTimer()+1);
             }
         }
         // TODO: dibujar resto de componentes de la pantalla
@@ -298,6 +357,7 @@ public:
         levelRoundObj.resize(&piramide);
         numLevelObj.resize(&piramide);
         numRoundObj.resize(&piramide);
+        gameoverObj.resize(&piramide);
     }
 
     void destroyAll(){
@@ -327,6 +387,12 @@ public:
         }
     }
 
+    void setMoveQBert(Direction dir){
+        if(!piramide.isPiramideCompleta() && qbert.getLives()!=0){
+            qbert.setMove(dir);
+        }
+    }
+
     /*************************
      * GETTER'S AND SETTER'S *
      *************************/
@@ -337,8 +403,7 @@ public:
     int getRound() const { return round; }
     void setRound(int _round) { Escena::round = _round; }
 
-    bool isGameover() const { return gameover; }
-    void setGameover(bool gameover) { Escena::gameover = gameover; }
+    bool isGameover() { return gameover; }
 
     bool itHasCoily() const { return hasCoily; }
 
