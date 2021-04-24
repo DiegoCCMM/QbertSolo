@@ -411,6 +411,9 @@ public:
     const Objeto &getPuntuacionObj() const { return puntuacionObj; }
     void setPuntuacionObj(const Objeto &puntuacionObj) { Escena::puntuacionObj = puntuacionObj; }
 
+    int getPuntuacion() const { return puntuacion; }
+    void setPuntuacion(int puntuacion) { Escena::puntuacion = puntuacion; }
+
 };
 
 #endif //QBERT_ESCENA_HPP

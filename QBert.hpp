@@ -120,7 +120,6 @@ public:
                             }
 
                             if (!enPlatillo) {
-                                // TODO: perder vida
                                 lives--;
                                 setFalling(true);
                                 playOnce(fallingSound);

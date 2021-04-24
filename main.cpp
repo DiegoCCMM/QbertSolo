@@ -73,7 +73,7 @@ int main() {
         inicio:
         {
             //goto juegoIntro; // Descomentar para ir directamente al juego
-            goto creditos; // Descomentar ir directamente a los creditos
+            //goto creditosIntro; // Descomentar ir directamente a los creditos
             al_wait_for_event(queue, &event);
             al_get_keyboard_state(&keyState);
 
@@ -295,9 +295,11 @@ int main() {
     // CREDITOS
     creditosIntro:
     {
-        creditos.loadPantalla(escena.get);
+        credit.loadPantalla(escena.getPuntuacion());
         creditos:
         {
+            //if(credit.isFinish()) goto inicioIntro;
+
             al_wait_for_event(queue, &event);
             al_get_keyboard_state(&keyState);
 
@@ -310,9 +312,8 @@ int main() {
 
                 case ALLEGRO_EVENT_KEY_DOWN:
 
-                    if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-
-                    }
+                    //std::cout << event.keyboard.keycode << std::endl;
+                    credit.write(event.keyboard.keycode);
 
                     break;
 
@@ -341,7 +342,7 @@ int main() {
             }
             if (redraw && al_is_event_queue_empty(queue)) {
                 //REDRAW THE IMAGE WITH EVERYTHING
-                al_clear_to_color(al_map_rgb(49, 33, 121));
+                al_clear_to_color(al_map_rgb(0, 0, 0));
 
                 credit.drawBitmap();
 
