@@ -262,7 +262,7 @@ public:
                 gameoverObj.setTimer(gameoverObj.getTimer()+1);
             }
         }
-        // TODO: dibujar resto de componentes de la pantalla
+
         playerObj.drawBitmap();
         numPlayerObj.drawBitmap();
 

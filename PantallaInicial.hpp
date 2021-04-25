@@ -69,7 +69,6 @@ public:
             if(platillo.getX() > width/2+4*32) escenarioInstruc();
         }
         else { // INSTRUCCIONES
-            // TODO: revisar --> esta mal
             if(timer!=0 && timer%topTimer == 0 && timer <= topTimer*5) qbert.setJumping(true);
             if(timer >= topTimer*6) escenarioInit();
             qbert.movementInstr();
