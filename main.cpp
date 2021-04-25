@@ -295,10 +295,10 @@ int main() {
     // CREDITOS
     creditosIntro:
     {
-        credit.loadPantalla(escena.getPuntuacion());
+        credit.loadPantalla(escena.getPuntuacion(), WIDTH/scale, HEIGHT/scale);
         creditos:
         {
-            //if(credit.isFinish()) goto inicioIntro;
+            if(credit.isFinish()) goto inicioIntro;
 
             al_wait_for_event(queue, &event);
             al_get_keyboard_state(&keyState);
