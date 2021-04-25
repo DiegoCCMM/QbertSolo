@@ -18,13 +18,9 @@ class QBert : public Character{
     ALLEGRO_BITMAP *bocadilloDraw = al_load_bitmap("../sprites/qbert-blasfemia.png");;   // sprite bocadillo
     bool superpower = false;
     bool enPlatillo = false;
-public:
-    bool hasSuperpower() const {
-        return superpower;
-    }
-
-private:
+    bool colision = false;
     std::list<Platillo>::iterator platillo;
+    int timerColision;
 
 public:
 
@@ -81,6 +77,7 @@ public:
         // pero ocurre
         piramide->changeCube(i, j, puntuacion);
         setTimer(0);
+        timerColision = 0;
         enemies.clear();
         return(false);
     }
@@ -168,8 +165,7 @@ public:
                             if(it.operator*()->getI() == getI() && it.operator*()->getJ() == getJ()){
                                 //estamos con un enemigo en el mismo sitio
                                 if(!it.operator*()->hasChangingGroundPower() * !it.operator*()->hasHelpingPower()){
-                                    salida = animacionMuerte(piramide);
-                                    salida = reset(piramide, puntuacion, enemies);
+                                    salida = animacionMuerte(piramide, enemies);
                                     break;
                                 }else if(it.operator*()->hasChangingGroundPower()){ // Slick y Sam
                                     enemies.erase(it, it);
@@ -200,34 +196,26 @@ public:
         }
     }
 
-    bool animacionMuerte(Piramide *piramide){
+    bool animacionMuerte(Piramide *piramide, std::list<Enemy*> &enemies){
+        if(colision) {
+            if(timer == 0){ // Primera vez que se entra se reproduce el sonido
+                al_play_sample(colisionSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+            }
 
-        al_draw_bitmap_region(bocadilloDraw, 0,
-                              0, 6*8, 4*8, QBert::getX()-6*2, QBert::getY()-4*8, 0);
-        al_play_sample(colisionSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+            al_draw_bitmap_region(bocadilloDraw, 0,
+                                  0, 6 * 8, 4 * 8, QBert::getX() - 6 * 2, QBert::getY() - 4 * 8, 0);
 
-        int none = 0;
+            int none = 0;
+            reset(piramide, none, enemies, getI(), getJ(), getDir());
 
-        // Colocar a QBert en la posicion anterior a la colision
-        // Si su direccion es:
-        // TOPRIGHT
-        /*if(getDir() == TOPRIGHT){
-            reset(piramide, none, getI()+1, getJ(), getDir());
+            if(timerColision > 50) { // TODO: establecer valor correcto de duracion
+                colision = false;
+                timerColision = 0;
+            } else {
+                timerColision++;
+            }
+
         }
-            // TOPLEFT
-        else if(getDir() == TOPLEFT){
-            reset(piramide, none, getI()+1, getJ()+1, getDir());
-        }
-            // DOWNRIGHT
-        else if(getDir() == DOWNRIGHT){
-            reset(piramide, none, getI()-1, getJ()-1, getDir());
-        }
-            // DOWNLEFT
-        else if(getDir() == DOWNLEFT){
-            reset(piramide, none, getI()-1, getJ(), getDir());
-        }*/
-
-        //sleep(2);
 
         return(false);
     }
@@ -313,6 +301,11 @@ public:
 
     int getScore() const { return score; }
     void setScore(int _score) { QBert::score = _score; }
+
+    bool isColision() const { return colision; }
+    void setColision(bool colision) { QBert::colision = colision; }
+
+    bool hasSuperpower() const { return superpower; }
 
 };
 
