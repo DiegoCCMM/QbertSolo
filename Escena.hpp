@@ -119,6 +119,7 @@ public:
         qbert = QBert(piramide);
 
         enemies.clear();
+        hasCoily=false;
         platillos.clear();
 
         // Establecer info del juego
@@ -191,12 +192,15 @@ public:
         if(!qbert.isFalling()) {
             checkRandMovementEnemies();
             int i = -2, j = -2;
+            //mover a todos los enemigos
             for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
                 it.operator*()->movement(&piramide, height, i, j);
                 if(i == qbert.getI() && j == qbert.getJ()){
+                    //enemigo mata a qbert
                     qbert.animacionMuerte(&piramide);
-                    hasCoily = qbert.reset(&piramide, p);
+                    hasCoily = qbert.reset(&piramide, p, enemies);
                     puntuacion += p;
+                    break;
                 }
             }
 
@@ -222,7 +226,6 @@ public:
             piramide.drawBitmap();
 
             // Recordar que mientras cae el resto de elementos dejan de moverse
-            enemies.clear();
             for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
                 it->drawBitmap();
             }
@@ -243,7 +246,6 @@ public:
                 for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
                     it->drawBitmap();
                 }
-                enemies.clear();
 
                 std::string frase = "GAME OVER";
                 float aux_x = gameoverObj.getX();

@@ -61,16 +61,21 @@ public:
     }
 
     /* Reinicia la posicion de Q*Bert al inicio de la piramide */
-    bool reset(Piramide *piramide, int &puntuacion, int i=0, int j=0, Direction direct = DOWNLEFT){
+    bool reset(Piramide *piramide, int &puntuacion, std::list<Enemy*> &enemies, int i=0, int j=0, Direction direct = DOWNLEFT){
         QBert::setFalling(false);
         QBert::setJumping(false);
-        QBert::setSourceX(QBert::getSourceX() - 16);
+        if(QBert::getSourceX() != 0){
+            QBert::setSourceX(0);
+        }
         QBert::setDir(direct);
         QBert::setI(i), QBert::setJ(j);
         QBert::setX(piramide->map[i][j].x+getXRespectCube());
         QBert::setY(piramide->map[i][j].y+getYRespectCube());
+        //TODO si se cae, problemas, porque puntuacion devuelve un error que esta optimized out para ahorrarnos errores
+        // pero ocurre
         piramide->changeCube(i, j, puntuacion);
         setTimer(0);
+        enemies.clear();
         return(false);
     }
 
@@ -128,6 +133,9 @@ public:
                             if (!enPlatillo) {
                                 lives--;
                                 setFalling(true);
+                                if(getSourceX()!=0) {
+                                    setSourceX(getSourceX() - 16);
+                                }
                                 playOnce(fallingSound);
                             }
 
@@ -136,7 +144,7 @@ public:
                             platillo->updateWithQBert(_x, _y, piramide);
 
                             if(platillo->getPosQBert() == NONE) { // Q*Bert ha salido del platillo, esta en el primer cubo
-                                salida = reset(piramide, puntuacion);
+                                salida = reset(piramide, puntuacion, enemies);
                                 enPlatillo = false;
                                 platillos.erase(platillo);
                             } else if(platillo->getPosQBert() == BAJANDO) {
@@ -150,14 +158,13 @@ public:
                         //WE LANDED
                         playOnce(getJumpSound());
                         piramide->changeCube(getI(), getJ(), puntuacion);
-                        bool muerto = false;
                         for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
                             if(it.operator*()->getI() == getI() && it.operator*()->getJ() == getJ()){
                                 //estamos con un enemigo en el mismo sitio
                                 if(!it.operator*()->hasChangingGroundPower() * !it.operator*()->hasHelpingPower()){
-                                    salida = reset(piramide, puntuacion);
-                                    muerto=true;
-                                    animacionMuerte(piramide);
+                                    salida = animacionMuerte(piramide);
+                                    salida = reset(piramide, puntuacion, enemies);
+                                    break;
                                 }else if(it.operator*()->hasChangingGroundPower()){ // Slick y Sam
                                     enemies.erase(it, it);
                                     puntuacion += 300;
@@ -169,9 +176,10 @@ public:
 
                             }
                         }
-                        if(!muerto) {
-                            setTimer(0);
-                            setJumping(false);
+
+                        setTimer(0);
+                        setJumping(false);
+                        if(getSourceX()!=0) {
                             setSourceX(getSourceX() - 16);
                         }
                     }
@@ -180,13 +188,13 @@ public:
                 if(getY() <= HEIGHT){
                     setY(getY() + movementY);
                 } else {
-                    salida = reset(piramide, puntuacion);
+                    salida = reset(piramide, puntuacion, enemies);
                 }
             }
         }
     }
 
-    void animacionMuerte(Piramide *piramide){
+    bool animacionMuerte(Piramide *piramide){
         al_draw_bitmap_region(bocadilloDraw, 0,
                               0, 6*8, 4*8, QBert::getX()-6*2, QBert::getY()-4*8, 0);
         al_play_sample(colisionSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
@@ -196,7 +204,7 @@ public:
         // Colocar a QBert en la posicion anterior a la colision
         // Si su direccion es:
         // TOPRIGHT
-        if(getDir() == TOPRIGHT){
+        /*if(getDir() == TOPRIGHT){
             reset(piramide, none, getI()+1, getJ(), getDir());
         }
             // TOPLEFT
@@ -210,9 +218,11 @@ public:
             // DOWNLEFT
         else if(getDir() == DOWNLEFT){
             reset(piramide, none, getI()-1, getJ(), getDir());
-        }
+        }*/
 
-        sleep(200);
+        //sleep(2);
+
+        return(false);
     }
 
     void movementInstr() {
