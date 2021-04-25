@@ -18,6 +18,12 @@ class QBert : public Character{
     ALLEGRO_BITMAP *bocadilloDraw = al_load_bitmap("../sprites/qbert-blasfemia.png");;   // sprite bocadillo
     bool superpower = false;
     bool enPlatillo = false;
+public:
+    bool hasSuperpower() const {
+        return superpower;
+    }
+
+private:
     std::list<Platillo>::iterator platillo;
 
 public:
@@ -195,6 +201,7 @@ public:
     }
 
     bool animacionMuerte(Piramide *piramide){
+
         al_draw_bitmap_region(bocadilloDraw, 0,
                               0, 6*8, 4*8, QBert::getX()-6*2, QBert::getY()-4*8, 0);
         al_play_sample(colisionSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
