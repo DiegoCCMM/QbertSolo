@@ -159,11 +159,11 @@ public:
                                     animacionMuerte();
                                 }else if(it.operator*()->hasChangingGroundPower()){
                                     enemies.erase(it, it);
-                                    //TODO PUNTOS ++
+                                    score = 300;
                                 }else if(it.operator*()->hasHelpingPower()){
                                     enemies.erase(it, it);
                                     superpower = true;
-                                    //TODO PUNTOS ++
+                                    score = 100;
                                 }
 
                             }
