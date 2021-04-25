@@ -44,12 +44,14 @@ public:
             Persona persona;
             std::string nom, punt;
             file >> nom >> punt;
-            if(punt != "") {
+            if(punt != "") { // para cuando el fichero esta vacio
+                std::cout << punt << std::endl;
                 persona.nombre = nom, persona.score = stoi(punt);
                 personas.push_back(persona);
             }
         }
         file.close();
+        personas.sort(compare);
     }
 
     void loadPantalla(int puntuacion, float _width, float _height) {
@@ -57,7 +59,7 @@ public:
         finish = false;
         timer = 0, tiempo = 30;
         if(personas.size()==numRegistros){
-            if(puntuacion > std::end(personas)->score){
+            if(puntuacion > personas.crbegin()->score){
                 personas.pop_back(); // elimina el ultimo
                 jugador.score = puntuacion;
                 jugador.nombre = "";
@@ -83,20 +85,18 @@ public:
                 }
             }
         } else {
-            //std::cout << timer << std::endl;
             if(timer == 0) al_play_sample(highscoreSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
-            if(timer > 180) finish = true; // TODO: revisar
+            if(timer > 180) finish = true;
         }
         timer++;
     }
 
     void write(int code){
         if(pant == REGNOM){
-            // TODO: poner un numero maximo de letras en el nombre --> 15
-            if(code >= 1 && code <= 26){ // letras de la A a la Z
+            if(code >= 1 && code <= 26 && jugador.nombre.length()<15){ // letras de la A a la Z
                 jugador.nombre += (1, char(code+64));
                 al_play_sample(teclaSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
-            } else if(code >= 27 && code <= 36){ // numeros del 0 al 9
+            } else if(code >= 27 && code <= 36 && jugador.nombre.length()<15){ // numeros del 0 al 9
                 jugador.nombre += (1, char(code+21));
                 al_play_sample(teclaSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
             } else if(code == 63 && jugador.nombre.length()>0){ // delete
@@ -118,6 +118,7 @@ public:
                 }
                 file.close();
 
+                timer = 0;
                 pant = HIGHSCORES;
             }
         }
@@ -299,7 +300,12 @@ public:
     }
 
     void destroy() {
-        // TODO
+        al_destroy_bitmap(letrasDraw);
+        al_destroy_bitmap(letrasGrandesDraw);
+        al_destroy_bitmap(qbertDraw);
+        al_destroy_bitmap(patriDraw);
+        al_destroy_sample(teclaSound);
+        al_destroy_sample(highscoreSound);
     }
 
     // Comparison for sort
