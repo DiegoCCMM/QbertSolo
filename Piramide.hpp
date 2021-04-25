@@ -80,8 +80,8 @@ public:
     void changeCube(int i, int j, int &puntuacion){
         int aux_color = sigCubo[map[i][j].color];
 
-        if(aux_color != map[i][j].color && aux_color == 1) puntuacion = 15; // Intermediate color
-        else if(aux_color != map[i][j].color && aux_color == 2) puntuacion = 25; // Target color
+        if(aux_color != map[i][j].color && aux_color == 1) puntuacion += 15; // Intermediate color
+        else if(aux_color != map[i][j].color && aux_color == 2) puntuacion += 25; // Target color
 
         map[i][j].color = aux_color;
 

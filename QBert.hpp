@@ -18,6 +18,8 @@ class QBert : public Character{
     bool enPlatillo = false;
     std::list<Platillo>::iterator platillo;
 
+    bool colision;
+
 public:
 
     /* Constructor */
@@ -59,7 +61,6 @@ public:
     }
 
     /* Reinicia la posicion de Q*Bert al inicio de la piramide */
-
     bool reset(Piramide *piramide, int puntuacion){
         QBert::setFalling(false);
         QBert::setJumping(false);
@@ -157,13 +158,13 @@ public:
                                     salida = reset(piramide, puntuacion);
                                     muerto=true;
                                     animacionMuerte();
-                                }else if(it.operator*()->hasChangingGroundPower()){
+                                }else if(it.operator*()->hasChangingGroundPower()){ // Slick y Sam
                                     enemies.erase(it, it);
-                                    //TODO PUNTOS ++
-                                }else if(it.operator*()->hasHelpingPower()){
+                                    puntuacion += 300;
+                                }else if(it.operator*()->hasHelpingPower()){ // Blob verde
                                     enemies.erase(it, it);
                                     superpower = true;
-                                    //TODO PUNTOS ++
+                                    puntuacion += 100;
                                 }
 
                             }

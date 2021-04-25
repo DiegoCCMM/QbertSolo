@@ -187,7 +187,6 @@ public:
     void movementAll() {
         int p = 0;
         qbert.movement(&piramide, height, platillos, enemies, hasCoily, p);
-        puntuacion += p;
 
         if(!qbert.isFalling()) {
             checkRandMovementEnemies();
@@ -212,6 +211,8 @@ public:
 
             flechaObj.movement();
         }
+
+        puntuacion += p; // Actualizamos la puntuacion
     }
 
     void drawAll() {
