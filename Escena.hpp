@@ -109,7 +109,7 @@ public:
 
     void load(float _width, float _height){
         width = _width, height = _height;
-        puntuacion = 0;
+        if(level==1 && round==1) puntuacion = 0;
         gameover = false;
 
         // Cargar mapa
@@ -139,9 +139,22 @@ public:
         numRoundObj.resize(&piramide);
         gameoverObj.resize(&piramide);
 
-        // TODO: implementar cuando aparecen los platillos
-        Platillo plato = Platillo(piramide, 3, IZQ);
-        platillos.push_back(plato);
+        cargarPlatillos();
+    }
+
+    void cargarPlatillos(){
+        std::string path;
+        if(level < 6) path = "../levels/platillos/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt";
+        else path = "../levels/platillos/restoLevels.txt";
+
+        std::ifstream file(path);
+        int pos, fila;
+        while(!file.eof()) {
+            file >> pos >> fila;
+            Platillo plato = Platillo(piramide, fila, static_cast<Posicion>(pos));
+            platillos.push_back(plato);
+        }
+        file.close();
     }
 
     bool piramideCompleta(){
@@ -151,7 +164,10 @@ public:
                 al_play_sample(piramide.getFinishSound(), 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
             }
 
-            if(time>170) return true;
+            if(time>170) {
+                calculatePoints();
+                return true;
+            }
 
             if(time%30<10){
                 piramide.setAllColor(0);
@@ -169,7 +185,9 @@ public:
     }
 
     void movementAll() {
-        qbert.movement(&piramide, height, platillos);
+        int p = 0;
+        qbert.movement(&piramide, height, platillos, p);
+        puntuacion += p;
 
         if(!qbert.isFalling()) {
             checkRandMovementEnemies();
@@ -330,6 +348,15 @@ public:
         }else{
             periodEnemies++;
         }
+    }
+
+    void calculatePoints(){
+        // Platillos no usados
+        puntuacion += platillos.size()*50;
+
+        // Segun la ronda que se haya completado
+        puntuacion += 1000 + 250*(round%4-1);
+
     }
 
     void resizAll(float _width, float _height){

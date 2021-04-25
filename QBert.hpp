@@ -57,7 +57,7 @@ public:
     }
 
     /* Reinicia la posicion de Q*Bert al inicio de la piramide */
-    void reset(Piramide *piramide){
+    void reset(Piramide *piramide, int puntuacion){
         QBert::setFalling(false);
         QBert::setJumping(false);
         QBert::setSourceX(QBert::getSourceX() - 16);
@@ -65,7 +65,7 @@ public:
         QBert::setI(0), QBert::setJ(0);
         QBert::setX(piramide->map[0][0].x+getXRespectCube());
         QBert::setY(piramide->map[0][0].y+getYRespectCube());
-        piramide->changeCube(0, 0);
+        piramide->changeCube(0, 0, puntuacion);
         setTimer(0);
     }
 
@@ -85,8 +85,9 @@ public:
         else if(dir == TOPRIGHT) setI(getI() - 1);
         else if(dir == DOWNLEFT) setI(getI() + 1);
     }
+
     //TODO AÑADIR LISTA DE ENEMIGOS ES NECESARIO std::list<Enemies*> &enemies
-    void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos) {
+    void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos, int &puntuacion) {
         if (isJumping()) {
             timerplusplus();
             if(!isFalling()) {
@@ -130,7 +131,7 @@ public:
                             platillo->updateWithQBert(_x, _y, piramide);
 
                             if(platillo->getPosQBert() == NONE) { // Q*Bert ha salido del platillo, esta en el primer cubo
-                                reset(piramide);
+                                reset(piramide, puntuacion);
                                 enPlatillo = false;
                                 // TODO: eliminar platillo de la lista
                                 platillos.erase(platillo);
@@ -144,7 +145,7 @@ public:
                     } else {
                         //WE LANDED
                         playOnce(getJumpSound());
-                        piramide->changeCube(getI(), getJ());
+                        piramide->changeCube(getI(), getJ(), puntuacion);
                         //TODO qbert landed on an enemie?
                         /*for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
                             if (it.) {}
@@ -158,7 +159,7 @@ public:
                 if(getY() <= HEIGHT){
                     setY(getY() + movementY);
                 } else {
-                    reset(piramide);
+                    reset(piramide, puntuacion);
                 }
             }
         }
@@ -210,7 +211,8 @@ public:
             } else if (getTimer() > airTime) {
                 //WE LANDED
                 playOnce(getJumpSound());
-                piramide->changeCube(getI(), getJ());
+                int none;
+                piramide->changeCube(getI(), getJ(), none);
 
                 setTimer(0);
                 setJumping(false);

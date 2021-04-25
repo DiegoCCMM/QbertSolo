@@ -86,7 +86,8 @@ public:
                 //WE LANDED
                 playOnce(getJumpSound());
                 if (hasChangingGroundPower()) {
-                    piramide->changeCube(getI(), getJ());
+                    int none;
+                    piramide->changeCube(getI(), getJ(), none);
                 }
                 setX(piramide->map[getI()][getJ()].x + getXRespectCube());
                 setY(piramide->map[getI()][getJ()].y + getYRespectCube());

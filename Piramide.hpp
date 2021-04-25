@@ -32,7 +32,7 @@ public:
         ALLEGRO_BITMAP *cubes = al_load_bitmap("../sprites/cubos.png");
         must_init(cubes, "cubes");
 
-        std::ifstream file("../levels/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt");
+        std::ifstream file("../levels/piramide/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt");
         for(int i=0; !file.eof(); i++) {
             file >> sx[i] >> sy[i] >> sigCubo[i];
         }
@@ -77,8 +77,13 @@ public:
     }
 
     /* Cambia el cubo [i,j] al siguiente color correspondiente */
-    void changeCube(int i, int j){
-        map[i][j].color = sigCubo[map[i][j].color];
+    void changeCube(int i, int j, int &puntuacion){
+        int aux_color = sigCubo[map[i][j].color];
+
+        if(aux_color != map[i][j].color && aux_color == 1) puntuacion = 15; // Intermediate color
+        else if(aux_color != map[i][j].color && aux_color == 2) puntuacion = 25; // Target color
+
+        map[i][j].color = aux_color;
 
         // Comprueba si todos los cuadrados estan en el color final
         bool completa = true;
@@ -120,7 +125,7 @@ public:
         ALLEGRO_BITMAP *cubes = al_load_bitmap("../sprites/cubos.png");
         must_init(cubes, "cubes");
 
-        std::ifstream file("../levels/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt");
+        std::ifstream file("../levels/piramide/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt");
         for(int i=0; !file.eof(); i++) {
             file >> sx[i] >> sy[i] >> sigCubo[i];
         }

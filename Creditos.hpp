@@ -45,7 +45,6 @@ public:
             std::string nom, punt;
             file >> nom >> punt;
             if(punt != "") { // para cuando el fichero esta vacio
-                std::cout << punt << std::endl;
                 persona.nombre = nom, persona.score = stoi(punt);
                 personas.push_back(persona);
             }
