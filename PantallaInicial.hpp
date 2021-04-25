@@ -6,6 +6,8 @@
 #define QBERT_PANTALLAINICIAL_HPP
 
 #include <unistd.h>
+#include "QBert.hpp"
+#include "Platillo.hpp"
 
 #define topTimer 80
 

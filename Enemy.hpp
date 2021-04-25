@@ -2,7 +2,6 @@
 // Created by diego on 13/3/21.
 //
 #include "Character.hpp"
-#include "QBert.hpp"
 #include <random>
 
 #ifndef ALLEGRO5TUTORIAL_ENEMY_HPP
@@ -13,6 +12,22 @@
 
 class Enemy : public Character{
     bool changingGroundPower = false;
+    bool helpingPower = false;
+public:
+
+    void setChangingGroundPower(bool changingGroundPower) {
+        Enemy::changingGroundPower = changingGroundPower;
+    }
+
+    bool hasHelpingPower() const {
+        return helpingPower;
+    }
+
+    void setHelpingPower(bool helpingPower) {
+        Enemy::helpingPower = helpingPower;
+    }
+
+private:
     int randMoveTimer = 0;
     int randMovePeriod;
 
@@ -63,7 +78,7 @@ public:
         else if(getDir() == DOWNLEFT) setI(getI() + 1);
     }
 
-    void movement(Piramide *piramide, int HEIGHT) override {
+    void movement(Piramide *piramide, int HEIGHT, int &i, int &j) override {
         if (isJumping()) {
             timerplusplus();
             if (getTimer() < airTime / 2) {
@@ -94,6 +109,8 @@ public:
                 setTimer(0);
                 setJumping(false);
                 setSourceX(getSourceX() + leftSprite);
+                i = getI();
+                j = getJ();
             }
         }
         //randomMoveTimerplusplus();

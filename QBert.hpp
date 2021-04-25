@@ -4,6 +4,7 @@
 
 #include "Character.hpp"
 #include "Platillo.hpp"
+#include "Enemy.hpp"
 
 
 #ifndef ALLEGRO5TUTORIAL_QBERT_HPP
@@ -13,6 +14,7 @@ class QBert : public Character{
     int lives = 3;
     int score = 0;
     ALLEGRO_SAMPLE *fallingSound = al_load_sample("../sounds/qbert-falling.ogg");
+    bool superpower = false;
     bool enPlatillo = false;
     std::list<Platillo>::iterator platillo;
 
@@ -57,7 +59,8 @@ public:
     }
 
     /* Reinicia la posicion de Q*Bert al inicio de la piramide */
-    void reset(Piramide *piramide, int puntuacion){
+
+    bool reset(Piramide *piramide, int puntuacion){
         QBert::setFalling(false);
         QBert::setJumping(false);
         QBert::setSourceX(QBert::getSourceX() - 16);
@@ -67,6 +70,7 @@ public:
         QBert::setY(piramide->map[0][0].y+getYRespectCube());
         piramide->changeCube(0, 0, puntuacion);
         setTimer(0);
+        return(false);
     }
 
     /* Dibuja la figura de Q*Bert */
@@ -86,8 +90,8 @@ public:
         else if(dir == DOWNLEFT) setI(getI() + 1);
     }
 
-    //TODO AÑADIR LISTA DE ENEMIGOS ES NECESARIO std::list<Enemies*> &enemies
-    void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos, int &puntuacion) {
+    void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos,
+                  std::list<Enemy*> &enemies, bool & salida, int &puntuacion) {
         if (isJumping()) {
             timerplusplus();
             if(!isFalling()) {
@@ -131,9 +135,8 @@ public:
                             platillo->updateWithQBert(_x, _y, piramide);
 
                             if(platillo->getPosQBert() == NONE) { // Q*Bert ha salido del platillo, esta en el primer cubo
-                                reset(piramide, puntuacion);
+                                salida = reset(piramide, puntuacion);
                                 enPlatillo = false;
-                                // TODO: eliminar platillo de la lista
                                 platillos.erase(platillo);
                             } else if(platillo->getPosQBert() == BAJANDO) {
                                 QBert::setY(_y);
@@ -146,23 +149,45 @@ public:
                         //WE LANDED
                         playOnce(getJumpSound());
                         piramide->changeCube(getI(), getJ(), puntuacion);
-                        //TODO qbert landed on an enemie?
-                        /*for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
-                            if (it.) {}
-                        }*/
+                        bool muerto = false;
+                        for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
+                            if(it.operator*()->getI() == getI() && it.operator*()->getJ() == getJ()){
+                                //estamos con un enemigo en el mismo sitio
+                                if(!it.operator*()->hasChangingGroundPower() * !it.operator*()->hasHelpingPower()){
+                                    salida = reset(piramide, puntuacion);
+                                    muerto=true;
+                                    animacionMuerte();
+                                }else if(it.operator*()->hasChangingGroundPower()){
+                                    enemies.erase(it, it);
+                                    //TODO PUNTOS ++
+                                }else if(it.operator*()->hasHelpingPower()){
+                                    enemies.erase(it, it);
+                                    superpower = true;
+                                    //TODO PUNTOS ++
+                                }
+
+                            }
+                        }
+                        if(!muerto) {
                             setTimer(0);
-                        setJumping(false);
-                        setSourceX(getSourceX() - 16);
+                            setJumping(false);
+                            setSourceX(getSourceX() - 16);
+                        }
                     }
                 }
             } else { // Esta cayendo
                 if(getY() <= HEIGHT){
                     setY(getY() + movementY);
                 } else {
-                    reset(piramide, puntuacion);
+                    salida = reset(piramide, puntuacion);
                 }
             }
         }
+    }
+
+    void animacionMuerte(){
+        //TODO ANIMACION RUIDITO Y CABREO
+
     }
 
     void movementInstr() {
