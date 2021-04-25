@@ -14,11 +14,12 @@ class QBert : public Character{
     int lives = 3;
     int score = 0;
     ALLEGRO_SAMPLE *fallingSound = al_load_sample("../sounds/qbert-falling.ogg");
+    ALLEGRO_BITMAP *bocadilloDraw = al_load_bitmap("../sprites/qbert-blasfemia.png");;   // sprite bocadillo
     bool superpower = false;
     bool enPlatillo = false;
     std::list<Platillo>::iterator platillo;
 
-    bool colision;
+    bool colision = true;
 
 public:
 
@@ -78,6 +79,10 @@ public:
     void drawBitmap() override {
         al_draw_bitmap_region(QBert::getDraw(), QBert::getSourceX() + (QBert::getDir() * 2 * sizePixelsX),
                               0, sizePixelsX, sizePixelsY, QBert::getX(), QBert::getY(), 0);
+        if(colision){
+            al_draw_bitmap_region(bocadilloDraw, 0,
+                                  0, 6*8, 4*8, QBert::getX()-6*4, QBert::getY()-4*8, 0);
+        }
     }
 
     void setMove(Direction dir) {
