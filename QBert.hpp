@@ -14,12 +14,11 @@ class QBert : public Character{
     int lives = 3;
     int score = 0;
     ALLEGRO_SAMPLE *fallingSound = al_load_sample("../sounds/qbert-falling.ogg");
+    ALLEGRO_SAMPLE *colisionSound = al_load_sample("../sounds/colision-qbert.ogg");
     ALLEGRO_BITMAP *bocadilloDraw = al_load_bitmap("../sprites/qbert-blasfemia.png");;   // sprite bocadillo
     bool superpower = false;
     bool enPlatillo = false;
     std::list<Platillo>::iterator platillo;
-
-    bool colision = true;
 
 public:
 
@@ -62,15 +61,15 @@ public:
     }
 
     /* Reinicia la posicion de Q*Bert al inicio de la piramide */
-    bool reset(Piramide *piramide, int puntuacion){
+    bool reset(Piramide *piramide, int &puntuacion, int i=0, int j=0, Direction direct = DOWNLEFT){
         QBert::setFalling(false);
         QBert::setJumping(false);
         QBert::setSourceX(QBert::getSourceX() - 16);
-        QBert::setDir(DOWNLEFT);
-        QBert::setI(0), QBert::setJ(0);
-        QBert::setX(piramide->map[0][0].x+getXRespectCube());
-        QBert::setY(piramide->map[0][0].y+getYRespectCube());
-        piramide->changeCube(0, 0, puntuacion);
+        QBert::setDir(direct);
+        QBert::setI(i), QBert::setJ(j);
+        QBert::setX(piramide->map[i][j].x+getXRespectCube());
+        QBert::setY(piramide->map[i][j].y+getYRespectCube());
+        piramide->changeCube(i, j, puntuacion);
         setTimer(0);
         return(false);
     }
@@ -79,10 +78,6 @@ public:
     void drawBitmap() override {
         al_draw_bitmap_region(QBert::getDraw(), QBert::getSourceX() + (QBert::getDir() * 2 * sizePixelsX),
                               0, sizePixelsX, sizePixelsY, QBert::getX(), QBert::getY(), 0);
-        if(colision){
-            al_draw_bitmap_region(bocadilloDraw, 0,
-                                  0, 6*8, 4*8, QBert::getX()-6*4, QBert::getY()-4*8, 0);
-        }
     }
 
     void setMove(Direction dir) {
@@ -162,7 +157,7 @@ public:
                                 if(!it.operator*()->hasChangingGroundPower() * !it.operator*()->hasHelpingPower()){
                                     salida = reset(piramide, puntuacion);
                                     muerto=true;
-                                    animacionMuerte();
+                                    animacionMuerte(piramide);
                                 }else if(it.operator*()->hasChangingGroundPower()){ // Slick y Sam
                                     enemies.erase(it, it);
                                     puntuacion += 300;
@@ -191,9 +186,33 @@ public:
         }
     }
 
-    void animacionMuerte(){
-        //TODO ANIMACION RUIDITO Y CABREO
+    void animacionMuerte(Piramide *piramide){
+        al_draw_bitmap_region(bocadilloDraw, 0,
+                              0, 6*8, 4*8, QBert::getX()-6*2, QBert::getY()-4*8, 0);
+        al_play_sample(colisionSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
 
+        int none = 0;
+
+        // Colocar a QBert en la posicion anterior a la colision
+        // Si su direccion es:
+        // TOPRIGHT
+        if(getDir() == TOPRIGHT){
+            reset(piramide, none, getI()+1, getJ(), getDir());
+        }
+            // TOPLEFT
+        else if(getDir() == TOPLEFT){
+            reset(piramide, none, getI()+1, getJ()+1, getDir());
+        }
+            // DOWNRIGHT
+        else if(getDir() == DOWNRIGHT){
+            reset(piramide, none, getI()-1, getJ()-1, getDir());
+        }
+            // DOWNLEFT
+        else if(getDir() == DOWNLEFT){
+            reset(piramide, none, getI()-1, getJ(), getDir());
+        }
+
+        sleep(200);
     }
 
     void movementInstr() {
@@ -242,7 +261,7 @@ public:
             } else if (getTimer() > airTime) {
                 //WE LANDED
                 playOnce(getJumpSound());
-                int none;
+                int none = 0;
                 piramide->changeCube(getI(), getJ(), none);
 
                 setTimer(0);

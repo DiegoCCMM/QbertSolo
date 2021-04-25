@@ -101,7 +101,7 @@ public:
                 //WE LANDED
                 playOnce(getJumpSound());
                 if (hasChangingGroundPower()) {
-                    int none;
+                    int none = 0;
                     piramide->changeCube(getI(), getJ(), none);
                 }
                 setX(piramide->map[getI()][getJ()].x + getXRespectCube());

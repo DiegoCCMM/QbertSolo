@@ -79,8 +79,8 @@ public:
             if(timer%30 == 0) {
                 tiempo--;
                 if(tiempo == 0) {
-                    pant = HIGHSCORES;
-                    timer = 0;
+                    // Anyadir usuario
+                    savePlayer();
                 }
             }
         } else {
@@ -101,26 +101,30 @@ public:
             } else if(code == 63 && jugador.nombre.length()>0){ // delete
                 jugador.nombre.pop_back();
             } else if(code == 67){ // ENTER
-                if(jugador.nombre.empty()){
-                    jugador.nombre = "EMPTY";
-                }
-                personas.push_back(jugador);
-                personas.sort(compare);
-
-                // Meter todos los jugadores de vuelta en el fichero
-                std::ofstream file("../highscores.txt");
-                int i = 0;
-                for (std::_List_iterator<Persona> it = personas.begin(); it != personas.end(); it++) {
-                    file << it->nombre << " " << it->score;
-                    if(i<personas.size()-1) file << "\n";
-                    i++;
-                }
-                file.close();
-
-                timer = 0;
-                pant = HIGHSCORES;
+                savePlayer();
             }
         }
+    }
+
+    void savePlayer(){
+        if(jugador.nombre.empty()){
+            jugador.nombre = "EMPTY";
+        }
+        personas.push_back(jugador);
+        personas.sort(compare);
+
+        // Meter todos los jugadores de vuelta en el fichero
+        std::ofstream file("../highscores.txt");
+        int i = 0;
+        for (std::_List_iterator<Persona> it = personas.begin(); it != personas.end(); it++) {
+            file << it->nombre << " " << it->score;
+            if(i<personas.size()-1) file << "\n";
+            i++;
+        }
+        file.close();
+
+        timer = 0;
+        pant = HIGHSCORES;
     }
 
     void drawBitmap() {

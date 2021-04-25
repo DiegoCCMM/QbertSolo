@@ -194,7 +194,7 @@ public:
             for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
                 it.operator*()->movement(&piramide, height, i, j);
                 if(i == qbert.getI() && j == qbert.getJ()){
-                    qbert.animacionMuerte();
+                    qbert.animacionMuerte(&piramide);
                     hasCoily = qbert.reset(&piramide, p);
                     puntuacion += p;
                 }
@@ -228,6 +228,7 @@ public:
             }
         } else {
             if(qbert.getLives()!=0) {
+                // Dibujado de las cosas durante el juego normal
                 piramide.drawBitmap();
                 for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
                     it->drawBitmap();
@@ -237,6 +238,7 @@ public:
                     it.operator*()->drawBitmap();
                 }
             } else {
+                // QBERT tiene 0 vidas
                 piramide.drawBitmap();
                 for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
                     it->drawBitmap();
@@ -337,7 +339,7 @@ public:
             if(eleccion >= 0 && eleccion <= 14){
                 //redblob o poder
                 //Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-                //enemies.push_back(redblob);
+                //enemies.push_back(&redblob);
             }else if(eleccion >= 15 && eleccion <= 29){
                 //coily
                 if(!hasCoily) {
