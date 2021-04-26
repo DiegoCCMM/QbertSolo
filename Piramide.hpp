@@ -95,6 +95,14 @@ public:
         piramideCompleta = completa;
     }
 
+    /* Cambia el cubo [i,j] al color anterior correspondiente --> Slick y Sam */
+    void changeCubeInverse(int i, int j) {
+        // TODO: comprobar si esta bien
+        if (map[i][j].color != 0) { // Solo nos intersa cambiar el color cuando no es el inicial
+            map[i][j].color--;
+        }
+    }
+
     void destroy(){
         for(int i=0; i<7; i++){ // Fila
             for(int j=0; j<i+1; j++){ // Columna
