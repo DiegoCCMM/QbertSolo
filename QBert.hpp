@@ -165,7 +165,6 @@ public:
                             if(it.operator*()->getI() == getI() && it.operator*()->getJ() == getJ()){
                                 //estamos con un enemigo en el mismo sitio
                                 if(!it.operator*()->hasChangingGroundPower() * !it.operator*()->hasHelpingPower()){
-                                    colision = true;
                                     salida = animacionMuerte(piramide, enemies);
                                     break;
                                 }else if(it.operator*()->hasChangingGroundPower()){ // Slick y Sam
