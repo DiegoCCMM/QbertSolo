@@ -187,35 +187,33 @@ public:
 
     void movementAll() {
         int p = 0;
-        if(!qbert.isColision()) {
-            qbert.movement(&piramide, height, platillos, enemies, hasCoily, p);
+        qbert.movement(&piramide, height, platillos, enemies, hasCoily, p);
 
-            if (!qbert.isFalling()) {
-                checkRandMovementEnemies();
-                /*int i = -2, j = -2;
-                //mover a todos los enemigos
-                for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
-                    it.operator*()->movement(&piramide, height, i, j);
-                    if (i == qbert.getI() && j == qbert.getJ()) {
-                        //enemigo mata a qbert
-                        qbert.animacionMuerte(&piramide);
-                        hasCoily = qbert.reset(&piramide, p, enemies);
-                        puntuacion += p;
-                        break;
-                    }
-                }*/
-
-                for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-                    it->movement();
+        if(!qbert.isFalling()) {
+            checkRandMovementEnemies();
+            int i = -2, j = -2;
+            //mover a todos los enemigos
+            for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
+                it.operator*()->movement(&piramide, height, i, j);
+                if(i == qbert.getI() && j == qbert.getJ()){
+                    //enemigo mata a qbert
+                    qbert.animacionMuerte(&piramide);
+                    hasCoily = qbert.reset(&piramide, p, enemies);
+                    puntuacion += p;
+                    break;
                 }
-
-                playerObj.movement();
-                if (playerObj.getTimer() % 2 == 0) {
-                    playerObj.setSourceI((playerObj.getSourceI() + 1) % 6);
-                }
-
-                flechaObj.movement();
             }
+
+            for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+                it->movement();
+            }
+
+            playerObj.movement();
+            if(playerObj.getTimer()%2==0){
+                playerObj.setSourceI((playerObj.getSourceI()+1)%6);
+            }
+
+            flechaObj.movement();
         }
 
         puntuacion += p; // Actualizamos la puntuacion
@@ -353,9 +351,6 @@ public:
                 }
             }else if(eleccion >= 30 && eleccion <= 44){
                 //ugg o wrong way
-                Coily coily = Coily(piramide, "coilyBola", 1, 0, 9, -3);
-                enemies.push_back(&coily);
-                hasCoily = true;
             }else if(eleccion >= 45 && eleccion <= 60){
                 //slick o sam
             }
