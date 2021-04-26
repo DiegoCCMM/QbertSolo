@@ -2,6 +2,8 @@
 // Created by diego on 13/3/21.
 //
 
+#include "QBert.hpp"
+
 enum State{
     GOING_DOWN, AI, COULD_FALL, FALLING
 };

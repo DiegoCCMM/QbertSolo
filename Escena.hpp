@@ -192,18 +192,18 @@ public:
 
             if (!qbert.isFalling()) {
                 checkRandMovementEnemies();
-                /*int i = -2, j = -2;
+                int i = -2, j = -2;
                 //mover a todos los enemigos
                 for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
                     it.operator*()->movement(&piramide, height, i, j);
                     if (i == qbert.getI() && j == qbert.getJ()) {
                         //enemigo mata a qbert
-                        qbert.animacionMuerte(&piramide);
+                        qbert.animacionMuerte(&piramide, enemies);
                         hasCoily = qbert.reset(&piramide, p, enemies);
                         puntuacion += p;
                         break;
                     }
-                }*/
+                }
 
                 for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
                     it->movement();
