@@ -190,37 +190,40 @@ public:
 
     void movementAll() {
         int p = 0;
-        qbert.movement(&piramide, height, platillos, enemies, hasCoily, p);
+        if(!qbert.isColision()) {
+            qbert.movement(&piramide, height, platillos, enemies, hasCoily, p);
 
-        if(!qbert.isFalling()) {
-            checkRandMovementEnemies();
-            int i = -2, j = -2;
-            //mover a todos los enemigos
-            for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
-                it.operator*()->movement(&piramide, height, i, j);
-                if(i == qbert.getI() && j == qbert.getJ()){
-                    //enemigo mata a qbert
-                    qbert.setColision(true);
-                    qbert.animacionMuerte(&piramide);
-                    hasCoily = qbert.reset(&piramide, p, enemies);
-                    puntuacion += p;
-                    break;
+            if (!qbert.isFalling()) {
+                checkRandMovementEnemies();
+                int i = -2, j = -2;
+                //mover a todos los enemigos
+                for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
+                    it.operator*()->movement(&piramide, height, i, j);
+                    if (i == qbert.getI() && j == qbert.getJ()) {
+                        //enemigo mata a qbert
+                        qbert.setColision(true);
+                        qbert.setLives(qbert.getLives()-1);
+                        qbert.animacionMuerte(&piramide);
+                        hasCoily = qbert.reset(&piramide, p, enemies, qbert.getI(), qbert.getJ(), qbert.getDir());
+                        puntuacion += p;
+                        break;
+                    }
                 }
+
+                for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
+                    it->movement();
+                }
+
+                playerObj.movement();
+                if (playerObj.getTimer() % 2 == 0) {
+                    playerObj.setSourceI((playerObj.getSourceI() + 1) % 6);
+                }
+
+                flechaObj.movement();
             }
 
-            for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
-                it->movement();
-            }
-
-            playerObj.movement();
-            if(playerObj.getTimer()%2==0){
-                playerObj.setSourceI((playerObj.getSourceI()+1)%6);
-            }
-
-            flechaObj.movement();
+            puntuacion += p; // Actualizamos la puntuacion
         }
-
-        puntuacion += p; // Actualizamos la puntuacion
     }
 
     void drawBocadillo(){
@@ -240,17 +243,17 @@ public:
             }
         } else {
             if(qbert.getLives()!=0) {
-                if(qbert.isColision()){
+                // Dibujado de las cosas durante el juego normal
+                piramide.drawBitmap();
+                if(qbert.isColision()){ //qbert se enfada
                     drawBocadillo();
-                    if(qbert.getTimerColision() > 15) { // TODO: establecer valor correcto de duracion
+                    if(qbert.getTimerColision() > 20) {
                         qbert.setColision(false);
                         qbert.setTimerColision(0);
                     } else {
                         qbert.setTimerColision(qbert.getTimerColision()+1);
                     }
                 }
-                // Dibujado de las cosas durante el juego normal
-                piramide.drawBitmap();
                 for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
                     it->drawBitmap();
                 }
@@ -349,33 +352,34 @@ public:
     }
 
     void generarEnemigos(){
-
-        if(periodEnemies == periodoEnemigos){
-            //genera un enemigo aleatorio
-            std::random_device rd;
-            std::mt19937 mt(rd());
-            std::uniform_int_distribution<int> dist(0, 60);
-            int eleccion = dist(mt);
-            if(eleccion >= 0 && eleccion <= 14){
-                //redblob o poder
-                //Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-                //enemies.push_back(&redblob);
-            }else if(eleccion >= 15 && eleccion <= 29){
-                //coily
-                if(!hasCoily) {
-                    Coily coily = Coily(piramide, "coilyBola", 1, 0, 9, -3);
-                    enemies.push_back(&coily);
-                    hasCoily = true;
+        if(!qbert.isColision()) {
+            if (periodEnemies >= periodoEnemigos) {
+                //genera un enemigo aleatorio
+                std::random_device rd;
+                std::mt19937 mt(rd());
+                std::uniform_int_distribution<int> dist(0, 60);
+                int eleccion = dist(mt);
+                if (eleccion >= 0 && eleccion <= 14) {
+                    //redblob o poder
+                    //Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
+                    //enemies.push_back(&redblob);
+                } else if (eleccion >= 15 && eleccion <= 29) {
+                    //coily
+                    if (!hasCoily) {
+                        Coily coily = Coily(piramide, "coilyBola", 1, 0, 9, -3);
+                        enemies.push_back(&coily);
+                        hasCoily = true;
+                    }
+                } else if (eleccion >= 30 && eleccion <= 44) {
+                    //ugg o wrong way
+                } else if (eleccion >= 45 && eleccion <= 60) {
+                    //slick o sam
                 }
-            }else if(eleccion >= 30 && eleccion <= 44){
-                //ugg o wrong way
-            }else if(eleccion >= 45 && eleccion <= 60){
-                //slick o sam
+                //reinicio periodEnemies
+                periodEnemies = 0;
+            } else {
+                periodEnemies++;
             }
-            //reinicio periodEnemies
-            periodEnemies = 0;
-        }else{
-            periodEnemies++;
         }
     }
 

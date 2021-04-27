@@ -189,8 +189,9 @@ public:
                                 //estamos con un enemigo en el mismo sitio
                                 if(!it.operator*()->hasChangingGroundPower() * !it.operator*()->hasHelpingPower()){
                                     colision = true;
+                                    lives--;
                                     salida = animacionMuerte(piramide);
-                                    salida = reset(piramide, puntuacion, enemies);
+                                    salida = reset(piramide, puntuacion, enemies, getI(), getJ(), getDir());
                                     break;
                                 }else if(it.operator*()->hasChangingGroundPower()){ // Slick y Sam
                                     enemies.erase(it, it);
