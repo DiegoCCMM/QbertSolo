@@ -14,6 +14,7 @@ class Enemy : public Character{
     bool changingGroundPower = false;
     bool helpingPower = false;
 public:
+    bool isCoily = false;
 
     void setChangingGroundPower(bool changingGroundPower) {
         Enemy::changingGroundPower = changingGroundPower;
@@ -60,6 +61,8 @@ public:
         std::random_device rd;
         std::mt19937 mt(rd());
         std::uniform_int_distribution<int> dist(1, 2);
+        std::cout << "valor qbert i" << i << std::endl;
+        std::cout << "valor qbert j" << j << std::endl;
         if(dist(mt) == 1){
             setDir(DOWNRIGHT);
         }else{
