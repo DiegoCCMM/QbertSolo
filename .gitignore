@@ -2,3 +2,7 @@
 /cmake-build-debug/
 CMakeLists.txt
 .idea
+/cmake-build-debug-coverage/
+libstdc++-6.dll
+allegro-5.0.10-monolith-md.dll
+libgcc_s_dw2-1.dll
