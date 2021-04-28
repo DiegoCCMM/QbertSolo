@@ -152,6 +152,18 @@ public:
                                     platillo = it;
                                     platillo->setPosQBert(MONTANDO);
 
+                                    for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
+                                        if(it.operator*()->isCoily){
+
+                                            Coily* col = (Coily*)(it.operator*());
+
+                                            if(col->coilyCouldFall()) {
+                                                col->setState(REACHING_LEDGE);
+                                            }
+
+                                        }
+                                    }
+
                                     break;
                                 }
                             }
