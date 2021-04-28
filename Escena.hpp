@@ -3,6 +3,7 @@
 //
 #include "Piramide.hpp"
 #include "Objeto.hpp"
+#include <random>
 
 #ifndef QBERT_ESCENA_HPP
 #define QBERT_ESCENA_HPP

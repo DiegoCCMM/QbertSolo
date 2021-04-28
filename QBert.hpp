@@ -123,7 +123,7 @@ public:
     }
 
     void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos,
-                  std::list<Enemy*> &enemies, bool & salida, int &puntuacion) {
+                  std::list<Enemy*> &enemies, bool & hasCoily, int &puntuacion) {
         if (isJumping()) {
             timerplusplus();
             if(!isFalling()) {
@@ -161,6 +161,8 @@ public:
                                                 col->setState(REACHING_LEDGE);
                                             }
 
+                                            hasCoily = false;
+
                                         }
                                     }
 
@@ -182,7 +184,7 @@ public:
                             platillo->updateWithQBert(_x, _y, piramide);
 
                             if(platillo->getPosQBert() == NONE) { // Q*Bert ha salido del platillo, esta en el primer cubo
-                                salida = reset(piramide, puntuacion, enemies);
+                                hasCoily = reset(piramide, puntuacion, enemies);
                                 enPlatillo = false;
                                 platillos.erase(platillo);
                             } else if(platillo->getPosQBert() == BAJANDO) {
@@ -202,8 +204,8 @@ public:
                                 if(!it.operator*()->hasChangingGroundPower() * !it.operator*()->hasHelpingPower()){
                                     colision = true;
                                     lives--;
-                                    salida = animacionMuerte(piramide);
-                                    salida = reset(piramide, puntuacion, enemies, getI(), getJ(), getDir());
+                                    hasCoily = animacionMuerte(piramide);
+                                    hasCoily = reset(piramide, puntuacion, enemies, getI(), getJ(), getDir());
                                     break;
                                 }else if(it.operator*()->hasChangingGroundPower()){ // Slick y Sam
                                     enemies.erase(it, it);
@@ -228,7 +230,7 @@ public:
                 if(getY() <= HEIGHT){
                     setY(getY() + movementY);
                 } else {
-                    salida = reset(piramide, puntuacion, enemies);
+                    hasCoily = reset(piramide, puntuacion, enemies);
                 }
             }
         }
