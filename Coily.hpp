@@ -26,16 +26,35 @@ public:
         state = s;
     }
 
-    void AIMovement(){
+    void AIMovement(const int& qberti, const int& qbertj){
 
-        setDir(TOPLEFT);
+        int coilyI = getI(), coilyJ = getJ();
+
+        int dirI = coilyI - qberti;
+
+        int dirJ = coilyJ - qbertj;
+
+        if(dirI > 0){//qbert esta por arriba 7 - 0 es 7, qbert en el sitio inicial, coily abajo max
+            if(dirJ > 0){ //qbert esta por la izq, 7 - 0 es 7, qbert en el inicial, coily a la derecha del to-do
+                setDir(TOPLEFT);
+            }else{ //qbert esta por la derecha
+                setDir(TOPRIGHT);
+            }
+        }else{//qbert esta por abajo 0 - 7 es -7, qbert en abajo max, coily arriba
+            if(dirJ >= 0){
+                setDir(DOWNLEFT);
+            }else{
+                setDir(DOWNRIGHT);
+            }
+        }
+
         assignIJ();
 
         Enemy::setJumping(true);
         Enemy::setSourceX(getSourceX()- leftSprite);
     }
 
-    void randomMovement() override {
+    void randomMovement(const int& i, const int& j) override {
 
         if(getI() == 6){
             state = AI;
@@ -43,9 +62,9 @@ public:
             setYRespectCube( -20 );
         }
         if(state == GOING_DOWN){
-            Enemy::randomMovement();
+            Enemy::randomMovement(i, j);
         }else{
-            Coily::AIMovement();
+            Coily::AIMovement(i, j);
         }
 
     }

@@ -190,7 +190,7 @@ public:
 
     void movementAll() {
         int p = 0;
-        if(!qbert.isColision()) {
+        if(!qbert.isColision() && !piramide.isPiramideCompleta()) {
             qbert.movement(&piramide, height, platillos, enemies, hasCoily, p);
 
             if (!qbert.isFalling()) {
@@ -439,7 +439,7 @@ public:
     void checkRandMovementEnemies() {
         for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++){
             if(it.operator*()->getRandMoveTimer() == it.operator*()->getRandMovePeriod()){
-                it.operator*()->randomMovement();
+                it.operator*()->randomMovement(qbert.getI(), qbert.getJ());
                 it.operator*()->resetRandomMoveTimer();
             }else {
                 it.operator*()->randomMoveTimerplusplus();

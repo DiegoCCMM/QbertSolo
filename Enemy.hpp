@@ -55,7 +55,7 @@ public:
 
     bool hasChangingGroundPower() const { return changingGroundPower; }
 
-    virtual void randomMovement()  {
+    virtual void randomMovement(const int& i, const int& j)  {
         // TODO: revisar, no parece haber aleatoriedad
         std::random_device rd;
         std::mt19937 mt(rd());
