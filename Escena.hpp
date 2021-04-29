@@ -22,7 +22,6 @@ class Escena{
             vidaObj, numvidaObj,
             levelRoundObj, numLevelObj, numRoundObj,
             gameoverObj;
-    ALLEGRO_BITMAP * bocadilloDraw;
 
 public:
 
@@ -108,8 +107,6 @@ public:
         gameoverObj.setSizePixelsY(8);
         gameoverObj.setXRespectCube(-16);
         gameoverObj.setYRespectCube(3*32);
-
-        bocadilloDraw = (al_load_bitmap("../sprites/qbert-blasfemia.png"));
 
     }
 
@@ -242,10 +239,7 @@ public:
         }
     }
 
-    void drawBocadillo(){
-        al_draw_bitmap_region(bocadilloDraw, 0,
-                              0, 6 * 8, 4 * 8, qbert.getX() - 6 * 2, qbert.getY() - 4 * 8, 0);
-    }
+
 
     void drawAll() {
 
@@ -262,7 +256,7 @@ public:
                 // Dibujado de las cosas durante el juego normal
                 piramide.drawBitmap();
                 if(qbert.isColision()){ //qbert se enfada
-                    drawBocadillo();
+                    qbert.drawBocadillo();
                     if(qbert.getTimerColision() > 20) {
                         qbert.setColision(false);
                         qbert.setTimerColision(0);
