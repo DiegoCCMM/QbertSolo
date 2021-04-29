@@ -129,7 +129,7 @@ public:
     }
 
     void randomMovement(int i, int j) override {
-
+        std::cout << "entro2" << std::endl;
         if(getI() == 6){
             state = AI;
             setSourceX(14);

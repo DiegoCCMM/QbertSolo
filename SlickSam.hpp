@@ -18,11 +18,13 @@ public:
     }
 
     void randomMovement(int i, int j) override {
-        std::cout<<"entro"<<std::endl;
+
+        //TODO RETOCAR MOVIMIENTO SI MUY REPETITIVO
+        std::cout<<"entro 80"<<std::endl;
 
         std::random_device rd;
         std::mt19937 mt(rd());
-        std::uniform_int_distribution<int> dist4(1, 6);
+        std::uniform_int_distribution<int> dist4(1, 4);
         std::uniform_int_distribution<int> dist2(1, 2);
         std::uniform_int_distribution<int> dist3(1, 3);
 
@@ -72,7 +74,7 @@ public:
         }else{ //sin restriccion
             std::cout<<"sin restriccion"<<std::endl;
             int a = dist4(mt);
-            if(a == 1 || a == 4){
+            if(a == 1){
                 setDir(TOPLEFT);
             }else if(a == 2){
                 setDir(DOWNLEFT);
