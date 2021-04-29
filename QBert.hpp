@@ -20,30 +20,6 @@ class QBert : public Character{
     bool enPlatillo = false;
     bool colision = false;
     int timerColision = 0;
-public:
-    int getTimerColision() const {
-        return timerColision;
-    }
-
-    void setTimerColision(int timerColision) {
-        QBert::timerColision = timerColision;
-    }
-
-public:
-    bool isColision() const {
-        return colision;
-    }
-
-    void setColision(bool colision) {
-        QBert::colision = colision;
-    }
-
-public:
-    bool hasSuperpower() const {
-        return superpower;
-    }
-
-private:
     std::list<Platillo>::iterator platillo;
 
 public:
@@ -52,39 +28,10 @@ public:
     QBert(Piramide piramide) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 7, -8) {
         must_init(fallingSound, "qbert-FallingSound");
         setSourceX(0);
-        //managementSpriteQbert();
     }
 
     /* Constructor 2 */
     QBert() : Character("qbert", DOWNRIGHT) {}
-
-    /* Cut the bitmap to get the different frames */
-    void managementSpriteQbert() {
-        std::vector<int> source;
-        std::vector<int> width;
-
-        ALLEGRO_COLOR pixel, lastPixel, separatorColor;
-
-        source.push_back(0);
-
-        for (int i = 0; i < al_get_bitmap_width(getDraw()) - 1; i++) {
-            separatorColor = al_map_rgba(0, 0, 255, 255);
-            pixel = al_get_pixel(getDraw(), i, 0);
-
-            if (memcmp(&pixel, &lastPixel, sizeof(ALLEGRO_COLOR))) {
-                if (!memcmp(&pixel, &separatorColor, sizeof(ALLEGRO_COLOR))) {
-                    source.push_back(i);
-                    if (source.size() == 2)
-                        width.push_back(i);
-                    else
-                        width.push_back(i - width[width.size() - 1]);
-                }
-            } else if (i == al_get_bitmap_width(getDraw()) - 1) {
-                width.push_back(i - width[width.size() - 1]);
-                lastPixel = pixel;
-            }
-        }
-    }
 
     /* Reinicia la posicion de Q*Bert al inicio de la piramide */
     bool reset(Piramide *piramide, int &puntuacion, std::list<Enemy*> &enemies, int i=0, int j=0, Direction direct = DOWNLEFT){
@@ -109,6 +56,11 @@ public:
     void drawBitmap() override {
         al_draw_bitmap_region(QBert::getDraw(), QBert::getSourceX() + (QBert::getDir() * 2 * sizePixelsX),
                               0, sizePixelsX, sizePixelsY, QBert::getX(), QBert::getY(), 0);
+    }
+
+    void drawBocadillo(){
+        al_draw_bitmap_region(bocadilloDraw, 0,
+                              0, 6 * 8, 4 * 8, getX() - 6 * 2, getY() - 4 * 8, 0);
     }
 
     void setMove(Direction dir) {
@@ -336,6 +288,14 @@ public:
 
     int getScore() const { return score; }
     void setScore(int _score) { QBert::score = _score; }
+
+    int getTimerColision() const { return timerColision; }
+    void setTimerColision(int timerColision) { QBert::timerColision = timerColision; }
+
+    bool isColision() const { return colision; }
+    void setColision(bool colision) { QBert::colision = colision; }
+
+    bool hasSuperpower() const { return superpower; }
 
 };
 

@@ -5,7 +5,7 @@
 #ifndef ALLEGRO5TUTORIAL_SLICKSAM_HPP
 #define ALLEGRO5TUTORIAL_SLICKSAM_HPP
 
-class Coily : public Enemy{
+class SlickSam : public Enemy{
 
     State state = GOING_DOWN;
     ALLEGRO_BITMAP* secondPhaseDraw;

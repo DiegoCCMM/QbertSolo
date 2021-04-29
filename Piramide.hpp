@@ -29,7 +29,7 @@ public:
 
     /* Carga el mapa de la piramide de un .txt según el nivel y la ronda */
     void loadMap(int level, int round, float width, float height){
-        level = level;
+        this->level = level;
         ALLEGRO_BITMAP *cubes = al_load_bitmap("../sprites/cubos.png");
         must_init(cubes, "cubes");
 
