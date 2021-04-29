@@ -375,20 +375,20 @@ public:
                     //enemies.push_back(&redblob);
                 } else if (eleccion >= 15 && eleccion <= 29) {
                     //coily
-                    if (!hasCoily) {
+                    /*if (!hasCoily) {
                         Coily coily = Coily(piramide, "coilyBola", 1, 0, 9, -3);
                         enemies.push_back(&coily);
                         hasCoily = true;
-                    }
+                    }*/
                 } else if (eleccion >= 30 && eleccion <= 44) {
                     //ugg o wrong way
                 } else if (eleccion >= 45 && eleccion <= 60) {
                     //slick o sam
-                    /*if(!hasSlickSam){
+                    if(!hasSlickSam){
                         SlickSam slickObj = SlickSam(piramide, "Slick", 1, 0, 9, -6);
                         enemies.push_back(&slickObj);
                         hasSlickSam = true;
-                    }*/
+                    }
                 }
                 //reinicio periodEnemies
                 periodEnemies = 0;
