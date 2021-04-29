@@ -6,6 +6,7 @@
 #include "Platillo.hpp"
 #include "Enemy.hpp"
 
+#define SUPERPOWER_PERIOD 20
 
 #ifndef ALLEGRO5TUTORIAL_QBERT_HPP
 #define ALLEGRO5TUTORIAL_QBERT_HPP
@@ -20,6 +21,7 @@ class QBert : public Character{
     bool enPlatillo = false;
     bool colision = false;
     int timerColision = 0;
+    int timerSuperPower = 0;
     std::list<Platillo>::iterator platillo;
 
 public:
@@ -146,6 +148,13 @@ public:
                         }
                     } else {
                         //WE LANDED
+                        if(superpower){
+                            if(timerSuperPower == SUPERPOWER_PERIOD){
+                                superpower = false;
+                            }else{
+                                timerSuperPower++;
+                            }
+                        }
                         playOnce(getJumpSound());
                         piramide->changeCube(getI(), getJ(), puntuacion);
                         for (auto it = enemies.begin(); it != enemies.end(); it++) {

@@ -194,7 +194,7 @@ public:
         if(!qbert.isColision() && !piramide.isPiramideCompleta()) {
             qbert.movement(&piramide, height, platillos, enemies, hasCoily, hasSlickSam, p);
 
-            if (!qbert.isFalling()) {
+            if (!qbert.isFalling() || !qbert.hasSuperpower()) {
                 checkRandMovementEnemies();
                 int i = -2, j = -2;
                 //mover a todos los enemigos
