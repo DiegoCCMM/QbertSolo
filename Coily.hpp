@@ -56,10 +56,10 @@ public:
 
             std::cout << "valor qbert i" << qberti << std::endl;
             std::cout << "valor qbert j" << qbertj << std::endl;
-/*
+
             std::cout << "valor i" << coilyI << std::endl;
             std::cout << "valor j" << coilyJ << std::endl;
-*/
+
             std::cout << "distancia i" << abs(dirI) << std::endl;
             std::cout << "distancia j" << abs(dirJ) << std::endl;
 
@@ -112,17 +112,23 @@ public:
             }
         }
 
-        assignIJ();
         if((getI() == getJ() || getI() == 0) && state == REACHING_LEDGE){
             state = FALLING;
             //TODO FALLING ANIMATION OR SO
+
         }
+
+        assignIJ();
 
         Enemy::setJumping(true);
         Enemy::setSourceX(getSourceX()- leftSprite);
     }
 
-    void randomMovement(const int& i, const int& j) override {
+    State getState() const {
+        return state;
+    }
+
+    void randomMovement(int i, int j) override {
 
         if(getI() == 6){
             state = AI;

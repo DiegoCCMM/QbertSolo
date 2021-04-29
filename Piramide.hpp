@@ -21,7 +21,7 @@ class Piramide {
     int sigCubo[3];
     bool piramideCompleta;
 
-    int time;
+    int time, level;
     ALLEGRO_SAMPLE *finishSound = al_load_sample("../sounds/levelup.ogg");
 
 public:
@@ -29,6 +29,7 @@ public:
 
     /* Carga el mapa de la piramide de un .txt según el nivel y la ronda */
     void loadMap(int level, int round, float width, float height){
+        level = level;
         ALLEGRO_BITMAP *cubes = al_load_bitmap("../sprites/cubos.png");
         must_init(cubes, "cubes");
 
@@ -96,10 +97,14 @@ public:
     }
 
     /* Cambia el cubo [i,j] al color anterior correspondiente --> Slick y Sam */
-    void changeCubeInverse(int i, int j) {
+    void changeCubeInverse(int i, int j){
         // TODO: comprobar si esta bien
-        if (map[i][j].color != 0) { // Solo nos intersa cambiar el color cuando no es el inicial
-            map[i][j].color--;
+        if(map[i][j].color != 0) { // Solo nos intersa cambiar el color cuando no es el inicial
+            if (level<=3) {
+                map[i][j].color = 0;
+            } else{
+                map[i][j].color--;
+            }
         }
     }
 
@@ -161,7 +166,7 @@ public:
                 if(i==2 && (j==0 || j==2)) ;
                 else
                     al_draw_bitmap_region(map[i][j].draw, sx[map[i][j].color], sy[map[i][j].color],
-                                      cubeSize, cubeSize, map[i][j].x, map[i][j].y, 0);
+                                          cubeSize, cubeSize, map[i][j].x, map[i][j].y, 0);
             }
         }
     }

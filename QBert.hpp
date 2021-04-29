@@ -123,7 +123,7 @@ public:
     }
 
     void movement(Piramide *piramide, int HEIGHT, std::list<Platillo> &platillos,
-                  std::list<Enemy*> &enemies, bool & hasCoily, int &puntuacion) {
+                  std::list<Enemy*> &enemies, bool & hasCoily, bool & hasSlickSam, int &puntuacion) {
         if (isJumping()) {
             timerplusplus();
             if(!isFalling()) {
@@ -160,12 +160,9 @@ public:
                                             if(col->coilyCouldFall()) {
                                                 col->setState(REACHING_LEDGE);
                                             }
-
-                                            hasCoily = false;
-
                                         }
                                     }
-
+                                    hasCoily = false;
                                     break;
                                 }
                             }
@@ -185,6 +182,7 @@ public:
 
                             if(platillo->getPosQBert() == NONE) { // Q*Bert ha salido del platillo, esta en el primer cubo
                                 hasCoily = reset(piramide, puntuacion, enemies);
+                                hasSlickSam = false;
                                 enPlatillo = false;
                                 platillos.erase(platillo);
                             } else if(platillo->getPosQBert() == BAJANDO) {
@@ -198,22 +196,27 @@ public:
                         //WE LANDED
                         playOnce(getJumpSound());
                         piramide->changeCube(getI(), getJ(), puntuacion);
-                        for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++) {
-                            if(it.operator*()->getI() == getI() && it.operator*()->getJ() == getJ()){
+                        for (auto it = enemies.begin(); it != enemies.end(); it++) {
+                            //DID WE LANDED ON AN ENEMY?
+                            if(it.operator*()->getI() == QBert::getI() && it.operator*()->getJ() == QBert::getJ()){
                                 //estamos con un enemigo en el mismo sitio
-                                if(!it.operator*()->hasChangingGroundPower() * !it.operator*()->hasHelpingPower()){
-                                    colision = true;
-                                    lives--;
-                                    hasCoily = animacionMuerte(piramide);
-                                    hasCoily = reset(piramide, puntuacion, enemies, getI(), getJ(), getDir());
-                                    break;
-                                }else if(it.operator*()->hasChangingGroundPower()){ // Slick y Sam
-                                    enemies.erase(it, it);
-                                    puntuacion += 300;
-                                }else if(it.operator*()->hasHelpingPower()){ // Blob verde
-                                    enemies.erase(it, it);
+                                if(it.operator*()->hasHelpingPower()){ // Blob verde
                                     superpower = true;
                                     puntuacion += 100;
+                                    enemies.erase(it);
+                                    break;
+                                }else if(it.operator*()->hasChangingGroundPower()){ // Slick y Sam
+                                    hasSlickSam = false;
+                                    puntuacion += 300;
+                                    enemies.erase(it);
+                                    break;
+                                }else{
+                                colision = true;
+                                lives--;
+                                hasCoily = animacionMuerte(piramide);
+                                hasCoily = reset(piramide, puntuacion, enemies, getI(), getJ(), getDir());
+                                hasSlickSam = false;
+                                break;
                                 }
 
                             }
@@ -231,9 +234,14 @@ public:
                     setY(getY() + movementY);
                 } else {
                     hasCoily = reset(piramide, puntuacion, enemies);
+                    hasSlickSam = false;
                 }
             }
         }
+    }
+
+    void setSuperpower(bool superpower) {
+        QBert::superpower = superpower;
     }
 
     bool animacionMuerte(Piramide *piramide){

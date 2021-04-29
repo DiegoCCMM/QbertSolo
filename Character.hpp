@@ -64,8 +64,6 @@ public:
         Character::setY(piramide->map[getI()][getJ()].y+this->yRespectCube);
     }
 
-    virtual void movement(Piramide *piramide, int HEIGHT, int &i, int &j) {}
-
     void destroy() override {
         al_destroy_bitmap(getDraw());
         al_destroy_sample(getJumpSound());

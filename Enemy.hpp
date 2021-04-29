@@ -56,13 +56,17 @@ public:
 
     bool hasChangingGroundPower() const { return changingGroundPower; }
 
-    virtual void randomMovement(const int& i, const int& j)  {
+    virtual void randomMovement(int i, int j)  {
         // TODO: revisar, no parece haber aleatoriedad
         std::random_device rd;
         std::mt19937 mt(rd());
         std::uniform_int_distribution<int> dist(1, 2);
         std::cout << "valor qbert i" << i << std::endl;
         std::cout << "valor qbert j" << j << std::endl;
+
+        std::cout << "valor qbert i" << getI() << std::endl;
+        std::cout << "valor qbert j" << getJ() << std::endl;
+
         if(dist(mt) == 1){
             setDir(DOWNRIGHT);
         }else{
@@ -81,7 +85,7 @@ public:
         else if(getDir() == DOWNLEFT) setI(getI() + 1);
     }
 
-    void movement(Piramide *piramide, int HEIGHT, int &i, int &j) override {
+    void movement(Piramide *piramide, int HEIGHT, int &i, int &j){
         if (isJumping()) {
             timerplusplus();
             if (getTimer() < airTime / 2) {
@@ -105,7 +109,7 @@ public:
                 playOnce(getJumpSound());
                 if (hasChangingGroundPower()) {
                     int none = 0;
-                    piramide->changeCube(getI(), getJ(), none);
+                    piramide->changeCubeInverse(getI(), getJ());
                 }
                 setX(piramide->map[getI()][getJ()].x + getXRespectCube());
                 setY(piramide->map[getI()][getJ()].y + getYRespectCube());

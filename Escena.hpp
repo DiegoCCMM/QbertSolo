@@ -3,6 +3,8 @@
 //
 #include "Piramide.hpp"
 #include "Objeto.hpp"
+#include "SlickSam.hpp"
+
 #include <random>
 
 #ifndef QBERT_ESCENA_HPP
@@ -30,7 +32,7 @@ public:
     std::list<Platillo> platillos;
     int level, round, periodEnemies = 0;
     int puntuacion;
-    bool hasCoily = false, gameover = false;
+    bool hasCoily = false, gameover = false, hasSlickSam=false;
 
     /* Constructor */
     Escena(float _width, float _height) : width(_width), height(_height), level(1), round(1) {
@@ -192,7 +194,7 @@ public:
     void movementAll() {
         int p = 0;
         if(!qbert.isColision() && !piramide.isPiramideCompleta()) {
-            qbert.movement(&piramide, height, platillos, enemies, hasCoily, p);
+            qbert.movement(&piramide, height, platillos, enemies, hasCoily, hasSlickSam, p);
 
             if (!qbert.isFalling()) {
                 checkRandMovementEnemies();
@@ -201,13 +203,26 @@ public:
                 for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
                     it.operator*()->movement(&piramide, height, i, j);
                     if (i == qbert.getI() && j == qbert.getJ()) {
-                        //enemigo mata a qbert
-                        qbert.setColision(true);
-                        qbert.setLives(qbert.getLives()-1);
-                        qbert.animacionMuerte(&piramide);
-                        hasCoily = qbert.reset(&piramide, p, enemies, qbert.getI(), qbert.getJ(), qbert.getDir());
-                        puntuacion += p;
-                        break;
+                        if(it.operator*()->hasHelpingPower()){ // Blob verde
+                            qbert.setSuperpower(true);
+                            puntuacion += 100;
+                            enemies.erase(it);
+                            break;
+                        }else if(it.operator*()->hasChangingGroundPower()) { // Slick y Sam
+                            hasSlickSam = false;
+                            puntuacion += 300;
+                            enemies.erase(it);
+                            break;
+                        }else {
+                            //enemigo mata a qbert
+                            qbert.setColision(true);
+                            qbert.setLives(qbert.getLives() - 1);
+                            qbert.animacionMuerte(&piramide);
+                            hasCoily = qbert.reset(&piramide, p, enemies, qbert.getI(), qbert.getJ(), qbert.getDir());
+                            hasSlickSam = false;
+                            puntuacion += p;
+                            break;
+                        }
                     }
                 }
 
@@ -375,6 +390,11 @@ public:
                     //ugg o wrong way
                 } else if (eleccion >= 45 && eleccion <= 60) {
                     //slick o sam
+                    /*if(!hasSlickSam){
+                        SlickSam slickObj = SlickSam(piramide, "Slick", 1, 0, 9, -6);
+                        enemies.push_back(&slickObj);
+                        hasSlickSam = true;
+                    }*/
                 }
                 //reinicio periodEnemies
                 periodEnemies = 0;
