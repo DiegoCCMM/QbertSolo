@@ -114,6 +114,11 @@ public:
 
         if((getI() == getJ() || getI() == 0) && state == REACHING_LEDGE){
             state = FALLING;
+            setFalling(true);
+            if(getSourceX()!=0) {
+                setSourceX(getSourceX() - 16);
+            }
+            //playOnce(fallingSound);
             //TODO FALLING ANIMATION OR SO
 
         }
@@ -130,7 +135,7 @@ public:
 
     void randomMovement(int i, int j) override {
         std::cout << "entro2" << std::endl;
-        if(getI() == 6){
+        if(getI() == 6){ // anyadir condicion de que el estado anterior sea una bola
             state = AI;
             setSourceX(14);
             setYRespectCube( -20 );

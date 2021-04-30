@@ -23,7 +23,7 @@ public:
         std::cout<<"entro 80"<<std::endl;
 
         std::random_device rd;
-        std::mt19937 mt(rd());
+        std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<int> dist4(1, 4);
         std::uniform_int_distribution<int> dist2(1, 2);
         std::uniform_int_distribution<int> dist3(1, 3);

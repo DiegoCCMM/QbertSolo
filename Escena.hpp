@@ -200,7 +200,7 @@ public:
                 //mover a todos los enemigos
                 for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
                     it.operator*()->movement(&piramide, height, i, j);
-                    if (i == qbert.getI() && j == qbert.getJ()) {
+                    if (it.operator*()->getI() == qbert.getI() && it.operator*()->getJ() == qbert.getJ()) {
                         if(it.operator*()->hasHelpingPower()){ // Blob verde
                             qbert.setSuperpower(true);
                             puntuacion += 100;
@@ -258,7 +258,7 @@ public:
                 piramide.drawBitmap();
                 if(qbert.isColision()){ //qbert se enfada
                     qbert.drawBocadillo();
-                    if(qbert.getTimerColision() > 20) {
+                    if(qbert.getTimerColision() > 50) {
                         qbert.setColision(false);
                         qbert.setTimerColision(0);
                     } else {
@@ -363,11 +363,11 @@ public:
     }
 
     void generarEnemigos(){
-        if(!qbert.isColision()) {
+        if(!qbert.isColision() || !qbert.isEnPlatillo()) {
             if (periodEnemies >= periodoEnemigos) {
                 //genera un enemigo aleatorio
                 std::random_device rd;
-                std::mt19937 mt(rd());
+                std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
                 std::uniform_int_distribution<int> dist(0, 60);
                 int eleccion = dist(mt);
                 if (eleccion >= 0 && eleccion <= 14) {
@@ -376,15 +376,15 @@ public:
                     //enemies.push_back(&redblob);
                 } else if (eleccion >= 15 && eleccion <= 29) {
                     //coily
-                    /*if (!hasCoily) {
+                    if (!hasCoily) {
                         Coily coily = Coily(piramide, "coilyBola", 1, 0, 9, -3);
                         enemies.push_back(&coily);
                         hasCoily = true;
-                    }*/
+                    }
                 } else if (eleccion >= 30 && eleccion <= 44) {
                     //ugg o wrong way
-                    UggWrongWay ugg = UggWrongWay(piramide, "Ugg", 6, 6, 9, -6);
-                    enemies.push_back(&ugg);
+                    //UggWrongWay ugg = UggWrongWay(piramide, "Ugg", 6, 6, 9, -6);
+                    //enemies.push_back(&ugg);
                 } else if (eleccion >= 45 && eleccion <= 60) {
                     //slick o sam
                     /*if(!hasSlickSam){

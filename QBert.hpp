@@ -306,6 +306,9 @@ public:
 
     bool hasSuperpower() const { return superpower; }
 
+    bool isEnPlatillo() const { return enPlatillo; }
+    void setEnPlatillo(bool enPlatillo) { QBert::enPlatillo = enPlatillo; }
+
 };
 
 #endif //ALLEGRO5TUTORIAL_QBERT_HPP

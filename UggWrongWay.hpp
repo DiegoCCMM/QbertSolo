@@ -25,7 +25,7 @@ public:
     void randomMovement(int i, int j) override {
 
         std::random_device rd;
-        std::mt19937 mt(rd());
+        std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<int> dist(1, 2);
 
         if(dist(mt) == 1){

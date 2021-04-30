@@ -3,6 +3,7 @@
 //
 #include "Character.hpp"
 #include <random>
+#include <chrono>
 
 #ifndef ALLEGRO5TUTORIAL_ENEMY_HPP
 #define ALLEGRO5TUTORIAL_ENEMY_HPP
@@ -42,10 +43,11 @@ public:
             Character(piramide, nom, i, j, DOWNRIGHT, xRespectCube, yRespectCube) {
 
         Enemy::setSourceX(16);
-        std::random_device rd;
-        std::mt19937 mt(rd());
+        std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
+        //
         std::uniform_int_distribution<int> dist(MIN, MAX);
-        Enemy::randMovePeriod = dist(mt);
+        //Enemy::randMovePeriod = dist(mt); // A 30 es una buena velocidad
+        Enemy::randMovePeriod = 30; // A 30 es una buena velocidad
     }
 
     int getRandMoveTimer() const { return randMoveTimer; }
@@ -58,13 +60,12 @@ public:
 
     virtual void randomMovement(int i, int j)  {
         // TODO: revisar, no parece haber aleatoriedad
-        std::random_device rd;
-        std::mt19937 mt(rd());
+        std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<int> dist(1, 2);
         std::cout << "valor qbert i" << i << std::endl;
         std::cout << "valor qbert j" << j << std::endl;
 
-        std::cout << "valor qbert i" << getI() << std::endl;
+        std::cout << "valor qbert i*" << getI() << std::endl;
         std::cout << "valor qbert j" << getJ() << std::endl;
 
         if(dist(mt) == 1){
@@ -73,6 +74,8 @@ public:
             setDir(DOWNLEFT);
         }
         assignIJ();
+        std::cout << getI() << std::endl;
+        std::cout << getJ() << std::endl;
 
         Enemy::setJumping(true);
         Enemy::setSourceX(getSourceX()-16);
@@ -88,39 +91,46 @@ public:
     void movement(Piramide *piramide, int HEIGHT, int &i, int &j){
         if (isJumping()) {
             timerplusplus();
-            if (getTimer() < airTime / 2) {
-                //GO UP AND DIRECTION
-                if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
-                    setX(movementX + getX());
-                else
-                    setX(getX() - movementX);
-                if (getDir() != DOWNRIGHT && getDir() != DOWNLEFT)
-                    setY(getY() - movementY);
-            } else if (getTimer() > airTime / 2 && getTimer() < airTime) {
-                //GO DOWN AND DIRECTION
-                if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
-                    setX(movementX + getX());
-                else
-                    setX(getX() - movementX);
-                if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
-                    setY(getY() + movementY);
-            } else if (getTimer() > airTime) {
-                //WE LANDED
-                playOnce(getJumpSound());
-                if (hasChangingGroundPower()) {
-                    int none = 0;
-                    piramide->changeCubeInverse(getI(), getJ());
+            if(!isFalling()) {
+                if (getTimer() < airTime / 2) {
+                    //GO UP AND DIRECTION
+                    if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
+                        setX(movementX + getX());
+                    else
+                        setX(getX() - movementX);
+                    if (getDir() != DOWNRIGHT && getDir() != DOWNLEFT)
+                        setY(getY() - movementY);
+                } else if (getTimer() > airTime / 2 && getTimer() < airTime) {
+                    //GO DOWN AND DIRECTION
+                    if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
+                        setX(movementX + getX());
+                    else
+                        setX(getX() - movementX);
+                    if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
+                        setY(getY() + movementY);
+                } else if (getTimer() > airTime) {
+                    //WE LANDED
+                    playOnce(getJumpSound());
+                    if (hasChangingGroundPower()) {
+                        int none = 0;
+                        piramide->changeCubeInverse(getI(), getJ());
+                    }
+                    setX(piramide->map[getI()][getJ()].x + getXRespectCube());
+                    setY(piramide->map[getI()][getJ()].y + getYRespectCube());
+                    setTimer(0);
+                    setJumping(false);
+                    setSourceX(getSourceX() + leftSprite);
+                    i = getI();
+                    j = getJ();
                 }
-                setX(piramide->map[getI()][getJ()].x + getXRespectCube());
-                setY(piramide->map[getI()][getJ()].y + getYRespectCube());
-                setTimer(0);
-                setJumping(false);
-                setSourceX(getSourceX() + leftSprite);
-                i = getI();
-                j = getJ();
+            } else {
+                if(getY() <= HEIGHT){
+                    setY(getY() + movementY);
+                } else {
+                    setFalling(false);
+                }
             }
         }
-        //randomMoveTimerplusplus();
     }
 
 };
