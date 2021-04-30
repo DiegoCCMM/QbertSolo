@@ -49,6 +49,9 @@ public:
         std::uniform_int_distribution<int> dist(MIN, MAX);
         //Enemy::randMovePeriod = dist(mt); // A 25 es una buena velocidad
         Enemy::randMovePeriod = 25; // A 25 es una buena velocidad
+        if(nom == "GreenBlob"){
+            setHelpingPower(true);
+        }
     }
 
     int getRandMoveTimer() const { return randMoveTimer; }

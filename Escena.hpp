@@ -110,20 +110,14 @@ public:
         gameoverObj.setDraw(al_load_bitmap("../sprites/gameover.png"));
         gameoverObj.setSizePixelsX(8);
         gameoverObj.setSizePixelsY(8);
-        gameoverObj.setXRespectCube(-18);
+        gameoverObj.setXRespectCube(-16);
         gameoverObj.setYRespectCube(3*32);
 
     }
 
     void load(float _width, float _height){
         width = _width, height = _height;
-        int vidas_aux;
-        if(level==1 && round==1) {
-            puntuacion = 0;
-            vidas_aux = 3;
-        } else {
-            vidas_aux = qbert.getLives();
-        }
+        if(level==1 && round==1) puntuacion = 0;
         gameover = false;
 
         // Cargar mapa
@@ -131,7 +125,6 @@ public:
 
         // Cargar personajes
         qbert = QBert(piramide);
-        qbert.setLives(vidas_aux);
 
         enemies.clear();
         hasCoily=false;
@@ -297,6 +290,7 @@ public:
                 float aux_x = gameoverObj.getX();
                 for (std::string::size_type i = 0; i < frase.size(); i++) {
                     if(int(frase[i]) != 32) {
+                        std::cout << int(frase[i]) % 65 << std::endl;
                         gameoverObj.setSourceJ(int(frase[i]) % 65);
                         gameoverObj.setSourceI(7);
                     } else{
@@ -377,7 +371,7 @@ public:
 
     void generarEnemigos(){
         if(!qbert.isColision() || !qbert.isEnPlatillo()) {
-            if (periodEnemies >= periodoEnemigos && maxEnemigos < limEnemigos) {
+            if (periodEnemies >= periodoEnemigos && enemies.size() < limEnemigos) {
                 //genera un enemigo aleatorio
                 std::random_device rd;
                 std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
@@ -385,11 +379,15 @@ public:
                 int eleccion = dist(mt);
                 if (eleccion >= 0 && eleccion <= 14) {
                     //redblob o poder
-                    std::cout<< "meto redblob" << std::endl;
-                    Enemy* redblob = new Enemy(piramide, "Redblob", 1, 1, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-                    enemies.push_back(redblob);
-                    maxEnemigos++;
-                    std::cout<< "meto redblobl" << std::endl;
+                    /*if(eleccion <= 12) {
+                        Enemy *redblob = new Enemy(piramide, "Redblob", 1, 1, 9,
+                                                   0); // X e Y (pixeles) posicion respecto al cubo[i,j]
+                        enemies.push_back(redblob);
+                    }else {*/
+                        Enemy *green = new Enemy(piramide, "GreenBlob", 1, 1, 9,
+                                                 -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
+                        enemies.push_back(green);
+                    //}
 
                 } else if (eleccion >= 15 && eleccion <= 29) {
                     //coily
@@ -398,28 +396,24 @@ public:
                         Coily* coily = new Coily(piramide, "coilyBola", 1, 0, 9, -3);
                         enemies.push_back(coily);
                         hasCoily = true;
-                        maxEnemigos++;
                         std::cout<< "meto redblobl" << std::endl;
                     }
                 } else if (eleccion >= 30 && eleccion <= 44) {
                     //ugg o wrong way
-                    /*if(eleccion <= 29) {
+                    if(eleccion <= 37) {
                         UggWrongWay* ugg = new UggWrongWay(piramide, "Ugg", 6, 6, 9, -6);
                         enemies.push_back(ugg);
-                        maxEnemigos++;
                     }else {
                         UggWrongWay* WrongWay = new UggWrongWay(piramide, "WrongWay", 6, 0, 9, -6);
                         enemies.push_back(WrongWay);
-                        maxEnemigos++;
-                    }*/
+                    }
                 } else if (eleccion >= 45 && eleccion <= 60) {
                     //slick o sam
-                    /*if(!hasSlickSam){
+                    if(!hasSlickSam){
                         SlickSam* slickObj = new SlickSam(piramide, "Slick", 1, 0, 9, -6);
                         enemies.push_back(slickObj);
                         hasSlickSam = true;
-                        maxEnemigos++;
-                    }*/
+                    }
                 }
                 //reinicio periodEnemies
                 periodEnemies = 0;
