@@ -36,11 +36,6 @@ public:
     }
 
     void AIMovement(const int& qberti, const int& qbertj){
-        if(state == REACHING_LEDGE && reachQberti == VACIO){
-            //si tenemos que llegar al borde y no tenemos última posición de qbert, la pillamos para llegar al borde
-            reachQberti = qberti;
-            reachQbertj = qbertj;
-        }
 
         if(state != FALLING) {//mientras no estemos cayendo nos movemos como siempre
 
@@ -113,7 +108,9 @@ public:
             }
         }
 
-        if((getI() == getJ() || getI() == 0) && state == REACHING_LEDGE){
+        if(getI() == reachQberti && getJ() == reachQbertj && state == REACHING_LEDGE){
+            std::cout <<"REACH QBERT "<<reachQberti<<std::endl;
+            std::cout <<"REACH QBERT "<<reachQbertj<<std::endl;
             state = FALLING;
             setFalling(true);
             if(getSourceX()!=0) {
@@ -121,13 +118,22 @@ public:
             }
             //playOnce(fallingSound);
             //TODO FALLING ANIMATION OR SO
-
+            reachQberti = VACIO;
+            reachQbertj = VACIO;
         }
 
         assignIJ();
 
         Enemy::setJumping(true);
         Enemy::setSourceX(getSourceX()- leftSprite);
+    }
+
+    void setReachQberti(int reachQberti) {
+        Coily::reachQberti = reachQberti;
+    }
+
+    void setReachQbertj(int reachQbertj) {
+        Coily::reachQbertj = reachQbertj;
     }
 
     State getState() const {
