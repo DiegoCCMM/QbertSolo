@@ -6,7 +6,7 @@
 #include "Platillo.hpp"
 #include "Enemy.hpp"
 
-#define SUPERPOWER_PERIOD 20
+#define SUPERPOWER_PERIOD 10
 
 #ifndef ALLEGRO5TUTORIAL_QBERT_HPP
 #define ALLEGRO5TUTORIAL_QBERT_HPP
@@ -109,7 +109,7 @@ public:
                                     for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
                                         if(it.operator*()->isCoily){
 
-                                            Coily* col = (Coily*)(it.operator*());
+                                            Coily* col = dynamic_cast<Coily*>(it.operator*());
 
                                             if(col->coilyCouldFall()) {
                                                 col->setState(REACHING_LEDGE);
@@ -151,6 +151,7 @@ public:
                         if(superpower){
                             if(timerSuperPower == SUPERPOWER_PERIOD){
                                 superpower = false;
+                                timerSuperPower = 0;
                             }else{
                                 timerSuperPower++;
                             }
