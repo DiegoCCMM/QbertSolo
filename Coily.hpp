@@ -24,6 +24,7 @@ public:
         secondPhaseDraw = draw;
         leftSprite = 16;
         Enemy::isCoily = true;
+        Character::y = piramide.map[i][j].y -32-10-32;
     }
 
     void setState(State s){

@@ -206,32 +206,39 @@ public:
             qbert.movement(&piramide, height, platillos, enemies, hasCoily, hasSlickSam, p);
 
             if (!qbert.isFalling() || !qbert.hasSuperpower()) {
-                checkRandMovementEnemies();
                 int i = -2, j = -2;
                 //mover a todos los enemigos
                 for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
-                    it.operator*()->movement(&piramide, height, i, j);
-                    if (it.operator*()->getI() == qbert.getI() && it.operator*()->getJ() == qbert.getJ()) {
-                        if(it.operator*()->hasHelpingPower()){ // Blob verde
-                            qbert.setSuperpower(true);
-                            puntuacion += 100;
-                            enemies.erase(it);
-                            break;
-                        }else if(it.operator*()->hasChangingGroundPower()) { // Slick y Sam
-                            hasSlickSam = false;
-                            puntuacion += 300;
-                            enemies.erase(it);
-                            break;
-                        }else {
-                            //enemigo mata a qbert
-                            qbert.setColision(true);
-                            qbert.setLives(qbert.getLives() - 1);
-                            qbert.animacionMuerte(&piramide);
-                            hasCoily = qbert.reset(&piramide, p, enemies, qbert.getI(), qbert.getJ(), qbert.getDir());
-                            hasSlickSam = false;
-                            puntuacion += p;
-                            break;
+                    // Si no esta bajando del cielo, es decir, esta en el campo de
+                    // juego, se calculan sus movimientos aleatorios y el resto
+                    if(!it.operator*()->estaCielo()) {
+                        checkRandMovementEnemies(it);
+                        it.operator*()->movement(&piramide, height, i, j);
+                        if (it.operator*()->getI() == qbert.getI() && it.operator*()->getJ() == qbert.getJ()) {
+                            if (it.operator*()->hasHelpingPower()) { // Blob verde
+                                qbert.setSuperpower(true);
+                                puntuacion += 100;
+                                enemies.erase(it);
+                                break;
+                            } else if (it.operator*()->hasChangingGroundPower()) { // Slick y Sam
+                                hasSlickSam = false;
+                                puntuacion += 300;
+                                enemies.erase(it);
+                                break;
+                            } else {
+                                //enemigo mata a qbert
+                                qbert.setColision(true);
+                                qbert.setLives(qbert.getLives() - 1);
+                                qbert.animacionMuerte(&piramide);
+                                hasCoily = qbert.reset(&piramide, p, enemies, qbert.getI(), qbert.getJ(),
+                                                       qbert.getDir());
+                                hasSlickSam = false;
+                                puntuacion += p;
+                                break;
+                            }
                         }
+                    } else { // El enemigo esta bajando del cielo
+                        it.operator*()->movement(&piramide, height, i, j);
                     }
                 }
 
@@ -382,25 +389,26 @@ public:
                 int eleccion = dist(mt);
                 if (eleccion >= 0 && eleccion <= 14) {
                     //redblob o poder
-                    //Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-                    //enemies.push_back(&redblob);
-                    //maxEnemigos++;
+                    /*Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
+                    enemies.push_back(&redblob);
+                    maxEnemigos++;*/
                 } else if (eleccion >= 15 && eleccion <= 29) {
                     //coily
-                    /*if (!hasCoily) {
+                    if (!hasCoily) {
+                        // TODO: coily puede aparecer en el (1,0) o (1,1)
                         Coily coily = Coily(piramide, "coilyBola", 1, 0, 9, -3);
                         enemies.push_back(&coily);
                         hasCoily = true;
-                    }*/
-                    //maxEnemigos++;
+                    }
+                    maxEnemigos++;
                 } else if (eleccion >= 30 && eleccion <= 44) {
                     //ugg o wrong way
-                    UggWrongWay ugg = UggWrongWay(piramide, "Ugg", 6, 6, 9, -6);
+                    /*UggWrongWay ugg = UggWrongWay(piramide, "Ugg", 6, 6, 9, -6);
                     enemies.push_back(&ugg);
 
                     UggWrongWay WrongWay = UggWrongWay(piramide, "WrongWay", 6, 0, 9, -6);
                     enemies.push_back(&WrongWay);
-                    maxEnemigos++;
+                    maxEnemigos++;*/
                 } else if (eleccion >= 45 && eleccion <= 60) {
                     //slick o sam
                     /*if(!hasSlickSam){
@@ -470,15 +478,15 @@ public:
         numPlayerObj.destroy();
     }
 
-    void checkRandMovementEnemies() {
-        for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++){
+    void checkRandMovementEnemies(std::_List_iterator<Enemy*> it) {
+        //for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++){
             if(it.operator*()->getRandMoveTimer() == it.operator*()->getRandMovePeriod()){
                 it.operator*()->randomMovement(qbert.getI(), qbert.getJ());
                 it.operator*()->resetRandomMoveTimer();
             }else {
                 it.operator*()->randomMoveTimerplusplus();
             }
-        }
+        //}
     }
 
     void setMoveQBert(Direction dir){

@@ -263,7 +263,7 @@ public:
             }
 
             // puntos ganador 1º
-            if(timer%50 >= 0 && timer%50 <= 20) {
+            //if(timer%50 >= 0 && timer%50 <= 20) {
                 x += 10;
                 frase = std::to_string(personas.begin()->score);
                 for (std::string::size_type i = 0; i < frase.size(); i++) {
@@ -271,7 +271,7 @@ public:
                                           8, 8, x, y, 0);
                     x += 8;
                 }
-            }
+            //}
 
             // OTROS JUGADORES (numRegistros)
             x = width/2 - 100, y = height/2 - 60;
