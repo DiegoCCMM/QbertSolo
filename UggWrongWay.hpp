@@ -8,7 +8,7 @@
 #define ALLEGRO5TUTORIAL_UGGWRONGWAY_HPP
 
 class UggWrongWay : public Enemy{
-    bool isUgg = true;
+    bool isUgg = true;  //ugg goes from right to left, wrong way, on the other way
 public:
     UggWrongWay(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube) : Enemy(
             piramide, nom, i, j, xRespectCube, yRespectCube) {
@@ -27,11 +27,28 @@ public:
         std::random_device rd;
         std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<int> dist(1, 2);
+        if(isUgg) {
+            if (dist(mt) == 1) {
+                setDir(TOPLEFT);
+            } else {
+                if(getI() != 6){//si no estamos en la ultima fila
+                    setDir(DOWNLEFT);
+                }else{
+                    setDir(TOPLEFT);
+                }
 
-        if(dist(mt) == 1){
-            setDir(TOPLEFT);
-        }else{
-            setDir(DOWNLEFT);
+            }
+        }else{//somos wrong way, vamos de izq a derecha
+            if (dist(mt) == 1) {
+                setDir(TOPRIGHT);
+            } else {
+                if(getI() != 6){//si no estamos en la ultima fila
+                    setDir(DOWNRIGHT);
+                }else{
+                    setDir(TOPRIGHT);
+                }
+
+            }
         }
         assignIJ();
 
