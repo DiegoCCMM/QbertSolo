@@ -204,9 +204,11 @@ public:
                     //mover a todos los enemigos
                     for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
                         if (!it.operator*()->estaCielo()) {
+                            i = it.operator*()->getI();
+                            j = it.operator*()->getJ();
                             checkRandMovementEnemies(it);
                             it.operator*()->movement(&piramide, height, i, j);
-                            if (it.operator*()->getI() == qbert.getI() && it.operator*()->getJ() == qbert.getJ()) {
+                            if (i == qbert.getI() && j == qbert.getJ() && !it.operator*()->isJumping()) {
                                 if (it.operator*()->hasHelpingPower()) { // Blob verde
                                     qbert.setSuperpower(true);
                                     puntuacion += 100;
