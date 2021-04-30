@@ -6,15 +6,19 @@
 #include "SlickSam.hpp"
 #include "UggWrongWay.hpp"
 
+#define limEnemigos 6
+
 #include <random>
 
 #ifndef QBERT_ESCENA_HPP
 #define QBERT_ESCENA_HPP
 
-#define periodoEnemigos 12
+#define periodoEnemigos 120
 
 class Escena{
     float width, height;
+
+    int maxEnemigos = 0;
 
     Objeto  playerObj, numPlayerObj,
             puntuacionObj,
@@ -374,17 +378,23 @@ public:
                     //redblob o poder
                     //Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
                     //enemies.push_back(&redblob);
+                    //maxEnemigos++;
                 } else if (eleccion >= 15 && eleccion <= 29) {
                     //coily
-                    if (!hasCoily) {
+                    /*if (!hasCoily) {
                         Coily coily = Coily(piramide, "coilyBola", 1, 0, 9, -3);
                         enemies.push_back(&coily);
                         hasCoily = true;
-                    }
+                    }*/
+                    //maxEnemigos++;
                 } else if (eleccion >= 30 && eleccion <= 44) {
                     //ugg o wrong way
-                    //UggWrongWay ugg = UggWrongWay(piramide, "Ugg", 6, 6, 9, -6);
-                    //enemies.push_back(&ugg);
+                    UggWrongWay ugg = UggWrongWay(piramide, "Ugg", 6, 6, 9, -6);
+                    enemies.push_back(&ugg);
+
+                    UggWrongWay WrongWay = UggWrongWay(piramide, "WrongWay", 6, 0, 9, -6);
+                    enemies.push_back(&WrongWay);
+                    maxEnemigos++;
                 } else if (eleccion >= 45 && eleccion <= 60) {
                     //slick o sam
                     /*if(!hasSlickSam){
