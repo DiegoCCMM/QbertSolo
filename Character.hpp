@@ -26,6 +26,8 @@ class Character : public Objeto {
 
     ALLEGRO_SAMPLE *jumpSound = nullptr;
 
+protected:
+    std::string nom;
 public:
 
     /* Constructor */
@@ -36,6 +38,8 @@ public:
         this-> sizePixelsX = 16;
         this-> sizePixelsY = 16;
         this->xRespectCube = xRespectCube, this->yRespectCube = yRespectCube;
+
+        nom = nom;
 
         std::string path = "../sprites/" + nom + ".png";
         ALLEGRO_BITMAP *player = al_load_bitmap(path.c_str());

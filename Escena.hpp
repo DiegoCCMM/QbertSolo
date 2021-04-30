@@ -198,32 +198,35 @@ public:
         if(!qbert.isColision() && !piramide.isPiramideCompleta()) {
             qbert.movement(&piramide, height, platillos, enemies, hasCoily, hasSlickSam, p);
 
-            if (!qbert.isFalling() || !qbert.hasSuperpower()) {
-                checkRandMovementEnemies();
-                int i = -2, j = -2;
-                //mover a todos los enemigos
-                for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
-                    it.operator*()->movement(&piramide, height, i, j);
-                    if (it.operator*()->getI() == qbert.getI() && it.operator*()->getJ() == qbert.getJ()) {
-                        if(it.operator*()->hasHelpingPower()){ // Blob verde
-                            qbert.setSuperpower(true);
-                            puntuacion += 100;
-                            enemies.erase(it);
-                            break;
-                        }else if(it.operator*()->hasChangingGroundPower()) { // Slick y Sam
-                            hasSlickSam = false;
-                            puntuacion += 300;
-                            enemies.erase(it);
-                            break;
-                        }else {
-                            //enemigo mata a qbert
-                            qbert.setColision(true);
-                            qbert.setLives(qbert.getLives() - 1);
-                            qbert.animacionMuerte(&piramide);
-                            hasCoily = qbert.reset(&piramide, p, enemies, qbert.getI(), qbert.getJ(), qbert.getDir());
-                            hasSlickSam = false;
-                            puntuacion += p;
-                            break;
+            if (!qbert.isFalling()) {
+                if(!qbert.hasSuperpower()) {
+                    checkRandMovementEnemies();
+                    int i = -2, j = -2;
+                    //mover a todos los enemigos
+                    for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
+                        it.operator*()->movement(&piramide, height, i, j);
+                        if (it.operator*()->getI() == qbert.getI() && it.operator*()->getJ() == qbert.getJ()) {
+                            if (it.operator*()->hasHelpingPower()) { // Blob verde
+                                qbert.setSuperpower(true);
+                                puntuacion += 100;
+                                enemies.erase(it);
+                                break;
+                            } else if (it.operator*()->hasChangingGroundPower()) { // Slick y Sam
+                                hasSlickSam = false;
+                                puntuacion += 300;
+                                enemies.erase(it);
+                                break;
+                            } else {
+                                //enemigo mata a qbert
+                                qbert.setColision(true);
+                                qbert.setLives(qbert.getLives() - 1);
+                                qbert.animacionMuerte(&piramide);
+                                hasCoily = qbert.reset(&piramide, p, enemies, qbert.getI(), qbert.getJ(),
+                                                       qbert.getDir());
+                                hasSlickSam = false;
+                                puntuacion += p;
+                                break;
+                            }
                         }
                     }
                 }
@@ -368,7 +371,7 @@ public:
 
     void generarEnemigos(){
         if(!qbert.isColision() || !qbert.isEnPlatillo()) {
-            if (periodEnemies >= periodoEnemigos) {
+            if (periodEnemies >= periodoEnemigos && maxEnemigos < limEnemigos) {
                 //genera un enemigo aleatorio
                 std::random_device rd;
                 std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
@@ -376,31 +379,40 @@ public:
                 int eleccion = dist(mt);
                 if (eleccion >= 0 && eleccion <= 14) {
                     //redblob o poder
-                    //Enemy redblob = Enemy(piramide, "Redblob", 1, 0, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-                    //enemies.push_back(&redblob);
-                    //maxEnemigos++;
+                    std::cout<< "meto redblob" << std::endl;
+                    Enemy* redblob = new Enemy(piramide, "Redblob", 1, 1, 9, 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
+                    enemies.push_back(redblob);
+                    maxEnemigos++;
+                    std::cout<< "meto redblobl" << std::endl;
+
                 } else if (eleccion >= 15 && eleccion <= 29) {
                     //coily
-                    /*if (!hasCoily) {
-                        Coily coily = Coily(piramide, "coilyBola", 1, 0, 9, -3);
-                        enemies.push_back(&coily);
+                    if (!hasCoily) {
+                        std::cout<< "meto coily" << std::endl;
+                        Coily* coily = new Coily(piramide, "coilyBola", 1, 0, 9, -3);
+                        enemies.push_back(coily);
                         hasCoily = true;
-                    }*/
-                    //maxEnemigos++;
+                        maxEnemigos++;
+                        std::cout<< "meto redblobl" << std::endl;
+                    }
                 } else if (eleccion >= 30 && eleccion <= 44) {
                     //ugg o wrong way
-                    UggWrongWay ugg = UggWrongWay(piramide, "Ugg", 6, 6, 9, -6);
-                    enemies.push_back(&ugg);
-
-                    UggWrongWay WrongWay = UggWrongWay(piramide, "WrongWay", 6, 0, 9, -6);
-                    enemies.push_back(&WrongWay);
-                    maxEnemigos++;
+                    /*if(eleccion <= 29) {
+                        UggWrongWay* ugg = new UggWrongWay(piramide, "Ugg", 6, 6, 9, -6);
+                        enemies.push_back(ugg);
+                        maxEnemigos++;
+                    }else {
+                        UggWrongWay* WrongWay = new UggWrongWay(piramide, "WrongWay", 6, 0, 9, -6);
+                        enemies.push_back(WrongWay);
+                        maxEnemigos++;
+                    }*/
                 } else if (eleccion >= 45 && eleccion <= 60) {
                     //slick o sam
                     /*if(!hasSlickSam){
-                        SlickSam slickObj = SlickSam(piramide, "Slick", 1, 0, 9, -6);
-                        enemies.push_back(&slickObj);
+                        SlickSam* slickObj = new SlickSam(piramide, "Slick", 1, 0, 9, -6);
+                        enemies.push_back(slickObj);
                         hasSlickSam = true;
+                        maxEnemigos++;
                     }*/
                 }
                 //reinicio periodEnemies
@@ -465,13 +477,24 @@ public:
     }
 
     void checkRandMovementEnemies() {
-        for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++){
+        auto it = enemies.begin();
+        while (it != enemies.end()){
             if(it.operator*()->getRandMoveTimer() == it.operator*()->getRandMovePeriod()){
+                std::cout<< "muevo enemi" << std::endl;
+                qbert.getI();
+                std::cout<< "muevo enemiI" << std::endl;
+                qbert.getJ();
+                std::cout<< "muevo enemiJ" << std::endl;
+                std::cout << it.operator*()->isCoily << std::endl;
+                std::cout<< "lolazo" << std::endl;
+
                 it.operator*()->randomMovement(qbert.getI(), qbert.getJ());
                 it.operator*()->resetRandomMoveTimer();
+                std::cout << "acabo de mover enemi" << std::endl;
             }else {
                 it.operator*()->randomMoveTimerplusplus();
             }
+            it++;
         }
     }
 

@@ -4,6 +4,7 @@
 #include "Character.hpp"
 #include <random>
 #include <chrono>
+#include <list>
 
 #ifndef ALLEGRO5TUTORIAL_ENEMY_HPP
 #define ALLEGRO5TUTORIAL_ENEMY_HPP
@@ -62,11 +63,15 @@ public:
         // TODO: revisar, no parece haber aleatoriedad
         std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<int> dist(1, 2);
+
+
+        std::cout << nom << std::endl;
+
         std::cout << "valor qbert i" << i << std::endl;
         std::cout << "valor qbert j" << j << std::endl;
 
-        std::cout << "valor qbert i*" << getI() << std::endl;
-        std::cout << "valor qbert j" << getJ() << std::endl;
+        std::cout << "valor enemy i*" << getI() << std::endl;
+        std::cout << "valor enemy j" << getJ() << std::endl;
 
         if(dist(mt) == 1){
             setDir(DOWNRIGHT);
