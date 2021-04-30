@@ -373,7 +373,7 @@ public:
     }
 
     void generarEnemigos(){
-        if(!qbert.isColision() || !qbert.isEnPlatillo()) {
+        if(!qbert.isColision() || !qbert.isEnPlatillo() || !qbert.hasSuperpower()) {
             if (periodEnemies >= periodoEnemigos && enemies.size() < limEnemigos) {
                 //genera un enemigo aleatorio
                 std::random_device rd;
