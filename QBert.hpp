@@ -27,7 +27,7 @@ class QBert : public Character{
 public:
 
     /* Constructor */
-    QBert(Piramide piramide) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 7, -8) {
+    QBert(Piramide piramide) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 8, -8) {
         must_init(fallingSound, "qbert-FallingSound");
         setSourceX(0);
     }

@@ -10,9 +10,9 @@
 #include <iostream>
 #include "Objeto.hpp"
 
-constexpr static const float movementX = 4.0;
-constexpr static const float movementY = 12.0;
-constexpr static const int airTime = 6;
+constexpr static const float movementX = 2.0;
+constexpr static const float movementY = 6.0;
+constexpr static const int airTime = 10;
 
 enum Direction {
     TOPRIGHT, TOPLEFT, DOWNRIGHT, DOWNLEFT

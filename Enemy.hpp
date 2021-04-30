@@ -47,8 +47,8 @@ public:
         std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         //
         std::uniform_int_distribution<int> dist(MIN, MAX);
-        //Enemy::randMovePeriod = dist(mt); // A 30 es una buena velocidad
-        Enemy::randMovePeriod = 30; // A 30 es una buena velocidad
+        //Enemy::randMovePeriod = dist(mt); // A 25 es una buena velocidad
+        Enemy::randMovePeriod = 25; // A 25 es una buena velocidad
     }
 
     int getRandMoveTimer() const { return randMoveTimer; }

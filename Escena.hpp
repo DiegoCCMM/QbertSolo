@@ -110,14 +110,20 @@ public:
         gameoverObj.setDraw(al_load_bitmap("../sprites/gameover.png"));
         gameoverObj.setSizePixelsX(8);
         gameoverObj.setSizePixelsY(8);
-        gameoverObj.setXRespectCube(-16);
+        gameoverObj.setXRespectCube(-18);
         gameoverObj.setYRespectCube(3*32);
 
     }
 
     void load(float _width, float _height){
         width = _width, height = _height;
-        if(level==1 && round==1) puntuacion = 0;
+        int vidas_aux;
+        if(level==1 && round==1) {
+            puntuacion = 0;
+            vidas_aux = 3;
+        } else {
+            vidas_aux = qbert.getLives();
+        }
         gameover = false;
 
         // Cargar mapa
@@ -125,6 +131,7 @@ public:
 
         // Cargar personajes
         qbert = QBert(piramide);
+        qbert.setLives(vidas_aux);
 
         enemies.clear();
         hasCoily=false;
@@ -290,7 +297,6 @@ public:
                 float aux_x = gameoverObj.getX();
                 for (std::string::size_type i = 0; i < frase.size(); i++) {
                     if(int(frase[i]) != 32) {
-                        std::cout << int(frase[i]) % 65 << std::endl;
                         gameoverObj.setSourceJ(int(frase[i]) % 65);
                         gameoverObj.setSourceI(7);
                     } else{
