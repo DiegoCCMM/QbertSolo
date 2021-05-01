@@ -50,6 +50,14 @@ public:
         if (nom == "GreenBlob") {
             setHelpingPower(true);
         }
+
+        if(nom == "Slick" || nom == "Sam"){
+            ALLEGRO_SAMPLE *musica1 = al_load_sample(("../sounds/" + nom + "1.ogg").c_str());
+            ALLEGRO_SAMPLE *musica2 = al_load_sample(("../sounds/" + nom + "2.ogg").c_str());
+
+            playOnce(musica1);
+            playOnce(musica2);
+        }
     }
 
     virtual void randomMovement(int i, int j) {
@@ -113,11 +121,14 @@ public:
                                 (nom == "Ugg" && (getJ() <= 0 || getJ() > getI() || getI() > 6)) ||
                                 (nom == "WrongWay" && (getJ() < 0 || getJ() >= getI() || getI() > 6)) ){
                             setFalling(true);
-                            if(nom == "coilyBola") puntuacion+=500;
+                            if(nom == "coilyBola") {
+                                puntuacion+=500;
+                                ALLEGRO_SAMPLE *coilyCae = al_load_sample("../sounds/snake-fall.ogg");
+                                playOnce(coilyCae);
+                            }
                             if (getSourceX() != 0) {
                                 setSourceX(getSourceX() + 16);
                             }
-                            //playOnce(fallingSound);
                         } else {
                             //WE LANDED
                             playOnce(getJumpSound());

@@ -98,6 +98,8 @@ public:
         must_init(jumpSound, ("../sounds/" + nom + "-jump.ogg").c_str());
     }
 
+
+
 };
 
 #endif //ALLEGRO5TUTORIAL_CHARACTER_HPP

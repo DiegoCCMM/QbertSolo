@@ -161,6 +161,7 @@ public:
         std::cout << "entro2" << std::endl;
         if(getI() == 6){ // anyadir condicion de que el estado anterior sea una bola
             state = AI;
+            CsetJumpSound("coilyEstirado");
             setSourceX(14);
             setYRespectCube( -20 );
         }

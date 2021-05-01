@@ -20,6 +20,11 @@ public:
         i = 6;
         j = 6;
 
+        ALLEGRO_SAMPLE *musica1 = al_load_sample(("../sounds/" + nom + "-1.ogg").c_str());
+        ALLEGRO_SAMPLE *musica2 = al_load_sample(("../sounds/" + nom + "-2.ogg").c_str());
+
+        playOnce(musica1);
+        playOnce(musica2);
     }
 
     void randomMovement(int i, int j) override {
