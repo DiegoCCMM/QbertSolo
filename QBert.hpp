@@ -113,7 +113,9 @@ public:
 
                                             if(col->coilyCouldFall()) {
                                                 col->setState(REACHING_LEDGE);
-                                                if(getJ()<0) {
+                                                col->setReachQberti(getI());
+                                                col->setReachQbertj(getJ());
+                                                /*if(getJ()<0) {
                                                     col->setReachQberti(getI());
                                                     col->setReachQbertj(getJ() -1);
                                                 }else if(getJ() > getI()){
@@ -122,7 +124,7 @@ public:
                                                 }else if( getI()>6){
                                                     col->setReachQberti(getI()-1);
                                                     col->setReachQbertj(getJ());
-                                                }
+                                                }*/
                                             }
                                         }
                                     }

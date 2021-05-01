@@ -255,7 +255,6 @@ public:
         }
     }
 
-
     void drawAll() {
 
         if (qbert.isFalling()) { // Si QBert esta cayendo primero se dibuja a QBert y luego la piramide
@@ -268,6 +267,11 @@ public:
             }
         } else {
             if (qbert.getLives() != 0) {
+                for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
+                    if(it.operator*()->isFalling() && it.operator*()->getI()<6){
+                        it.operator*()->drawBitmap();
+                    }
+                }
                 // Dibujado de las cosas durante el juego normal
                 piramide.drawBitmap();
                 if (qbert.isColision()) { //qbert se enfada
@@ -284,7 +288,9 @@ public:
                 }
                 qbert.drawBitmap();
                 for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
-                    it.operator*()->drawBitmap();
+                    if(!it.operator*()->isFalling() || it.operator*()->getI()>=6){
+                        it.operator*()->drawBitmap();
+                    }
                 }
             } else {
                 // QBERT tiene 0 vidas

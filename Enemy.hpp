@@ -103,26 +103,30 @@ public:
                         if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
                             setY(getY() + movementY);
                     } else if (getTimer() > airTime) {
-                        //WE LANDED
-                        playOnce(getJumpSound());
-                        if (hasChangingGroundPower()) {
-                            int none = 0;
-                            piramide->changeCubeInverse(getI(), getJ());
+                        if(getJ()<0 || getJ() > getI() || getI()>6){
+                            setFalling(true);
+                            if(getSourceX()!=0) {
+                                setSourceX(getSourceX() + 16);
+                            }
+                            //playOnce(fallingSound);
+                        } else {
+                            //WE LANDED
+                            playOnce(getJumpSound());
+                            if (hasChangingGroundPower()) {
+                                int none = 0;
+                                piramide->changeCubeInverse(getI(), getJ());
+                            }
+                            setX(piramide->map[getI()][getJ()].x + getXRespectCube());
+                            setY(piramide->map[getI()][getJ()].y + getYRespectCube());
+                            setTimer(0);
+                            setJumping(false);
+                            setSourceX(getSourceX() + leftSprite);
+                            i = getI();
+                            j = getJ();
                         }
-                        setX(piramide->map[getI()][getJ()].x + getXRespectCube());
-                        setY(piramide->map[getI()][getJ()].y + getYRespectCube());
-                        setTimer(0);
-                        setJumping(false);
-                        setSourceX(getSourceX() + leftSprite);
-                        i = getI();
-                        j = getJ();
                     }
                 } else {
-                    if (getY() <= HEIGHT) {
-                        setY(getY() + movementY);
-                    } else {
-                        setFalling(false);
-                    }
+                    setY(getY() + movementY);
                 }
             }
         } else{ // Esta bajando del cielo, CIELO

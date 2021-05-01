@@ -3,10 +3,10 @@
 //
 #include     <cmath>
 enum State{
-    GOING_DOWN, AI, COULD_FALL, REACHING_LEDGE, FALLING
+    GOING_DOWN, AI, COULD_FALL, REACHING_LEDGE
 };
 
-#define VACIO -10
+#define VACIO 0
 
 #ifndef ALLEGRO5TUTORIAL_COILY_HPP
 #define ALLEGRO5TUTORIAL_COILY_HPP
@@ -37,7 +37,7 @@ public:
 
     void AIMovement(const int& qberti, const int& qbertj){
 
-        if(state != FALLING) {//mientras no estemos cayendo nos movemos como siempre
+        if(!isFalling()) {//mientras no estemos cayendo nos movemos como siempre
 
             int coilyI = getI(), coilyJ = getJ();
             int dirI, dirJ;
@@ -108,11 +108,29 @@ public:
             }
         }
 
-        if(getI() == reachQberti && getJ() == reachQbertj && state == REACHING_LEDGE){
-            std::cout <<"REACH QBERT "<<reachQberti<<std::endl;
-            std::cout <<"REACH QBERT "<<reachQbertj<<std::endl;
-            state = FALLING;
-            setFalling(true);
+        std::cout <<"********* "<<getI()<<std::endl;
+        std::cout <<"********* "<<getJ()<<std::endl;
+        std::cout <<"********* "<<reachQberti<<std::endl;
+        std::cout <<"********* "<<reachQbertj<<std::endl;
+
+        /*int i_obj, j_obj;
+        if(reachQbertj<0) {
+            i_obj = reachQberti+1;
+            j_obj = reachQbertj+1;
+        }else if(reachQbertj > reachQberti){
+            i_obj = reachQberti+1;
+            j_obj = reachQbertj;
+        }else if( reachQberti>6) {
+            i_obj = reachQberti - 1;
+            j_obj = reachQbertj;
+        }*/
+
+        /*if(reachQbertj<0 || reachQbertj > reachQberti || reachQberti>6){
+            setState(REACHING_LEDGE);
+        }
+
+        if(getI() == reachQberti && getJ() == reachQbertj && state==REACHING_LEDGE){
+
             if(getSourceX()!=0) {
                 setSourceX(getSourceX() - 16);
             }
@@ -120,7 +138,7 @@ public:
             //TODO FALLING ANIMATION OR SO
             reachQberti = VACIO;
             reachQbertj = VACIO;
-        }
+        }*/
 
         assignIJ();
 
