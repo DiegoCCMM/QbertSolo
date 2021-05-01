@@ -407,6 +407,7 @@ public:
                 std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
                 std::uniform_int_distribution<int> dist(0, 60);
                 int eleccion = dist(mt);
+
                 if (eleccion >= 0 && eleccion <= 14) {
                     //redblob o poder
                     if(eleccion <= 12 && enemigosPosibles[1]) {
