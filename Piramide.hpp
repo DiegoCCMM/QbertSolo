@@ -98,7 +98,6 @@ public:
 
     /* Cambia el cubo [i,j] al color anterior correspondiente --> Slick y Sam */
     void changeCubeInverse(int i, int j){
-        // TODO: comprobar si esta bien
         if(map[i][j].color != 0) { // Solo nos intersa cambiar el color cuando no es el inicial
             if (level<=3) {
                 map[i][j].color = 0;

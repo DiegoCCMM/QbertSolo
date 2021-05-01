@@ -124,7 +124,7 @@ public:
         piramide.loadMap(level, round, width, height);
 
         // Cargar personajes
-        qbert = QBert(piramide);
+        qbert = QBert(piramide, qbert.getLives());
 
         enemies.clear();
         hasCoily = false;
@@ -241,7 +241,7 @@ public:
                                         qbert.setColision(true);
                                         qbert.setLives(qbert.getLives() - 1);
                                         qbert.animacionMuerte(&piramide);
-                                        hasCoily = qbert.reset(&piramide, p, enemies, qbert.getI(), qbert.getJ(),
+                                        hasCoily = qbert.reset(&piramide, p, enemies, true, qbert.getI(), qbert.getJ(),
                                                                qbert.getDir());
                                         hasSlickSam = false;
                                         break;
@@ -400,7 +400,7 @@ public:
     }
 
     void generarEnemigos() {
-        if (!qbert.isColision() && !qbert.isEnPlatillo() && !qbert.hasSuperpower()) {
+        if (!qbert.isColision() && !qbert.isEnPlatillo() && !qbert.hasSuperpower() && !piramideCompleta()) {
             if (periodEnemies >= periodoEnemigos && enemies.size() < limEnemigos) {
                 //genera un enemigo aleatorio
                 std::random_device rd;
@@ -409,7 +409,7 @@ public:
                 int eleccion = dist(mt);
                 if (eleccion >= 0 && eleccion <= 14) {
                     //redblob o poder
-                    if(eleccion <= 12 && enemigosPosibles[1]) {
+                    if(eleccion <= 14 && enemigosPosibles[1]) {
                         Enemy *redblob = new Enemy(piramide, "Redblob", 1, eleccion%2, 9,
                                                    0); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(redblob);
@@ -440,11 +440,16 @@ public:
                 } else if (eleccion >= 45 && eleccion <= 60 && enemigosPosibles[4]) {
                     //slick o sam
                     if (!hasSlickSam) {
-                        SlickSam *slickObj = new SlickSam(piramide, "Slick", 1, eleccion%2, 9, -6);
-                        enemies.push_back(slickObj);
-                        hasSlickSam = true;
+                        if(eleccion % 2 == 0) {
+                            SlickSam *slickObj = new SlickSam(piramide, "Slick", 1, eleccion % 2, 9, -6);
+                            enemies.push_back(slickObj);
+                            hasSlickSam = true;
+                        }else{
+                            SlickSam *sam = new SlickSam(piramide, "Sam", 1, eleccion % 2, 9, -6);
+                            enemies.push_back(sam);
+                            hasSlickSam = true;
+                        }
                     }
-                    // TODO: Sam
                 }
                 //reinicio periodEnemies
                 periodEnemies = 0;

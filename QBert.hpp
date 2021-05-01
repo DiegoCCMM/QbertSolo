@@ -32,12 +32,16 @@ public:
         setSourceX(0);
     }
 
+    QBert(const Piramide &piramide, int lives) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 8, -8),
+                                         lives(lives) {}
+
     /* Constructor 2 */
     QBert() : Character("qbert", DOWNRIGHT) {}
 
     /* Reinicia la posicion de Q*Bert al inicio de la piramide */
-    bool reset(Piramide *piramide, int &puntuacion, std::list<Enemy*> &enemies, int i=0, int j=0, Direction direct = DOWNLEFT){
+    bool reset(Piramide *piramide, int &puntuacion, std::list<Enemy*> &enemies, bool clearEnemies, int i=0, int j=0, Direction direct = DOWNLEFT){
         QBert::setFalling(false);
+        bool hasCoily;
         QBert::setJumping(false);
         if(QBert::getSourceX() != 0){
             QBert::setSourceX(0);
@@ -46,12 +50,20 @@ public:
         QBert::setI(i), QBert::setJ(j);
         QBert::setX(piramide->map[i][j].x+getXRespectCube());
         QBert::setY(piramide->map[i][j].y+getYRespectCube());
-        //TODO si se cae, problemas, porque puntuacion devuelve un error que esta optimized out para ahorrarnos errores
-        // pero ocurre
         piramide->changeCube(i, j, puntuacion);
         setTimer(0);
-        enemies.clear();
-        return(false);
+        if(clearEnemies){//borrar a todos los enemigos
+            enemies.clear();
+            hasCoily = false;
+        }else {//borrar enemigos menos coily
+            hasCoily = true;
+            for (const auto &item : enemies) {
+                if (!item->isCoily) {//borrar todos los enemigos excepto coily
+                    enemies.remove(item);
+                }
+            }
+        }
+        return(hasCoily);
     }
 
     /* Dibuja la figura de Q*Bert */
@@ -147,7 +159,7 @@ public:
                             platillo->updateWithQBert(_x, _y, piramide);
 
                             if(platillo->getPosQBert() == NONE) { // Q*Bert ha salido del platillo, esta en el primer cubo
-                                hasCoily = reset(piramide, puntuacion, enemies);
+                                hasCoily = reset(piramide, puntuacion, enemies, false);
                                 hasSlickSam = false;
                                 enPlatillo = false;
                                 platillos.erase(platillo);
@@ -189,7 +201,7 @@ public:
                                     colision = true;
                                     lives--;
                                     hasCoily = animacionMuerte(piramide);
-                                    hasCoily = reset(piramide, puntuacion, enemies, getI(), getJ(), getDir());
+                                    hasCoily = reset(piramide, puntuacion, enemies, true, getI(), getJ(), getDir());
                                     hasSlickSam = false;
                                     break;
                                 }
@@ -208,7 +220,7 @@ public:
                 if(getY() <= HEIGHT){
                     setY(getY() + movementY);
                 } else {
-                    hasCoily = reset(piramide, puntuacion, enemies);
+                    hasCoily = reset(piramide, puntuacion, enemies, true);
                     hasSlickSam = false;
                 }
             }
