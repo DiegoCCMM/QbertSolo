@@ -52,8 +52,8 @@ public:
         }
         assignIJ();
 
-        Enemy::setJumping(true);
-        Enemy::setSourceX(getSourceX()-16);
+        setJumping(true);
+        setSourceX(getSourceX()-16);
     }
 
     void drawBitmap() override {
@@ -62,6 +62,5 @@ public:
                               getX(), getY(), 0);
     }
 };
-
 
 #endif //ALLEGRO5TUTORIAL_UGGWRONGWAY_HPP

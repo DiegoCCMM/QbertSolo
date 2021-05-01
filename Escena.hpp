@@ -208,7 +208,7 @@ public:
                             i = it.operator*()->getI();
                             j = it.operator*()->getJ();
                             checkRandMovementEnemies(it);
-                            it.operator*()->movement(&piramide, height, &qbert, it, borrarEnemigos);
+                            it.operator*()->movement(&piramide, width, height, &qbert, it, borrarEnemigos);
                             if (it.operator*()->haColisionado()) {
                                 if (it.operator*()->hasHelpingPower()) { // Blob verde
                                     qbert.setSuperpower(true);
@@ -235,7 +235,7 @@ public:
                                 }
                             }
                         } else { // El enemigo esta bajando del cielo
-                            it.operator*()->movement(&piramide, height, &qbert, it, borrarEnemigos);
+                            it.operator*()->movement(&piramide, width, height, &qbert, it, borrarEnemigos);
                         }
                     }
                     for (const auto &item : borrarEnemigos){
@@ -396,22 +396,21 @@ public:
                 int eleccion = dist(mt);
                 if (eleccion >= 0 && eleccion <= 14) {
                     //redblob o poder
-                    /*if(eleccion <= 12) {
-                        Enemy *redblob = new Enemy(piramide, "Redblob", 1, 1, 9,
+                    if(eleccion <= 12) {
+                        Enemy *redblob = new Enemy(piramide, "Redblob", 1, eleccion%2, 9,
                                                    0); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(redblob);
-                    }else {*/
-                    Enemy *green = new Enemy(piramide, "GreenBlob", 1, 1, 9,
-                                             -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
-                    enemies.push_back(green);
-                    //}
+                    }else {
+                        Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
+                                                 -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
+                        enemies.push_back(green);
+                    }
 
                 } else if (eleccion >= 15 && eleccion <= 29) {
                     //coily
                     if (!hasCoily) {
                         std::cout << "meto coily" << std::endl;
-                        // TODO: coily puede aparecer en el (1,0) o (1,1)
-                        Coily *coily = new Coily(piramide, "coilyBola", 1, 0, 9, -3);
+                        Coily *coily = new Coily(piramide, "coilyBola", 1, eleccion%2, 9, -3);
                         enemies.push_back(coily);
                         hasCoily = true;
                         std::cout << "meto redblobl" << std::endl;
@@ -428,10 +427,11 @@ public:
                 } else if (eleccion >= 45 && eleccion <= 60) {
                     //slick o sam
                     if (!hasSlickSam) {
-                        SlickSam *slickObj = new SlickSam(piramide, "Slick", 1, 0, 9, -6);
+                        SlickSam *slickObj = new SlickSam(piramide, "Slick", 1, eleccion%2, 9, -6);
                         enemies.push_back(slickObj);
                         hasSlickSam = true;
                     }
+                    // TODO: Sam
                 }
                 //reinicio periodEnemies
                 periodEnemies = 0;

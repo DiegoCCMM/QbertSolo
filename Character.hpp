@@ -39,7 +39,7 @@ public:
         this-> sizePixelsY = 16;
         this->xRespectCube = xRespectCube, this->yRespectCube = yRespectCube;
 
-        nom = nom;
+        this->nom = nom;
 
         std::string path = "../sprites/" + nom + ".png";
         ALLEGRO_BITMAP *player = al_load_bitmap(path.c_str());

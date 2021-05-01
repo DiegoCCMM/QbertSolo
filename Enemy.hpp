@@ -43,6 +43,10 @@ public:
         // TODO: para los niveles del 5 al 9 que se incrementa la dificultad
         // con modificar esta variable a menor valor bastaria creo para que vayan mas rapido
 
+        if(nom != "Ugg" && nom != "WrongWay"){
+            Character::y = piramide.map[i][j].y -32-10-32;
+        }
+
         if (nom == "GreenBlob") {
             setHelpingPower(true);
         }
@@ -82,7 +86,7 @@ public:
         else if (getDir() == DOWNLEFT) setI(getI() + 1);
     }
 
-    void movement(Piramide *piramide, int HEIGHT, Character *qbert, std::_List_iterator<Enemy *> it,
+    void movement(Piramide *piramide, int WIDTH, int HEIGHT, Character *qbert, std::_List_iterator<Enemy *> it,
                   std::list<Enemy*> & borrarEnemies) {
         if (estado == INGAME) { // Esta en el campo de juego
             if (isJumping()) {
@@ -105,7 +109,9 @@ public:
                         if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
                             setY(getY() + movementY);
                     } else if (getTimer() > airTime) {
-                        if (getJ() < 0 || getJ() > getI() || getI() > 6) {
+                        if ((getJ() < 0 || getJ() > getI() || getI() > 6) ||
+                                (nom == "Ugg" && (getJ() <= 0 || getJ() > getI() || getI() > 6)) ||
+                                (nom == "WrongWay" && (getJ() < 0 || getJ() >= getI() || getI() > 6)) ){
                             setFalling(true);
                             if (getSourceX() != 0) {
                                 setSourceX(getSourceX() + 16);
@@ -130,9 +136,17 @@ public:
                         }
                     }
                 } else {    //se cae de la piramide
-                    if(getY() <= HEIGHT){
+
+                    if(nom == "Ugg" && getX() >= WIDTH/2-200){
+                        setX(getX() - movementX);
+                    }
+                    else if(nom == "WrongWay" && getX() <= WIDTH/2+200){
+                        setX(getX() + movementX);
+                    }
+                    else if(nom != "WrongWay" && nom != "Ugg" && getY() <= HEIGHT){
                         setY(getY() + movementY);
-                    }else{//si hemos llegado al suelo
+                    }
+                    else{//si hemos llegado al suelo
                         borrarEnemies.push_back(it.operator*());//lo borramos
                     }
                 }
