@@ -409,7 +409,7 @@ public:
                 int eleccion = dist(mt);
                 if (eleccion >= 0 && eleccion <= 14) {
                     //redblob o poder
-                    if(eleccion <= 14 && enemigosPosibles[1]) {
+                    if(eleccion <= 12 && enemigosPosibles[1]) {
                         Enemy *redblob = new Enemy(piramide, "Redblob", 1, eleccion%2, 9,
                                                    0); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(redblob);
@@ -418,7 +418,7 @@ public:
                                                  -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(green);
                     }
-
+                    periodEnemies = 0;
                 } else if (eleccion >= 15 && eleccion <= 29 && enemigosPosibles[2]) {
                     //coily
                     if (!hasCoily) {
@@ -428,6 +428,7 @@ public:
                         hasCoily = true;
                         std::cout << "meto redblobl" << std::endl;
                     }
+                    periodEnemies = 0;
                 } else if (eleccion >= 30 && eleccion <= 44 && enemigosPosibles[3]) {
                     //ugg o wrong way
                     if (eleccion <= 37) {
@@ -437,6 +438,7 @@ public:
                         UggWrongWay *WrongWay = new UggWrongWay(piramide, "WrongWay", 6, 0, 9, -6);
                         enemies.push_back(WrongWay);
                     }
+                    periodEnemies = 0;
                 } else if (eleccion >= 45 && eleccion <= 60 && enemigosPosibles[4]) {
                     //slick o sam
                     if (!hasSlickSam) {
@@ -449,10 +451,11 @@ public:
                             enemies.push_back(sam);
                             hasSlickSam = true;
                         }
+                        periodEnemies = 0;
                     }
                 }
-                //reinicio periodEnemies
-                periodEnemies = 0;
+
+
             } else {
                 periodEnemies++;
             }
