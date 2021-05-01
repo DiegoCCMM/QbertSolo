@@ -18,7 +18,7 @@
 class Escena {
     float width, height;
 
-    int maxEnemigos = 0;
+    bool enemigosPosibles[5];
 
     Objeto playerObj, numPlayerObj,
             puntuacionObj,
@@ -149,6 +149,7 @@ public:
         gameoverObj.resize(&piramide);
 
         cargarPlatillos();
+        cargarEnemigos();
     }
 
     void cargarPlatillos() {
@@ -164,6 +165,20 @@ public:
             Platillo plato = Platillo(piramide, fila, static_cast<Posicion>(pos));
             platillos.push_back(plato);
         }
+        file.close();
+    }
+
+    void cargarEnemigos(){
+        std::string path;
+        if (level < 6)
+            path = "../levels/enemigos/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt";
+        else path = "../levels/enemigos/restoLevels.txt";
+
+        // Formato de los ficheros:
+        // blob verde, blob rojo, coily, wrong way&ugg, sam&slick
+
+        std::ifstream file(path);
+        file >> enemigosPosibles[0] >> enemigosPosibles[1] >> enemigosPosibles[2] >> enemigosPosibles[3] >> enemigosPosibles[4];
         file.close();
     }
 
@@ -394,17 +409,17 @@ public:
                 int eleccion = dist(mt);
                 if (eleccion >= 0 && eleccion <= 14) {
                     //redblob o poder
-                    if(eleccion <= 12) {
+                    if(eleccion <= 12 && enemigosPosibles[1]) {
                         Enemy *redblob = new Enemy(piramide, "Redblob", 1, eleccion%2, 9,
                                                    0); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(redblob);
-                    }else {
+                    }else if(eleccion > 12 && enemigosPosibles[0]) {
                         Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
                                                  -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(green);
                     }
 
-                } else if (eleccion >= 15 && eleccion <= 29) {
+                } else if (eleccion >= 15 && eleccion <= 29 && enemigosPosibles[2]) {
                     //coily
                     if (!hasCoily) {
                         std::cout << "meto coily" << std::endl;
@@ -413,7 +428,7 @@ public:
                         hasCoily = true;
                         std::cout << "meto redblobl" << std::endl;
                     }
-                } else if (eleccion >= 30 && eleccion <= 44) {
+                } else if (eleccion >= 30 && eleccion <= 44 && enemigosPosibles[3]) {
                     //ugg o wrong way
                     if (eleccion <= 37) {
                         UggWrongWay *ugg = new UggWrongWay(piramide, "Ugg", 6, 6, 9, -6);
@@ -422,7 +437,7 @@ public:
                         UggWrongWay *WrongWay = new UggWrongWay(piramide, "WrongWay", 6, 0, 9, -6);
                         enemies.push_back(WrongWay);
                     }
-                } else if (eleccion >= 45 && eleccion <= 60) {
+                } else if (eleccion >= 45 && eleccion <= 60 && enemigosPosibles[4]) {
                     //slick o sam
                     if (!hasSlickSam) {
                         SlickSam *slickObj = new SlickSam(piramide, "Slick", 1, eleccion%2, 9, -6);
