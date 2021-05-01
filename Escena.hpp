@@ -207,8 +207,8 @@ public:
                             i = it.operator*()->getI();
                             j = it.operator*()->getJ();
                             checkRandMovementEnemies(it);
-                            it.operator*()->movement(&piramide, height, i, j);
-                            if (i == qbert.getI() && j == qbert.getJ() && !it.operator*()->isJumping()) {
+                            it.operator*()->movement(&piramide, height, &qbert);
+                            if (it.operator*()->haColisionado()) {
                                 if (it.operator*()->hasHelpingPower()) { // Blob verde
                                     qbert.setSuperpower(true);
                                     puntuacion += 100;
@@ -234,7 +234,7 @@ public:
                                 }
                             }
                         } else { // El enemigo esta bajando del cielo
-                            it.operator*()->movement(&piramide, height, i, j);
+                            it.operator*()->movement(&piramide, height, &qbert);
                         }
                     }
                 }

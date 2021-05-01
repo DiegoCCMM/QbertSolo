@@ -22,6 +22,7 @@ class Enemy : public Character{
     int randMoveTimer = 0;
     int randMovePeriod;
     Estado estado = CIELO;
+    bool colisionado = false;
 
 public:
     bool isCoily = false;
@@ -81,7 +82,7 @@ public:
         else if(getDir() == DOWNLEFT) setI(getI() + 1);
     }
 
-    void movement(Piramide *piramide, int HEIGHT, int &i, int &j){
+    void movement(Piramide *piramide, int HEIGHT, Character* qbert){
         if(estado==INGAME) { // Esta en el campo de juego
             if (isJumping()) {
                 timerplusplus();
@@ -121,8 +122,10 @@ public:
                             setTimer(0);
                             setJumping(false);
                             setSourceX(getSourceX() + leftSprite);
-                            i = getI();
-                            j = getJ();
+
+                            if (getI() == qbert->getI() && getJ() == qbert->getJ()) {
+                                colisionado = true;
+                            }
                         }
                     }
                 } else {
@@ -148,6 +151,14 @@ public:
     /*************************
      * GETTER'S AND SETTER'S *
      *************************/
+
+    bool haColisionado(){
+        return colisionado;
+    }
+
+    void setHaColisionado(bool col){
+        colisionado = col;
+    }
 
     void setChangingGroundPower(bool changingGroundPower) {
         Enemy::changingGroundPower = changingGroundPower;
