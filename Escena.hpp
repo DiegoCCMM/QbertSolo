@@ -208,7 +208,7 @@ public:
                             i = it.operator*()->getI();
                             j = it.operator*()->getJ();
                             checkRandMovementEnemies(it);
-                            it.operator*()->movement(&piramide, width, height, &qbert, it, borrarEnemigos);
+                            it.operator*()->movement(&piramide, width, height, p, &qbert, it, borrarEnemigos);
                             if (it.operator*()->haColisionado()) {
                                 if (it.operator*()->hasHelpingPower()) { // Blob verde
                                     qbert.setSuperpower(true);
@@ -229,13 +229,12 @@ public:
                                         hasCoily = qbert.reset(&piramide, p, enemies, qbert.getI(), qbert.getJ(),
                                                                qbert.getDir());
                                         hasSlickSam = false;
-                                        puntuacion += p;
                                         break;
                                     }
                                 }
                             }
                         } else { // El enemigo esta bajando del cielo
-                            it.operator*()->movement(&piramide, width, height, &qbert, it, borrarEnemigos);
+                            it.operator*()->movement(&piramide, width, height, p, &qbert, it, borrarEnemigos);
                         }
                     }
                     for (const auto &item : borrarEnemigos){
@@ -254,9 +253,8 @@ public:
 
                 flechaObj.movement();
             }
-
-            puntuacion += p; // Actualizamos la puntuacion
         }
+        puntuacion += p; // Actualizamos la puntuacion
     }
 
     void drawAll() {

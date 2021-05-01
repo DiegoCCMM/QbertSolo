@@ -86,7 +86,7 @@ public:
         else if (getDir() == DOWNLEFT) setI(getI() + 1);
     }
 
-    void movement(Piramide *piramide, int WIDTH, int HEIGHT, Character *qbert, std::_List_iterator<Enemy *> it,
+    void movement(Piramide *piramide, int WIDTH, int HEIGHT, int &puntuacion, Character *qbert, std::_List_iterator<Enemy *> it,
                   std::list<Enemy*> & borrarEnemies) {
         if (estado == INGAME) { // Esta en el campo de juego
             if (isJumping()) {
@@ -113,6 +113,7 @@ public:
                                 (nom == "Ugg" && (getJ() <= 0 || getJ() > getI() || getI() > 6)) ||
                                 (nom == "WrongWay" && (getJ() < 0 || getJ() >= getI() || getI() > 6)) ){
                             setFalling(true);
+                            if(nom == "coilyBola") puntuacion+=500;
                             if (getSourceX() != 0) {
                                 setSourceX(getSourceX() + 16);
                             }

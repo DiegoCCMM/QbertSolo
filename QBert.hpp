@@ -158,7 +158,8 @@ public:
                                 QBert::setY(platillo->getY()-6);
                             }
                         }
-                    } else {
+                    }
+                    else {
                         //WE LANDED
                         if(superpower){
                             if(timerSuperPower == SUPERPOWER_PERIOD){
