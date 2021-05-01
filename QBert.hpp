@@ -185,12 +185,12 @@ public:
                                     enemies.erase(it);
                                     break;
                                 }else{
-                                colision = true;
-                                lives--;
-                                hasCoily = animacionMuerte(piramide);
-                                hasCoily = reset(piramide, puntuacion, enemies, getI(), getJ(), getDir());
-                                hasSlickSam = false;
-                                break;
+                                    colision = true;
+                                    lives--;
+                                    hasCoily = animacionMuerte(piramide);
+                                    hasCoily = reset(piramide, puntuacion, enemies, getI(), getJ(), getDir());
+                                    hasSlickSam = false;
+                                    break;
                                 }
 
                             }

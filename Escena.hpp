@@ -202,12 +202,13 @@ public:
                 if (!qbert.hasSuperpower()) {
                     int i = -2, j = -2;
                     //mover a todos los enemigos
+                    std::list<Enemy *> borrarEnemigos;
                     for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
                         if (!it.operator*()->estaCielo()) {
                             i = it.operator*()->getI();
                             j = it.operator*()->getJ();
                             checkRandMovementEnemies(it);
-                            it.operator*()->movement(&piramide, height, &qbert);
+                            it.operator*()->movement(&piramide, height, &qbert, it, borrarEnemigos);
                             if (it.operator*()->haColisionado()) {
                                 if (it.operator*()->hasHelpingPower()) { // Blob verde
                                     qbert.setSuperpower(true);
@@ -234,9 +235,12 @@ public:
                                 }
                             }
                         } else { // El enemigo esta bajando del cielo
-                            it.operator*()->movement(&piramide, height, &qbert);
+                            it.operator*()->movement(&piramide, height, &qbert, it, borrarEnemigos);
                         }
                     }
+                    for (const auto &item : borrarEnemigos){
+                        enemies.remove(item);
+                    }borrarEnemigos.clear();
                 }
 
                 for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
