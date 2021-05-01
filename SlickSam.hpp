@@ -9,7 +9,7 @@
 
 class SlickSam : public Enemy{
 
-    int reachQberti = VACIO,  reachQbertj = VACIO;
+    bool repeticion = false;
 
 public:
     SlickSam(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube) : Enemy(
@@ -18,10 +18,6 @@ public:
     }
 
     void randomMovement(int i, int j) override {
-
-        //TODO RETOCAR MOVIMIENTO SI MUY REPETITIVO
-        std::cout<<"entro 80"<<std::endl;
-
         std::random_device rd;
         std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<int> dist4(1, 4);
@@ -46,7 +42,6 @@ public:
 
 
         }else if(getI() == getJ()){//estamos a la derecha
-            std::cout<<"estamos der"<<std::endl;
             if(getJ() == 0) {
                 //esquina arriba
                 if(dist2(mt) == 1){
@@ -55,21 +50,30 @@ public:
                     setDir(DOWNLEFT);
                 }
             }else{//lateral derecho
-                int a = dist4(mt);
-
-                if(getDir() == DOWNRIGHT || getDir() == TOPLEFT){
+                if(repeticion){
                     setDir(DOWNLEFT);
+                    repeticion = false;
                 }else{
-                    setDir(DOWNLEFT);
+                    if(dist2(mt) == 1) {
+                        setDir(DOWNRIGHT);
+                    }else {
+                        setDir(TOPLEFT);
+                    }
+                    repeticion = true;
                 }
             }
         }else if(getJ() == 0){//estamos a la izquierda
             std::cout<<"estamos izquierda"<<std::endl;
-            int a = dist4(mt);
-            if(getDir() == TOPRIGHT || getDir() == DOWNLEFT){
+            if(repeticion){
                 setDir(DOWNRIGHT);
+                repeticion = false;
             }else{
-                setDir(DOWNRIGHT);
+                if(dist2(mt) == 1) {
+                    setDir(TOPRIGHT);
+                }else {
+                    setDir(DOWNLEFT);
+                }
+                repeticion = true;
             }
         }else{ //sin restriccion
             std::cout<<"sin restriccion"<<std::endl;
