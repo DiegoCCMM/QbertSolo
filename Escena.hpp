@@ -5,14 +5,12 @@
 #include "Objeto.hpp"
 #include "SlickSam.hpp"
 #include "UggWrongWay.hpp"
-
-#define limEnemigos 6
-
 #include <random>
 
 #ifndef QBERT_ESCENA_HPP
 #define QBERT_ESCENA_HPP
 
+#define limEnemigos 6
 #define periodoEnemigos 120
 
 class Escena {
@@ -221,18 +219,16 @@ public:
             qbert.movement(&piramide, height, platillos, enemies, hasCoily, hasSlickSam, p);
             if (!qbert.isFalling()) {
                 if (!qbert.hasSuperpower()) {
-                    int i = -2, j = -2;
                     //mover a todos los enemigos
                     std::list<Enemy *> borrarEnemigos;
                     for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
                         if (!it.operator*()->estaCielo()) {
-                            i = it.operator*()->getI();
-                            j = it.operator*()->getJ();
                             checkRandMovementEnemies(it);
                             it.operator*()->movement(&piramide, width, height, p, &qbert, it, borrarEnemigos);
                             if (it.operator*()->haColisionado()) {
                                 if (it.operator*()->hasHelpingPower()) { // Blob verde
                                     qbert.setSuperpower(true);
+                                    // TODO Reproducir sonido superpower
                                     puntuacion += 100;
                                     enemies.erase(it);
                                     break;
@@ -261,6 +257,11 @@ public:
                     for (const auto &item : borrarEnemigos){
                         enemies.remove(item);
                     }borrarEnemigos.clear();
+                } else {
+                    // Tengo el superpower
+                    // Ver minuto 41 del video o 37:20 o 32:10
+                    // TODO cambiar color fondo de pantalla
+                    al_clear_to_color(al_map_rgb(157, 115, 0));
                 }
 
                 for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
@@ -425,7 +426,6 @@ public:
                         Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
                                                  -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(green);
-                        // Ver minuto 41 del video o 37:20 o 32:10
                     }
                     periodEnemies = 0;
                 } else if (eleccion >= 15 && eleccion <= 29 && enemigosPosibles[2]) {

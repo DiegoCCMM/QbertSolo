@@ -107,11 +107,6 @@ public:
             }
         }
 
-        std::cout <<"********* "<<getI()<<std::endl;
-        std::cout <<"********* "<<getJ()<<std::endl;
-        std::cout <<"********* "<<reachQberti<<std::endl;
-        std::cout <<"********* "<<reachQbertj<<std::endl;
-
         assignIJ();
 
         Enemy::setJumping(true);
