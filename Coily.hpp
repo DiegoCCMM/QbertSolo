@@ -112,33 +112,6 @@ public:
         std::cout <<"********* "<<reachQberti<<std::endl;
         std::cout <<"********* "<<reachQbertj<<std::endl;
 
-        /*int i_obj, j_obj;
-        if(reachQbertj<0) {
-            i_obj = reachQberti+1;
-            j_obj = reachQbertj+1;
-        }else if(reachQbertj > reachQberti){
-            i_obj = reachQberti+1;
-            j_obj = reachQbertj;
-        }else if( reachQberti>6) {
-            i_obj = reachQberti - 1;
-            j_obj = reachQbertj;
-        }*/
-
-        /*if(reachQbertj<0 || reachQbertj > reachQberti || reachQberti>6){
-            setState(REACHING_LEDGE);
-        }
-
-        if(getI() == reachQberti && getJ() == reachQbertj && state==REACHING_LEDGE){
-
-            if(getSourceX()!=0) {
-                setSourceX(getSourceX() - 16);
-            }
-            //playOnce(fallingSound);
-            //TODO FALLING ANIMATION OR SO
-            reachQberti = VACIO;
-            reachQbertj = VACIO;
-        }*/
-
         assignIJ();
 
         Enemy::setJumping(true);

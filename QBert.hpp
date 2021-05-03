@@ -27,12 +27,7 @@ class QBert : public Character{
 public:
 
     /* Constructor */
-    QBert(Piramide piramide) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 8, -8) {
-        must_init(fallingSound, "qbert-FallingSound");
-        setSourceX(0);
-    }
-
-    QBert(const Piramide &piramide, int lives) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 8, -8),
+    QBert(const Piramide &piramide, int lives=3) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 8, -8),
                                          lives(lives) {}
 
     /* Constructor 2 */
@@ -127,16 +122,6 @@ public:
                                                 col->setState(REACHING_LEDGE);
                                                 col->setReachQberti(getI());
                                                 col->setReachQbertj(getJ());
-                                                /*if(getJ()<0) {
-                                                    col->setReachQberti(getI());
-                                                    col->setReachQbertj(getJ() -1);
-                                                }else if(getJ() > getI()){
-                                                    col->setReachQberti(getI());
-                                                    col->setReachQbertj(getJ()-1);
-                                                }else if( getI()>6){
-                                                    col->setReachQberti(getI()-1);
-                                                    col->setReachQbertj(getJ());
-                                                }*/
                                             }
                                         }
                                     }

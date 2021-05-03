@@ -19,6 +19,7 @@ class Escena {
     float width, height;
 
     bool enemigosPosibles[5];
+    int puntosVidasAdicionales;
 
     Objeto playerObj, numPlayerObj,
             puntuacionObj,
@@ -117,14 +118,19 @@ public:
 
     void load(float _width, float _height) {
         width = _width, height = _height;
-        if (level == 1 && round == 1) puntuacion = 0;
         gameover = false;
 
         // Cargar mapa
         piramide.loadMap(level, round, width, height);
 
         // Cargar personajes
-        qbert = QBert(piramide, qbert.getLives());
+        if(level == 1 && round == 1){
+            qbert = QBert(piramide);
+            puntuacion = 0;
+            puntosVidasAdicionales = 0;
+        } else {
+            qbert = QBert(piramide, qbert.getLives());
+        }
 
         enemies.clear();
         hasCoily = false;
@@ -270,6 +276,7 @@ public:
             }
         }
         puntuacion += p; // Actualizamos la puntuacion
+        checkPointsLives();
     }
 
     void drawAll() {
@@ -418,7 +425,7 @@ public:
                         Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
                                                  -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(green);
-                        // Ver minuto 41 del video
+                        // Ver minuto 41 del video o 37:20 o 32:10
                     }
                     periodEnemies = 0;
                 } else if (eleccion >= 15 && eleccion <= 29 && enemigosPosibles[2]) {
@@ -471,6 +478,20 @@ public:
         // Segun la ronda que se haya completado
         puntuacion += 1000 + 250 * (round % 4 - 1);
 
+        checkPointsLives();
+
+    }
+
+    void checkPointsLives(){
+        if(puntuacion >= 1000 && puntosVidasAdicionales == 0){
+            qbert.setLives(qbert.getLives()+1);
+            puntosVidasAdicionales++;
+        }
+
+        if(puntosVidasAdicionales!=0 && (puntuacion-8000)/(14000 * puntosVidasAdicionales) > 0){
+            puntosVidasAdicionales++;
+            qbert.setLives(qbert.getLives()+1);
+        }
     }
 
     void resizAll(float _width, float _height) {
@@ -515,6 +536,7 @@ public:
 
         playerObj.destroy();
         numPlayerObj.destroy();
+        // TODO: destruir el resto de objetos
     }
 
     void checkRandMovementEnemies(std::_List_iterator<Enemy *> it) {
@@ -538,7 +560,7 @@ public:
     }
 
     void setMoveQBert(Direction dir) {
-        if (!piramide.isPiramideCompleta() && qbert.getLives() != 0) {
+        if (!qbert.isColision() && !piramide.isPiramideCompleta() && qbert.getLives() != 0) {
             qbert.setMove(dir);
         }
     }
@@ -548,25 +570,20 @@ public:
      *************************/
 
     int getLevel() const { return level; }
-
     void setLevel(int _level) { Escena::level = _level; }
 
     int getRound() const { return round; }
-
     void setRound(int _round) { Escena::round = _round; }
 
     bool isGameover() { return gameover; }
 
     bool itHasCoily() const { return hasCoily; }
-
     void setHasCoily(bool hasCoily) { Escena::hasCoily = hasCoily; }
 
     const Objeto &getPuntuacionObj() const { return puntuacionObj; }
-
     void setPuntuacionObj(const Objeto &puntuacionObj) { Escena::puntuacionObj = puntuacionObj; }
 
     int getPuntuacion() const { return puntuacion; }
-
     void setPuntuacion(int puntuacion) { Escena::puntuacion = puntuacion; }
 
 };
