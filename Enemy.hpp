@@ -61,7 +61,6 @@ public:
     }
 
     virtual void randomMovement(int i, int j) {
-        // TODO: revisar, no parece haber aleatoriedad
         std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<int> dist(1, 2);
 

@@ -35,7 +35,7 @@ public:
     std::list<Enemy *> enemies;
     std::list<Platillo> platillos;
     int level, round, periodEnemies = 0;
-    int puntuacion;
+    int puntuacion, vidasExtra;
     bool hasCoily = false, gameover = false, hasSlickSam = false;
 
     /* Constructor */
@@ -270,6 +270,14 @@ public:
             }
         }
         puntuacion += p; // Actualizamos la puntuacion
+        aumentoVidas();
+    }
+
+    void aumentoVidas() {
+        if(puntuacion > 5000 * vidasExtra){
+            qbert.setLives(qbert.getLives() + 1);
+            vidasExtra++;
+        }
     }
 
     void drawAll() {
@@ -467,10 +475,10 @@ public:
     void calculatePoints() {
         // Platillos no usados
         puntuacion += platillos.size() * 50;
-
+        aumentoVidas();
         // Segun la ronda que se haya completado
         puntuacion += 1000 + 250 * (round % 4 - 1);
-
+        aumentoVidas();
     }
 
     void resizAll(float _width, float _height) {
