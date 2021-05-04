@@ -38,10 +38,24 @@ public:
         std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         //
         std::uniform_int_distribution<int> dist(MIN, MAX);
-        //Enemy::randMovePeriod = dist(mt);
-        Enemy::randMovePeriod = 25; // A 25 es una buena velocidad
-        // TODO: para los niveles del 5 al 9 que se incrementa la dificultad
-        // con modificar esta variable a menor valor bastaria creo para que vayan mas rapido
+        Enemy::randMovePeriod;
+        switch (piramide.getLevel()) {
+            case 6:
+                randMovePeriod = 23;
+                break;
+            case 7:
+                randMovePeriod = 20;
+                break;
+            case 8:
+                randMovePeriod = 17;
+                break;
+            case 9:
+                randMovePeriod = 15;
+                break;
+            default:
+                randMovePeriod = 25;
+                break;
+        }
 
         if(nom != "Ugg" && nom != "WrongWay"){
             Character::y = piramide.map[i][j].y -32-10-32;
@@ -165,10 +179,13 @@ public:
         } else { // Esta bajando del cielo, CIELO
             timerplusplus();
             setX(piramide->map[getI()][getJ()].x + getXRespectCube());
-            if (getY() < piramide->map[getI()][getJ()].y + getYRespectCube() - 5) {
+            if (getY() < piramide->map[getI()][getJ()].y + getYRespectCube()) {
                 setY(getY() + movementY);
             } else {
                 estado = INGAME;
+                if (getI() == qbert->getI() && getJ() == qbert->getJ()) {
+                    colisionado = true;
+                }
                 playOnce(getJumpSound());
                 setX(piramide->map[getI()][getJ()].x + getXRespectCube());
                 setY(piramide->map[getI()][getJ()].y + getYRespectCube());

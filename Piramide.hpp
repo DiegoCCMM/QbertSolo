@@ -211,6 +211,8 @@ public:
 
     ALLEGRO_SAMPLE *getFinishSound() const { return finishSound; }
 
+    int getLevel() const { return level; }
+
 };
 
 #endif //QBERT_PIRAMIDE_HPP

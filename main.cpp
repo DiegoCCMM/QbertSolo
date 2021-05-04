@@ -14,7 +14,7 @@
 #include "PantallaInfoNivel.hpp"
 #include "Escena.hpp"
 #include "Creditos.hpp"
-// TODO: tener en cuenta a la hora de cuantos audios vamos a usar
+
 #define NUMERODESAMPLES 10
 
 float scale = 1.0f;

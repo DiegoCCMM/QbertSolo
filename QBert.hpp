@@ -16,7 +16,8 @@ class QBert : public Character{
     int score = 0;
     ALLEGRO_SAMPLE *fallingSound = al_load_sample("../sounds/qbert-falling.ogg");
     ALLEGRO_SAMPLE *colisionSound = al_load_sample("../sounds/colision-qbert.ogg");
-    ALLEGRO_BITMAP *bocadilloDraw = al_load_bitmap("../sprites/qbert-blasfemia.png");;   // sprite bocadillo
+    ALLEGRO_SAMPLE *superPowerSound = al_load_sample("../sounds/superpower-qbert.ogg");
+    ALLEGRO_BITMAP *bocadilloDraw = al_load_bitmap("../sprites/qbert-blasfemia.png");   // sprite bocadillo
     bool superpower = false;
     bool enPlatillo = false;
     bool colision = false;
@@ -27,12 +28,7 @@ class QBert : public Character{
 public:
 
     /* Constructor */
-    QBert(Piramide piramide) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 8, -8) {
-        must_init(fallingSound, "qbert-FallingSound");
-        setSourceX(0);
-    }
-
-    QBert(const Piramide &piramide, int lives) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 8, -8),
+    QBert(const Piramide &piramide, int lives=3) : Character(piramide, "qbert", 0, 0, DOWNLEFT, 8, -8),
                                          lives(lives) {}
 
     /* Constructor 2 */
@@ -127,16 +123,6 @@ public:
                                                 col->setState(REACHING_LEDGE);
                                                 col->setReachQberti(getI());
                                                 col->setReachQbertj(getJ());
-                                                /*if(getJ()<0) {
-                                                    col->setReachQberti(getI());
-                                                    col->setReachQbertj(getJ() -1);
-                                                }else if(getJ() > getI()){
-                                                    col->setReachQberti(getI());
-                                                    col->setReachQbertj(getJ()-1);
-                                                }else if( getI()>6){
-                                                    col->setReachQberti(getI()-1);
-                                                    col->setReachQbertj(getJ());
-                                                }*/
                                             }
                                         }
                                     }
@@ -177,6 +163,8 @@ public:
                             if(timerSuperPower == SUPERPOWER_PERIOD){
                                 superpower = false;
                                 timerSuperPower = 0;
+                                al_destroy_sample(superPowerSound);
+                                superPowerSound = al_load_sample("../sounds/superpower-qbert.ogg");
                             }else{
                                 timerSuperPower++;
                             }
@@ -188,6 +176,7 @@ public:
                             if(it.operator*()->getI() == QBert::getI() && it.operator*()->getJ() == QBert::getJ()){
                                 //estamos con un enemigo en el mismo sitio
                                 if(it.operator*()->hasHelpingPower()){ // Blob verde
+                                    al_play_sample(getSuperPowerSound(), 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
                                     superpower = true;
                                     puntuacion += 100;
                                     enemies.erase(it);
@@ -310,8 +299,11 @@ public:
 
     void destroy() override {
         al_destroy_bitmap(getDraw());
+        al_destroy_bitmap(bocadilloDraw);
         al_destroy_sample(getJumpSound());
         al_destroy_sample(fallingSound);
+        al_destroy_sample(colisionSound);
+        al_destroy_sample(superPowerSound);
     }
 
     /*************************
@@ -334,6 +326,8 @@ public:
 
     bool isEnPlatillo() const { return enPlatillo; }
     void setEnPlatillo(bool enPlatillo) { QBert::enPlatillo = enPlatillo; }
+
+    ALLEGRO_SAMPLE *getSuperPowerSound() const { return superPowerSound; }
 
 };
 
