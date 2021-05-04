@@ -18,6 +18,7 @@ class Escena {
 
     bool enemigosPosibles[5];
     int puntosVidasAdicionales;
+    int colorSuperPower;
 
     Objeto playerObj, numPlayerObj,
             puntuacionObj,
@@ -117,6 +118,7 @@ public:
     void load(float _width, float _height) {
         width = _width, height = _height;
         gameover = false;
+        colorSuperPower = 0;
 
         // Cargar mapa
         piramide.loadMap(level, round, width, height);
@@ -228,7 +230,7 @@ public:
                             if (it.operator*()->haColisionado()) {
                                 if (it.operator*()->hasHelpingPower()) { // Blob verde
                                     qbert.setSuperpower(true);
-                                    // TODO Reproducir sonido superpower
+                                    al_play_sample(qbert.getSuperPowerSound(), 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
                                     puntuacion += 100;
                                     enemies.erase(it);
                                     break;
@@ -257,11 +259,6 @@ public:
                     for (const auto &item : borrarEnemigos){
                         enemies.remove(item);
                     }borrarEnemigos.clear();
-                } else {
-                    // Tengo el superpower
-                    // Ver minuto 41 del video o 37:20 o 32:10
-                    // TODO cambiar color fondo de pantalla
-                    al_clear_to_color(al_map_rgb(157, 115, 0));
                 }
 
                 for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
@@ -298,6 +295,24 @@ public:
                     }
                 }
                 // Dibujado de las cosas durante el juego normal
+                if(qbert.hasSuperpower()){
+                    // Tengo el superpower
+                    // TODO poner a gustos los colores que se quiera
+                    if(colorSuperPower < 15){
+                        al_clear_to_color(al_map_rgb(157, 115, 0));
+                        colorSuperPower++;
+                    } else if(colorSuperPower < 30) {
+                        al_clear_to_color(al_map_rgb(208, 41, 238));
+                        colorSuperPower++;
+                    } else if(colorSuperPower < 45) {
+                        al_clear_to_color(al_map_rgb(98, 41, 238));
+                        colorSuperPower++;
+                    } else{
+                        al_clear_to_color(al_map_rgb(98, 41, 238));
+                        colorSuperPower = 0;
+                    }
+                }
+
                 piramide.drawBitmap();
                 if (qbert.isColision()) { //qbert se enfada
                     qbert.drawBocadillo();
@@ -427,6 +442,9 @@ public:
                                                  -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(green);
                     }
+//                    Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
+//                                             -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
+//                    enemies.push_back(green);
                     periodEnemies = 0;
                 } else if (eleccion >= 15 && eleccion <= 29 && enemigosPosibles[2]) {
                     //coily
@@ -497,6 +515,7 @@ public:
     void resizAll(float _width, float _height) {
         width = _width, height = _height;
         piramide.resizeMap(width, height);
+        qbert.resize(&piramide);
 
         for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
             it.operator*()->resize(&piramide);
@@ -505,8 +524,6 @@ public:
         for (std::_List_iterator<Platillo> it = platillos.begin(); it != platillos.end(); it++) {
             it->resize(&piramide);
         }
-
-        qbert.resize(&piramide);
 
         playerObj.resize(&piramide);
         numPlayerObj.resize(&piramide);
@@ -536,7 +553,16 @@ public:
 
         playerObj.destroy();
         numPlayerObj.destroy();
-        // TODO: destruir el resto de objetos
+        puntuacionObj.destroy();
+        changetoObj.destroy();
+        flechaObj.destroy();
+        cuadrObj.destroy();
+        vidaObj.destroy();
+        numvidaObj.destroy();
+        levelRoundObj.destroy();
+        numLevelObj.destroy();
+        numRoundObj.destroy();
+        gameoverObj.destroy();
     }
 
     void checkRandMovementEnemies(std::_List_iterator<Enemy *> it) {
