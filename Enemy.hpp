@@ -12,10 +12,12 @@
 #define MIN 60
 #define MAX 120
 
+enum Estado {
+    CIELO, INGAME
+};
+
 class Enemy : public Character {
-    enum Estado {
-        CIELO, INGAME
-    };
+
 
     bool changingGroundPower = false;
     bool helpingPower = false;
@@ -107,7 +109,7 @@ public:
         else if (getDir() == DOWNLEFT) setI(getI() + 1);
     }
 
-    void movement(Piramide *piramide, int WIDTH, int HEIGHT, int &puntuacion, Character *qbert, std::_List_iterator<Enemy *> it,
+    virtual void movement(Piramide *piramide, int WIDTH, int HEIGHT, int &puntuacion, Character *qbert, std::_List_iterator<Enemy *> it,
                   std::list<Enemy*> & borrarEnemies) {
         if (estado == INGAME) { // Esta en el campo de juego
             if (isJumping()) {

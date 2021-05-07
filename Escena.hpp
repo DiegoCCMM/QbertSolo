@@ -434,9 +434,9 @@ public:
                 if (eleccion >= 0 && eleccion <= 14) {
                     //redblob o poder
                     if(eleccion <= 12 && enemigosPosibles[1]) {
-                        Enemy *redblob = new Enemy(piramide, "Redblob", 1, eleccion%2, 9,
-                                                   0); // X e Y (pixeles) posicion respecto al cubo[i,j]
-                        enemies.push_back(redblob);
+                        Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
+                                                 -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
+                        enemies.push_back(green);
                     }else if(eleccion > 12 && enemigosPosibles[0]) {
                         Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
                                                  -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
@@ -453,7 +453,7 @@ public:
                         Coily *coily = new Coily(piramide, "coilyBola", 1, eleccion%2, 9, -3);
                         enemies.push_back(coily);
                         hasCoily = true;
-                        std::cout << "meto redblobl" << std::endl;
+                        std::cout << "meto redblob" << std::endl;
                     }
                     periodEnemies = 0;
                 } else if (eleccion >= 30 && eleccion <= 44 && enemigosPosibles[3]) {

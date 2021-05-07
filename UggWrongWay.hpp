@@ -2,8 +2,6 @@
 // Created by diego on 29/4/21.
 //
 
-#include "Enemy.hpp"
-
 #ifndef ALLEGRO5TUTORIAL_UGGWRONGWAY_HPP
 #define ALLEGRO5TUTORIAL_UGGWRONGWAY_HPP
 
@@ -60,7 +58,92 @@ public:
         setJumping(true);
         setSourceX(getSourceX()-16);
     }
+    void movement(Piramide *piramide, int WIDTH, int HEIGHT, int &puntuacion, Character *qbert, std::_List_iterator<Enemy *> it,
+                  std::list<Enemy*> & borrarEnemies) override  {
+        if (!Enemy::estaCielo()) { // Esta en el campo de juego
+            if (isJumping()) {
+                timerplusplus();
+                if (!isFalling()) {
+                    if (getTimer() < airTime / 2) {
+                        //GO UP AND DIRECTION
+                        if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
+                            setX(movementX + getX());
+                        else
+                            setX(getX() - movementX);
+                        if (getDir() != DOWNRIGHT && getDir() != DOWNLEFT)
+                            setY(getY() - movementY);
+                    } else if (getTimer() > airTime / 2 && getTimer() < airTime) {
+                        //GO DOWN AND DIRECTION
+                        if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
+                            setX(movementX + getX());
+                        else
+                            setX(getX() - movementX);
+                        if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
+                            setY(getY() + movementY);
+                    } else if (getTimer() > airTime) {
+                        if ((getJ() < 0 || getJ() > getI() || getI() > 6) ||
+                            (nom == "Ugg" && (getJ() <= 0 || getJ() > getI() || getI() > 6)) ||
+                            (nom == "WrongWay" && (getJ() < 0 || getJ() >= getI() || getI() > 6)) ){
+                            setFalling(true);
+                            if(nom == "coilyBola") {
+                                puntuacion+=500;
+                                ALLEGRO_SAMPLE *coilyCae = al_load_sample("../sounds/snake-fall.ogg");
+                                playOnce(coilyCae);
+                            }
+                            if (getSourceX() != 0) {
+                                setSourceX(getSourceX() + 16);
+                            }
+                        } else {
+                            //WE LANDED
+                            playOnce(getJumpSound());
+                            if (hasChangingGroundPower()) {
+                                int none = 0;
+                                piramide->changeCubeInverse(getI(), getJ());
+                            }
+                            setX(piramide->map[getI()][getJ()].x + getXRespectCube());
+                            setY(piramide->map[getI()][getJ()].y + getYRespectCube());
+                            setTimer(0);
+                            setJumping(false);
+                            setSourceX(getSourceX() + leftSprite);
 
+                            if (getI() == qbert->getI() && getJ() == qbert->getJ()) {
+                                setHaColisionado(true);
+                            }
+                        }
+                    }
+                } else {    //se cae de la piramide
+
+                    if(nom == "Ugg" && getX() >= WIDTH/2-200){
+                        setX(getX() - movementX);
+                    }
+                    else if(nom == "WrongWay" && getX() <= WIDTH/2+200){
+                        setX(getX() + movementX);
+                    }
+                    else if(nom != "WrongWay" && nom != "Ugg" && getY() <= HEIGHT){
+                        setY(getY() + movementY);
+                    }
+                    else{//si hemos llegado al suelo
+                        borrarEnemies.push_back(it.operator*());//lo borramos
+                    }
+                }
+            }
+        } else { // Esta bajando del cielo, CIELO
+            timerplusplus();
+            setX(piramide->map[getI()][getJ()].x + getXRespectCube());
+            if (getY() < piramide->map[getI()][getJ()].y + getYRespectCube()) {
+                setY(getY() + movementY);
+            } else {
+                setEstado(INGAME);
+                if (getI() == qbert->getI() && getJ() == qbert->getJ()) {
+                    setHaColisionado(true);
+                }
+                playOnce(getJumpSound());
+                setX(piramide->map[getI()][getJ()].x + getXRespectCube());
+                setY(piramide->map[getI()][getJ()].y + getYRespectCube());
+                setTimer(0);
+            }
+        }
+    };
     void drawBitmap() override {
         al_draw_bitmap_region(getDraw(), getSourceX() + (getDir() * 2 * sizePixelsX),
                               getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY*2,
