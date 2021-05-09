@@ -52,13 +52,18 @@ public:
             enemies.clear();
             hasCoily = false;
         }else {//borrar enemigos menos coily
-            hasCoily = true;
-            if(!enemies.empty()) {
-                for (const auto &item : enemies) {
-                    if (!item->isCoily) {//borrar todos los enemigos excepto coily
-                        enemies.remove(item);
+            while(enemies.size() > 1) { //nos han invocado con más de un enemigo
+                for (std::_List_iterator<Enemy *> it = enemies.begin(); it != enemies.end(); it++) {
+                    if (!it.operator*()->isCoily) {//borrar todos los enemigos excepto coily
+                        enemies.remove(it.operator*());
+                        break;
                     }
                 }
+                hasCoily = true;
+            }
+            if(enemies.size() == 1 && !enemies.begin().operator*()->isCoily){ //nos han invocado con un enemigo y no es coily
+                enemies.clear();
+                hasCoily = false;
             }
         }
         return(hasCoily);
