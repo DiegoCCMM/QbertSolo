@@ -72,7 +72,7 @@ int main() {
         PantallaInicial init = PantallaInicial(WIDTH/scale, HEIGHT/scale);
         inicio:
         {
-            goto juegoIntro; // Descomentar para ir directamente al juego
+            //goto juegoIntro; // Descomentar para ir directamente al juego
             //goto creditosIntro; // Descomentar ir directamente a los creditos
             al_wait_for_event(queue, &event);
             al_get_keyboard_state(&keyState);

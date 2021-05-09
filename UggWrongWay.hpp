@@ -66,7 +66,7 @@ public:
     }
     void movement(Piramide *piramide, int WIDTH, int HEIGHT, int &puntuacion, Character *qbert, std::_List_iterator<Enemy *> it,
                   std::list<Enemy*> & borrarEnemies) override  {
-        float movementXEspecial = 4.0;
+        float movementXEspecial = 5.0;
         if (!Enemy::estaCielo()) { // Esta en el campo de juego
             if (isJumping()) {
                 timerplusplus();
