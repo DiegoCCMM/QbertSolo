@@ -94,7 +94,7 @@ public:
         x += 8;
 
         // Cargar anyo
-        std::string frase = "2020";
+        std::string frase = "2021";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             al_draw_bitmap_region(drawInit, (int(frase[i]) % 48) * 8, 0,
                                   8, 8, x, y, 0);
@@ -244,12 +244,12 @@ public:
         // En caso de querer programar la animacion que cae el blob rojo
         /*if(timer > topTimer*6){ // Cae el blob rojo
 
-        }
+        }*/
 
         // despues de todas las animaciones volver a INICIO
         if(timer > topTimer*6){
             pant = INICIO;
-        }*/
+        }
     }
 
     void resize(float _width, float _height){
