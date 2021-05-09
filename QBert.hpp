@@ -234,17 +234,17 @@ public:
     }
 
     void movementInstr() {
-        float moveX = 3.0;
-        float moveY[5] = {9.0, 25.0, 22.0, 20.0, 22.0};
+        float moveX[5] = {3.0, 1.0, 1.0, 1.0, 1.0};
+        float moveY[5] = {5.0, 13.0, 10.0, 10.0, 10.0};
 
         if (isJumping()) {
             timerplusplus();
             if (getTimer() < airTime / 2) {
-                setX(moveX + getX());
-                setXRespectCube(getXRespectCube()+moveX);
+                setX(moveX[getJ()] + getX());
+                setXRespectCube(getXRespectCube()+moveX[getJ()]);
             } else if (getTimer() > airTime / 2 && getTimer() < airTime) {
-                setX(moveX + getX());
-                setXRespectCube(getXRespectCube()+moveX);
+                setX(moveX[getJ()] + getX());
+                setXRespectCube(getXRespectCube()+moveX[getJ()]);
                 setY(getY() + moveY[getJ()]);
                 setYRespectCube(getYRespectCube()+moveY[getJ()]);
             } else if (getTimer() > airTime) {

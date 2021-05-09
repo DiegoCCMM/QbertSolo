@@ -241,14 +241,15 @@ public:
             qbert.setJ(4);
         }
 
-        if(timer > topTimer*6){ // TODO: Cae el blob rojo
+        // En caso de querer programar la animacion que cae el blob rojo
+        /*if(timer > topTimer*6){ // Cae el blob rojo
 
         }
 
-        // TODO: despues de todas las animaciones volver a INICIO
+        // despues de todas las animaciones volver a INICIO
         if(timer > topTimer*6){
             pant = INICIO;
-        }
+        }*/
     }
 
     void resize(float _width, float _height){
