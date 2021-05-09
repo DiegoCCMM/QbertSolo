@@ -32,7 +32,6 @@ class Creditos{
     ALLEGRO_BITMAP *letrasDraw = al_load_bitmap("../sprites/fonts.png");
     ALLEGRO_BITMAP *letrasGrandesDraw = al_load_bitmap("../sprites/youdidit.png");
     ALLEGRO_BITMAP *qbertDraw = al_load_bitmap("../sprites/qbert.png");
-    ALLEGRO_BITMAP *patriDraw = al_load_bitmap("../sprites/patri.png");
     ALLEGRO_SAMPLE *teclaSound = al_load_sample("../sounds/qbert-jump.ogg");
     ALLEGRO_SAMPLE *highscoreSound = al_load_sample("../sounds/highscores.ogg");
 
@@ -218,12 +217,6 @@ public:
                                           8, 8, x, y, 0);
                 x += 8;
             }
-
-            x = width/2 - 100, y = height/2+20;
-            al_draw_bitmap_region(patriDraw, 0, 0,
-                                  27*8, 10*8, x, y, 0);
-
-            //TODO: poner imagen Diego
         }
         else {
 
@@ -306,7 +299,6 @@ public:
         al_destroy_bitmap(letrasDraw);
         al_destroy_bitmap(letrasGrandesDraw);
         al_destroy_bitmap(qbertDraw);
-        al_destroy_bitmap(patriDraw);
         al_destroy_sample(teclaSound);
         al_destroy_sample(highscoreSound);
     }
