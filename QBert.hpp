@@ -53,8 +53,9 @@ public:
             hasCoily = false;
         }else {//borrar enemigos menos coily
             hasCoily = true;
+
             for (const auto &item : enemies) {
-                if (!item->isCoily) {//borrar todos los enemigos excepto coily
+                if (item != nullptr && !item->isCoily) {//borrar todos los enemigos excepto coily
                     enemies.remove(item);
                 }
             }

@@ -102,7 +102,7 @@ public:
         Enemy::setSourceX(getSourceX() - 16);
     }
 
-    void assignIJ() {
+    virtual void assignIJ() {
         if (getDir() == TOPLEFT) setI(getI() - 1), setJ(getJ() - 1);
         else if (getDir() == DOWNRIGHT) setI(getI() + 1), setJ(getJ() + 1);
         else if (getDir() == TOPRIGHT) setI(getI() - 1);
@@ -121,7 +121,7 @@ public:
                             setX(movementX + getX());
                         else
                             setX(getX() - movementX);
-                        if (getDir() != DOWNRIGHT && getDir() != DOWNLEFT)
+                        if (getDir() == TOPRIGHT || getDir() == TOPLEFT)
                             setY(getY() - movementY);
                     } else if (getTimer() > airTime / 2 && getTimer() < airTime) {
                         //GO DOWN AND DIRECTION

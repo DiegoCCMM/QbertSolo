@@ -58,28 +58,41 @@ public:
         setJumping(true);
         setSourceX(getSourceX()-16);
     }
+    void assignIJ() override {
+        if (getDir() == TOPLEFT) setI(getI() - 1), setJ(getJ() - 1);
+        else if (getDir() == DOWNRIGHT) setJ(getJ() + 1);
+        else if (getDir() == TOPRIGHT) setI(getI() - 1);
+        else if (getDir() == DOWNLEFT) setJ(getJ() - 1);
+    }
     void movement(Piramide *piramide, int WIDTH, int HEIGHT, int &puntuacion, Character *qbert, std::_List_iterator<Enemy *> it,
                   std::list<Enemy*> & borrarEnemies) override  {
+        float movementXEspecial = 4.0;
         if (!Enemy::estaCielo()) { // Esta en el campo de juego
             if (isJumping()) {
                 timerplusplus();
                 if (!isFalling()) {
                     if (getTimer() < airTime / 2) {
                         //GO UP AND DIRECTION
-                        if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
+                        if (getDir() == TOPRIGHT)
                             setX(movementX + getX());
-                        else
+                        else if( getDir() == DOWNRIGHT)
+                            setX(movementXEspecial + getX());
+                        else if(getDir() == TOPLEFT)
                             setX(getX() - movementX);
-                        if (getDir() != DOWNRIGHT && getDir() != DOWNLEFT)
+                        else
+                            setX(getX() - movementXEspecial);
+                        if (getDir() == TOPRIGHT || getDir() == TOPLEFT)
                             setY(getY() - movementY);
                     } else if (getTimer() > airTime / 2 && getTimer() < airTime) {
                         //GO DOWN AND DIRECTION
-                        if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
+                        if (getDir() == TOPRIGHT)
                             setX(movementX + getX());
-                        else
+                        else if( getDir() == DOWNRIGHT)
+                            setX(movementXEspecial + getX());
+                        else if(getDir() == TOPLEFT)
                             setX(getX() - movementX);
-                        if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
-                            setY(getY() + movementY);
+                        else
+                            setX(getX() - movementXEspecial);
                     } else if (getTimer() > airTime) {
                         if ((getJ() < 0 || getJ() > getI() || getI() > 6) ||
                             (nom == "Ugg" && (getJ() <= 0 || getJ() > getI() || getI() > 6)) ||

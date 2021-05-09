@@ -434,8 +434,8 @@ public:
                 if (eleccion >= 0 && eleccion <= 14) {
                     //redblob o poder
                     if(eleccion <= 12 && enemigosPosibles[1]) {
-                        Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
-                                                 -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
+                        Enemy *green = new Enemy(piramide, "Redblob", 1, eleccion%2, 10,
+                                                 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(green);
                     }else if(eleccion > 12 && enemigosPosibles[0]) {
                         Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
