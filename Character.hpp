@@ -15,7 +15,7 @@ constexpr static const float movementY = 6.0;
 constexpr static const int airTime = 10;
 
 enum Direction {
-    TOPRIGHT, TOPLEFT, DOWNRIGHT, DOWNLEFT
+    TOPRIGHT, TOPLEFT, DOWNRIGHT, DOWNLEFT, DONTMOVE
 };
 
 class Character : public Objeto {
