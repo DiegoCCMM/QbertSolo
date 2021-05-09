@@ -156,7 +156,7 @@ public:
                                       getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY * 2,
                                       getX(), getY(), 0);
             }else{
-                al_draw_bitmap_region(getDraw(), getSourceX() + (DOWNRIGHT * 2 * sizePixelsX),
+                al_draw_bitmap_region(getDraw(), getSourceX() + (DOWNRIGHT * 2 * sizePixelsX) + 16,
                                       getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY * 2,
                                       getX(), getY(), 0);
             }
