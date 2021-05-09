@@ -297,7 +297,6 @@ public:
                 // Dibujado de las cosas durante el juego normal
                 if(qbert.hasSuperpower()){
                     // Tengo el superpower
-                    // TODO poner a gustos los colores que se quiera
                     if(colorSuperPower < 15){
                         al_clear_to_color(al_map_rgb(157, 115, 0));
                         colorSuperPower++;
