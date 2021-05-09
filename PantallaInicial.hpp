@@ -45,6 +45,7 @@ public:
     void escenarioInstruc(){
         pant = INSTRUCCIONES;
         timer = 0;
+        qbert.setJ(0);
         qbert.setXRespectCube(20);
         qbert.setYRespectCube(50);
         qbert.setX(width/2-165+qbert.getXRespectCube());
