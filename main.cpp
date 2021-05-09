@@ -250,6 +250,7 @@ int main() {
                                 escena.setMoveQBert(DOWNLEFT);
                                 break;
                             case ALLEGRO_KEY_PAD_PLUS:
+                            case ALLEGRO_KEY_EQUALS:
                                 escena.qbert.setLives(escena.qbert.getLives()+1);
                                 break;
                         }
