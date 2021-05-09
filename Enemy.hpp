@@ -119,7 +119,7 @@ public:
                         //GO UP AND DIRECTION
                         if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
                             setX(movementX + getX());
-                        else
+                        else if(getDir() == TOPLEFT || getDir() == DOWNLEFT)
                             setX(getX() - movementX);
                         if (getDir() == TOPRIGHT || getDir() == TOPLEFT)
                             setY(getY() - movementY);
@@ -127,7 +127,7 @@ public:
                         //GO DOWN AND DIRECTION
                         if (getDir() == TOPRIGHT || getDir() == DOWNRIGHT)
                             setX(movementX + getX());
-                        else
+                        else if(getDir() == TOPLEFT || getDir() == DOWNLEFT)
                             setX(getX() - movementX);
                         if (getDir() == DOWNRIGHT || getDir() == DOWNLEFT)
                             setY(getY() + movementY);

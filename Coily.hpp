@@ -95,7 +95,11 @@ public:
                     if (coilyI == 6 || coilyJ == 6) {
                         setDir(TOPLEFT);
                     } else {
-                        setDir(DOWNLEFT);
+                        if(dirJ == 0 && dirI == 0){
+                            setDir(DONTMOVE);
+                        }else {
+                            setDir(DOWNLEFT);
+                        }
                     }
                 } else {
                     if (coilyI == 6 || coilyJ == 6) {
@@ -147,9 +151,15 @@ public:
                                   getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY,
                                   getX(), getY(), 0);
         }else{
-            al_draw_bitmap_region(getDraw(), getSourceX() + (getDir() * 2 * sizePixelsX),
-                                  getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY*2,
-                                  getX(), getY(), 0);
+            if(getDir() != DONTMOVE) {
+                al_draw_bitmap_region(getDraw(), getSourceX() + (getDir() * 2 * sizePixelsX),
+                                      getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY * 2,
+                                      getX(), getY(), 0);
+            }else{
+                al_draw_bitmap_region(getDraw(), getSourceX() + (DOWNRIGHT * 2 * sizePixelsX) + 16,
+                                      getSourceY() + (sourceI * sizePixelsY), sizePixelsX, sizePixelsY * 2,
+                                      getX(), getY(), 0);
+            }
         }
     }
 
