@@ -501,7 +501,7 @@ public:
     }
 
     void checkPointsLives(){
-        if(puntuacion >= 1000 && puntosVidasAdicionales == 0){
+        if(puntuacion >= 8000 && puntosVidasAdicionales == 0){
             qbert.setLives(qbert.getLives()+1);
             puntosVidasAdicionales++;
         }
