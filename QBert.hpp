@@ -64,7 +64,7 @@ public:
             if(enemies.size() == 1 && !enemies.begin().operator*()->isCoily){ //nos han invocado con un enemigo y no es coily
                 enemies.clear();
                 hasCoily = false;
-            }else if(enemies.size() == 1 && !enemies.begin().operator*()->isCoily){ //nos han invocado con un enemigo y es coily
+            }else if(enemies.size() == 1 && enemies.begin().operator*()->isCoily){ //nos han invocado con un enemigo y es coily
                 hasCoily = true;
             }
         }

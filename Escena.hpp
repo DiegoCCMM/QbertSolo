@@ -441,9 +441,6 @@ public:
                                                  -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(green);
                     }
-//                    Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
-//                                             -5); // X e Y (pixeles) posicion respecto al cubo[i,j]
-//                    enemies.push_back(green);
                     periodEnemies = 0;
                 } else if (eleccion >= 15 && eleccion <= 29 && enemigosPosibles[2]) {
                     //coily
