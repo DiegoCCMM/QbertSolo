@@ -25,7 +25,7 @@ public:
         std::uniform_int_distribution<int> dist3(1, 3);
 
         if(getI() == 6){//estamos abajo
-            std::cout<<"estamos abajo"<<std::endl;
+//            std::cout<<"estamos abajo"<<std::endl;
             if(getJ() == 0){
                 //esquina abajo a la izquierda
                 setDir(TOPRIGHT);
@@ -63,7 +63,7 @@ public:
                 }
             }
         }else if(getJ() == 0){//estamos a la izquierda
-            std::cout<<"estamos izquierda"<<std::endl;
+//            std::cout<<"estamos izquierda"<<std::endl;
             if(repeticion){
                 setDir(DOWNRIGHT);
                 repeticion = false;
@@ -76,7 +76,7 @@ public:
                 repeticion = true;
             }
         }else{ //sin restriccion
-            std::cout<<"sin restriccion"<<std::endl;
+//            std::cout<<"sin restriccion"<<std::endl;
             int a = dist4(mt);
             if(a == 1){
                 setDir(TOPLEFT);

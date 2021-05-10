@@ -342,7 +342,7 @@ public:
                 float aux_x = gameoverObj.getX();
                 for (std::string::size_type i = 0; i < frase.size(); i++) {
                     if (int(frase[i]) != 32) {
-                        std::cout << int(frase[i]) % 65 << std::endl;
+                        //std::cout << int(frase[i]) % 65 << std::endl;
                         gameoverObj.setSourceJ(int(frase[i]) % 65);
                         gameoverObj.setSourceI(7);
                     } else {
@@ -445,11 +445,11 @@ public:
                 } else if (eleccion >= 15 && eleccion <= 29 && enemigosPosibles[2]) {
                     //coily
                     if (!hasCoily) {
-                        std::cout << "meto coily" << std::endl;
+                        //std::cout << "meto coily" << std::endl;
                         Coily *coily = new Coily(piramide, "coilyBola", 1, eleccion%2, 9, -3);
                         enemies.push_back(coily);
                         hasCoily = true;
-                        std::cout << "meto redblob" << std::endl;
+//                        std::cout << "meto redblob" << std::endl;
                     }
                     periodEnemies = 0;
                 } else if (eleccion >= 30 && eleccion <= 44 && enemigosPosibles[3]) {
@@ -564,17 +564,17 @@ public:
     void checkRandMovementEnemies(std::_List_iterator<Enemy *> it) {
         //for (std::_List_iterator<Enemy*> it = enemies.begin(); it != enemies.end(); it++){
         if (it.operator*()->getRandMoveTimer() == it.operator*()->getRandMovePeriod()) {
-            std::cout << "muevo enemi" << std::endl;
+//            std::cout << "muevo enemi" << std::endl;
             qbert.getI();
-            std::cout << "muevo enemiI" << std::endl;
+//            std::cout << "muevo enemiI" << std::endl;
             qbert.getJ();
-            std::cout << "muevo enemiJ" << std::endl;
-            std::cout << it.operator*()->isCoily << std::endl;
-            std::cout << "lolazo" << std::endl;
+//            std::cout << "muevo enemiJ" << std::endl;
+//            std::cout << it.operator*()->isCoily << std::endl;
+//            std::cout << "lolazo" << std::endl;
 
             it.operator*()->randomMovement(qbert.getI(), qbert.getJ());
             it.operator*()->resetRandomMoveTimer();
-            std::cout << "acabo de mover enemi" << std::endl;
+//            std::cout << "acabo de mover enemi" << std::endl;
         } else {
             it.operator*()->randomMoveTimerplusplus();
         }

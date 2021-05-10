@@ -81,13 +81,13 @@ public:
         std::uniform_int_distribution<int> dist(1, 2);
 
 
-        std::cout << nom << std::endl;
+        /*std::cout << nom << std::endl;
 
         std::cout << "valor qbert i" << i << std::endl;
         std::cout << "valor qbert j" << j << std::endl;
 
         std::cout << "valor enemy i*" << getI() << std::endl;
-        std::cout << "valor enemy j" << getJ() << std::endl;
+        std::cout << "valor enemy j" << getJ() << std::endl;*/
 
         if (dist(mt) == 1) {
             setDir(DOWNRIGHT);
@@ -95,8 +95,8 @@ public:
             setDir(DOWNLEFT);
         }
         assignIJ();
-        std::cout << getI() << std::endl;
-        std::cout << getJ() << std::endl;
+        /*std::cout << getI() << std::endl;
+        std::cout << getJ() << std::endl;*/
 
         Enemy::setJumping(true);
         Enemy::setSourceX(getSourceX() - 16);

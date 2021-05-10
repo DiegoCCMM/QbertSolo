@@ -49,14 +49,14 @@ public:
                 dirJ = coilyJ - qbertj;
             }
 
-            std::cout << "valor qbert i" << qberti << std::endl;
+            /*std::cout << "valor qbert i" << qberti << std::endl;
             std::cout << "valor qbert j" << qbertj << std::endl;
 
             std::cout << "valor i" << coilyI << std::endl;
             std::cout << "valor j" << coilyJ << std::endl;
 
             std::cout << "distancia i" << abs(dirI) << std::endl;
-            std::cout << "distancia j" << abs(dirJ) << std::endl;
+            std::cout << "distancia j" << abs(dirJ) << std::endl;*/
 
             //la diferencia de altura es igual en distancia en bloques
             int cercania = abs(dirI);
@@ -75,7 +75,7 @@ public:
 
 
 
-            std::cout << "cercania " << cercania << std::endl;
+            //std::cout << "cercania " << cercania << std::endl;
 
 
             if (cercania <= 3) { //si estamos "cerca" nos tiramos
@@ -130,7 +130,7 @@ public:
     }
 
     void randomMovement(int i, int j) override {
-        std::cout << "entro2" << std::endl;
+        //std::cout << "entro2" << std::endl;
         if(getI() == 6){ // anyadir condicion de que el estado anterior sea una bola
             state = AI;
             CsetJumpSound("coilyEstirado");
