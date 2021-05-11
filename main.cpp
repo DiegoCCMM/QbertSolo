@@ -298,7 +298,8 @@ int main() {
 
     // CREDITOS
     creditosIntro:
-    {
+    {   escena.setLevel(1);
+        escena.setRound(1);
         credit.loadPantalla(escena.getPuntuacion(), WIDTH/scale, HEIGHT/scale);
         creditos:
         {
