@@ -354,7 +354,10 @@ public:
                 }
                 gameoverObj.setX(aux_x);
 
-                if (gameoverObj.getTimer() > 100) gameover = true;
+                if (gameoverObj.getTimer() > 100) {
+                    gameover = true;
+                    gameoverObj.setTimer(0);
+                }
                 gameoverObj.setTimer(gameoverObj.getTimer() + 1);
             }
         }
