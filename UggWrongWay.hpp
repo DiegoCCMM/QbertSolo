@@ -104,7 +104,7 @@ public:
                                 playOnce(coilyCae);
                             }
                             if (getSourceX() != 0) {
-                                setSourceX(getSourceX() + 16);
+                                //setSourceX(getSourceX() + 16);
                             }
                         } else {
                             //WE LANDED

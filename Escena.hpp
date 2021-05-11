@@ -425,7 +425,7 @@ public:
     }
 
     void generarEnemigos() {
-        if (!qbert.isColision() && !qbert.isEnPlatillo() && !qbert.hasSuperpower() && !piramideCompleta()) {
+        if (!qbert.isColision() && !qbert.isEnPlatillo() && !qbert.hasSuperpower() && !piramide.isPiramideCompleta()) {
             if (periodEnemies >= periodoEnemigos && enemies.size() < limEnemigos) {
                 //genera un enemigo aleatorio
                 std::random_device rd;
