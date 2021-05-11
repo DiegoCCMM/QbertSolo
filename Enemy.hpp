@@ -185,6 +185,9 @@ public:
                 setY(getY() + movementY);
             } else {
                 estado = INGAME;
+                if(nom == "Slick" || nom == "Sam"){
+                    piramide->changeCubeInverse(getI(),getJ());
+                }
                 if (getI() == qbert->getI() && getJ() == qbert->getJ()) {
                     colisionado = true;
                 }
