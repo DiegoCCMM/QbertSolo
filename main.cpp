@@ -5,6 +5,7 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
+#include <allegro5/allegro_primitives.h>
 #include <list>
 
 #include "Piramide.hpp"
@@ -98,10 +99,22 @@ int main() {
 
                     al_identity_transform(&camera);
 
-                    int prev_disp;
-                    prev_disp = al_get_display_width(disp);
+                    // datos previos al resize
+                    WIDTH = al_get_display_width(disp);
+                    HEIGHT = al_get_display_height(disp);
+
                     al_acknowledge_resize(disp);
-                    scale += ((float) al_get_display_width(disp) - (float) prev_disp) * 0.001f;
+
+                    if(HEIGHT != (float)al_get_display_height(disp)){
+                        WIDTH = (330.0/280.0)*(float)al_get_display_height(disp);
+                        al_resize_display(disp, WIDTH, (float)al_get_display_height(disp));
+                        scale += ((float) al_get_display_height(disp) - (float) HEIGHT) * 0.0035f;
+                    } else if(WIDTH != (float)al_get_display_width(disp)){
+                        HEIGHT = (float)al_get_display_width(disp)/(330.0/280.0);
+                        al_resize_display(disp, (float)al_get_display_width(disp), HEIGHT);
+                        scale += ((float) al_get_display_width(disp) - (float) WIDTH) * 0.0035f;
+                    }
+
                     al_scale_transform(&camera, scale, scale);
                     al_use_transform(&camera);
 
@@ -162,10 +175,22 @@ int main() {
 
                     al_identity_transform(&camera);
 
-                    int prev_disp;
-                    prev_disp = al_get_display_width(disp);
+                    // datos previos al resize
+                    WIDTH = al_get_display_width(disp);
+                    HEIGHT = al_get_display_height(disp);
+
                     al_acknowledge_resize(disp);
-                    scale += ((float) al_get_display_width(disp) - (float) prev_disp) * 0.001f;
+
+                    if(HEIGHT != (float)al_get_display_height(disp)){
+                        WIDTH = (330.0/280.0)*(float)al_get_display_height(disp);
+                        al_resize_display(disp, WIDTH, (float)al_get_display_height(disp));
+                        scale += ((float) al_get_display_height(disp) - (float) HEIGHT) * 0.0035f;
+                    } else if(WIDTH != (float)al_get_display_width(disp)){
+                        HEIGHT = (float)al_get_display_width(disp)/(330.0/280.0);
+                        al_resize_display(disp, (float)al_get_display_width(disp), HEIGHT);
+                        scale += ((float) al_get_display_width(disp) - (float) WIDTH) * 0.0035f;
+                    }
+
                     al_scale_transform(&camera, scale, scale);
                     al_use_transform(&camera);
 
@@ -261,10 +286,22 @@ int main() {
 
                     al_identity_transform(&camera);
 
-                    int prev_disp;
-                    prev_disp = al_get_display_width(disp);
+                    // datos previos al resize
+                    WIDTH = al_get_display_width(disp);
+                    HEIGHT = al_get_display_height(disp);
+
                     al_acknowledge_resize(disp);
-                    scale += ((float) al_get_display_width(disp) - (float) prev_disp) * 0.001f;
+
+                    if(HEIGHT != (float)al_get_display_height(disp)){
+                        WIDTH = (330.0/280.0)*(float)al_get_display_height(disp);
+                        al_resize_display(disp, WIDTH, (float)al_get_display_height(disp));
+                        scale += ((float) al_get_display_height(disp) - (float) HEIGHT) * 0.0035f;
+                    } else if(WIDTH != (float)al_get_display_width(disp)){
+                        HEIGHT = (float)al_get_display_width(disp)/(330.0/280.0);
+                        al_resize_display(disp, (float)al_get_display_width(disp), HEIGHT);
+                        scale += ((float) al_get_display_width(disp) - (float) WIDTH) * 0.0035f;
+                    }
+
                     al_scale_transform(&camera, scale, scale);
                     al_use_transform(&camera);
 
@@ -326,10 +363,22 @@ int main() {
 
                     al_identity_transform(&camera);
 
-                    int prev_disp;
-                    prev_disp = al_get_display_width(disp);
+                    // datos previos al resize
+                    WIDTH = al_get_display_width(disp);
+                    HEIGHT = al_get_display_height(disp);
+
                     al_acknowledge_resize(disp);
-                    scale += ((float) al_get_display_width(disp) - (float) prev_disp) * 0.001f;
+
+                    if(HEIGHT != (float)al_get_display_height(disp)){
+                        WIDTH = (330.0/280.0)*(float)al_get_display_height(disp);
+                        al_resize_display(disp, WIDTH, (float)al_get_display_height(disp));
+                        scale += ((float) al_get_display_height(disp) - (float) HEIGHT) * 0.003f;
+                    } else if(WIDTH != (float)al_get_display_width(disp)){
+                        HEIGHT = (float)al_get_display_width(disp)/(330.0/280.0);
+                        al_resize_display(disp, (float)al_get_display_width(disp), HEIGHT);
+                        scale += ((float) al_get_display_width(disp) - (float) WIDTH) * 0.003f;
+                    }
+
                     al_scale_transform(&camera, scale, scale);
                     al_use_transform(&camera);
 
