@@ -25,8 +25,9 @@ class Enemy : public Character {
     int randMovePeriod;
     Estado estado = CIELO;
     bool colisionado = false;
+
 protected:
-    int IA;
+    int IA; //0 CLASICO, 1 MEDIO, 2 DIFICIL
 
 public:
     bool isCoily = false;
