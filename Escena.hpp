@@ -19,6 +19,7 @@ class Escena {
     bool enemigosPosibles[5];
     int puntosVidasAdicionales;
     int colorSuperPower;
+    int timerGlobal;
 
     Objeto playerObj, numPlayerObj,
             puntuacionObj,
@@ -129,6 +130,7 @@ public:
         width = _width, height = _height;
         gameover = false;
         colorSuperPower = 0;
+        timerGlobal = 0;
 
         // Cargar mapa
         piramide.loadMap(level, round, width, height);
@@ -659,6 +661,18 @@ public:
         if (!qbert.isColision() && !piramide.isPiramideCompleta() && qbert.getLives() != 0) {
             qbert.setMove(dir);
         }
+    }
+
+    void changeCube(){
+        if(cubeID != 0 && timerGlobal%(30*15*cubeID) == 0){
+            //genera un enemigo aleatorio
+            std::random_device rd;
+            std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
+            std::uniform_int_distribution<int> dist(0, 6);
+            int i = dist(mt), j = dist(mt);
+            piramide.changeCubeInverse(i,j);
+        }
+        timerGlobal++;
     }
 
     /*************************
