@@ -7,6 +7,8 @@
 #include <allegro5/allegro_acodec.h>
 #include <allegro5/allegro_primitives.h>
 #include <list>
+#include <fstream>
+#include <iostream>
 
 #include "Piramide.hpp"
 #include "Enemy.hpp"
@@ -18,14 +20,20 @@
 
 #define NUMERODESAMPLES 10
 
-float scale = 1.0f;
-float WIDTH = 330, HEIGHT = 280;
+float scale;
+float WIDTH, HEIGHT;
 
 void must_init(bool test, const char *description);
+void guardarResize();
 
 int main() {
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
+
+    // Memoria a la hora del reescalado
+    std::ifstream file("../pantalla.txt");
+    file >> WIDTH >> HEIGHT >> scale;
+    file.close();
 
     ALLEGRO_TRANSFORM camera;
 
@@ -54,6 +62,15 @@ int main() {
     al_init_acodec_addon();
     al_reserve_samples(NUMERODESAMPLES);
 
+    al_identity_transform(&camera);
+
+    al_acknowledge_resize(disp);
+
+    al_resize_display(disp, WIDTH, HEIGHT);
+
+    al_scale_transform(&camera, scale, scale);
+    al_use_transform(&camera);
+
     Creditos credit = Creditos();
     Escena escena = Escena(WIDTH/scale, HEIGHT/scale);
     bool redraw = true;
@@ -65,12 +82,12 @@ int main() {
      *************************/
 
     int cuboID = 0, coilyID = 0, slicksamID = 0, blobID = 0, level = 1;
-    // UP, DOWN, LEFT, RIGHT
+    // UP, DOWN, LEFT, RIGHT (inicialmente)
     // ARRIBADER, ABAJOIZQ, ARRIBAIZQ, ABAJODER
     int controls[4] = {84, 85, 82, 83};
     bool backdoor;
 
-                                                         // Pantallas:
+    // Pantallas/Estados:
     // INICIO, INFONIVEL, JUEGO, CREDITOS(registro nombre y highscore), CLOSE
 
     inicioIntro:
@@ -159,6 +176,8 @@ int main() {
                     // RESIZE ALL ITEMS
                     init.resize(WIDTH / scale, HEIGHT / scale);
 
+                    guardarResize();
+
                     break;
 
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -234,6 +253,8 @@ int main() {
 
                     // RESIZE ALL ITEMS
                     infonivel.resize(WIDTH / scale, HEIGHT / scale);
+
+                    guardarResize();
 
                     break;
 
@@ -368,6 +389,8 @@ int main() {
                     // RESIZE ALL ITEMS
                     escena.resizAll(WIDTH/scale, HEIGHT/scale);
 
+                    guardarResize();
+
                     break;
 
 
@@ -446,6 +469,8 @@ int main() {
                     // RESIZE ALL ITEMS
                     credit.resize(WIDTH / scale, HEIGHT / scale);
 
+                    guardarResize();
+
                     break;
 
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -488,4 +513,11 @@ void must_init(bool test, const char *description) {
 
     printf("No se ha podido inicializar: %s\n", description);
     exit(1);
+}
+
+void guardarResize(){
+    // Guardar en memoria a la hora del reescalado
+    std::ofstream file("../pantalla.txt");
+    file << WIDTH << " " << HEIGHT << " " << scale;
+    file.close();
 }
