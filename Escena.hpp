@@ -42,6 +42,7 @@ public:
     int puntuacion;
     bool hasCoily = false, gameover = false, hasSlickSam = false;
     int posPause = 0;
+    int cuboTiempo, IACoily, IASlickSam, IABlob;
 
     /* Constructor */
     Escena(float _width, float _height) : width(_width), height(_height), level(1), round(1) {
@@ -126,11 +127,16 @@ public:
 
     }
 
-    void load(float _width, float _height, bool backdoor) {
+    void load(float _width, float _height, bool backdoor, int _cuboTiempo, int _IACoily, int _IASlickSam, int _IABlob) {
         width = _width, height = _height;
         gameover = false;
         colorSuperPower = 0;
         timerGlobal = 0;
+
+        cuboTiempo = _cuboTiempo;
+        IACoily = _IACoily;
+        IASlickSam = _IASlickSam;
+        IABlob = _IABlob;
 
         // Cargar mapa
         piramide.loadMap(level, round, width, height);
@@ -506,7 +512,7 @@ public:
                     //redblob o poder
                     if(eleccion <= 12 && enemigosPosibles[1]) {
                         Enemy *green = new Enemy(piramide, "Redblob", 1, eleccion%2, 10,
-                                                 0); // X e Y (pixeles) posicion respecto al cubo[i,j]
+                                                 0, IABlob); // X e Y (pixeles) posicion respecto al cubo[i,j]
                         enemies.push_back(green);
                     }else if(eleccion > 12 && enemigosPosibles[0]) {
                         Enemy *green = new Enemy(piramide, "GreenBlob", 1, eleccion%2, 9,
@@ -518,7 +524,7 @@ public:
                     //coily
                     if (!hasCoily) {
                         //std::cout << "meto coily" << std::endl;
-                        Coily *coily = new Coily(piramide, "coilyBola", 1, eleccion%2, 9, -3);
+                        Coily *coily = new Coily(piramide, "coilyBola", 1, eleccion%2, 9, -3, IACoily);
                         enemies.push_back(coily);
                         hasCoily = true;
 //                        std::cout << "meto redblob" << std::endl;
@@ -538,11 +544,11 @@ public:
                     //slick o sam
                     if (!hasSlickSam) {
                         if(eleccion % 2 == 0) {
-                            SlickSam *slickObj = new SlickSam(piramide, "Slick", 1, eleccion % 2, 9, -6);
+                            SlickSam *slickObj = new SlickSam(piramide, "Slick", 1, eleccion % 2, 9, -6, IASlickSam);
                             enemies.push_back(slickObj);
                             hasSlickSam = true;
                         }else{
-                            SlickSam *sam = new SlickSam(piramide, "Sam", 1, eleccion % 2, 9, -6);
+                            SlickSam *sam = new SlickSam(piramide, "Sam", 1, eleccion % 2, 9, -6, IASlickSam);
                             enemies.push_back(sam);
                             hasSlickSam = true;
                         }

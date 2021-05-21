@@ -280,7 +280,7 @@ int main() {
     // GAME LOOP
     juegoIntro:
     {
-        escena.load(WIDTH/scale, HEIGHT/scale, backdoor);
+        escena.load(WIDTH/scale, HEIGHT/scale, backdoor, cuboID, coilyID, slicksamID, blobID);
         bool pause = false;
 
         juego:

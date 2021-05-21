@@ -15,14 +15,16 @@ class Coily : public Enemy{
     State state = GOING_DOWN;
     ALLEGRO_BITMAP* secondPhaseDraw;
     int reachQberti = VACIO,  reachQbertj = VACIO;
+    int IACoily;
 
 public:
-    Coily(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube) : Enemy(
-            piramide, nom, i, j, xRespectCube, yRespectCube) {
+    Coily(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube,
+          int IACoily) : Enemy(piramide, nom, i, j, xRespectCube, yRespectCube) {
         ALLEGRO_BITMAP *draw = al_load_bitmap("../sprites/coilyEstirado.png");
         must_init(draw, nom.c_str());
         secondPhaseDraw = draw;
         leftSprite = 16;
+        IACoily = IACoily;
         Enemy::isCoily = true;
     }
 
