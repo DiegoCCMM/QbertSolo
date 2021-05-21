@@ -314,6 +314,7 @@ int main() {
                     if(!pause) {
                         escena.movementAll();
                         escena.generarEnemigos();
+                        escena.changeCube();
                     }
 
                     break;

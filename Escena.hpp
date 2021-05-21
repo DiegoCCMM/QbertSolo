@@ -19,6 +19,7 @@ class Escena {
     bool enemigosPosibles[5];
     int puntosVidasAdicionales;
     int colorSuperPower;
+    int timerGlobal;
 
     Objeto playerObj, numPlayerObj,
             puntuacionObj,
@@ -130,6 +131,7 @@ public:
         width = _width, height = _height;
         gameover = false;
         colorSuperPower = 0;
+        timerGlobal = 0;
 
         cuboTiempo = _cuboTiempo;
         IACoily = _IACoily;
@@ -665,6 +667,20 @@ public:
         if (!qbert.isColision() && !piramide.isPiramideCompleta() && qbert.getLives() != 0) {
             qbert.setMove(dir);
         }
+    }
+
+    void changeCube(){
+        if(cuboTiempo != 0 && timerGlobal!= 0 && timerGlobal%(30*15*cuboTiempo) == 0){
+            std::cout << cuboTiempo << std::endl;
+            //genera un enemigo aleatorio
+            std::random_device rd;
+            std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
+            std::uniform_int_distribution<int> dist(0, 6);
+            int i = dist(mt), j = dist(mt);
+            std::cout << i << " " << j << std::endl;
+            piramide.changeCubeInverse(i,j);
+        }
+        timerGlobal++;
     }
 
     /*************************
