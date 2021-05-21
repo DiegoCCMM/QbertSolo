@@ -10,7 +10,7 @@
 class SlickSam : public Enemy{
 
     bool repeticion = false;
-    int IASlickSam;
+    int IASlickSam;         //0 CLASICO, 1 MEDIO, 2 DIFICIL
 
 public:
     SlickSam(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube, int IASlickSam) : Enemy(

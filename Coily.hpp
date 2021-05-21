@@ -15,7 +15,7 @@ class Coily : public Enemy{
     State state = GOING_DOWN;
     ALLEGRO_BITMAP* secondPhaseDraw;
     int reachQberti = VACIO,  reachQbertj = VACIO;
-    int IACoily;
+    int IACoily;                                  //0 CLASICO, 1 MEDIO, 2 DIFICIL
 
 public:
     Coily(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube,
@@ -24,7 +24,7 @@ public:
         must_init(draw, nom.c_str());
         secondPhaseDraw = draw;
         leftSprite = 16;
-        IACoily = IACoily;
+        this->IACoily = IACoily;
         Enemy::isCoily = true;
     }
 
@@ -119,6 +119,176 @@ public:
         Enemy::setSourceX(getSourceX()- leftSprite);
     }
 
+    void AIMovement2(const int& qberti, const int& qbertj){
+
+        if(!isFalling()) {//mientras no estemos cayendo nos movemos como siempre
+
+            int coilyI = getI(), coilyJ = getJ();
+            int dirI, dirJ;
+
+            if(state == REACHING_LEDGE){//si tenemos que llegar al borde, perseguimos el top de la pirámide
+                dirI = coilyI - reachQberti;
+                dirJ = coilyJ - reachQbertj;
+            } else if(qbertj < 0 || qbertj > qberti){//si qbert se sube a platillo, buscamos cuspide
+                dirI = coilyI - 0;
+                dirJ = coilyJ - 0;
+            } else{//en cualquier otro caso, perseguimos la última posición de qbert que tenemos
+                dirI = coilyI - qberti;
+                dirJ = coilyJ - qbertj;
+            }
+
+            /*std::cout << "valor qbert i" << qberti << std::endl;
+            std::cout << "valor qbert j" << qbertj << std::endl;
+
+            std::cout << "valor i" << coilyI << std::endl;
+            std::cout << "valor j" << coilyJ << std::endl;
+
+            std::cout << "distancia i" << abs(dirI) << std::endl;
+            std::cout << "distancia j" << abs(dirJ) << std::endl;*/
+
+            //la diferencia de altura es igual en distancia en bloques
+            int cercania = abs(dirI);
+            if((dirJ < 0 && dirI >= 0) || (dirI <= 0 && dirJ > 0) ){
+                // Sólo tenemos diferencia lateral o la diferencia lateral no es en la misma dirección que la altura,
+                // impidiendo usar los movimientos diagonales para ajustar ambos
+                // , lo que implica que tendremos que hacer 2 movimientos
+                // por cada diferencia lateral EJ de 5 4 a 5 3 sólo podemos llegar pisando antes 6 4 y luego 5 3
+                cercania += 2*abs(dirJ);
+            }
+            //la otra alternativa sería que dirJ y dirI tuvieran el mismo signo
+            //significa que la diferencia lateral se puede solucionar usando dirI movimientos diagonales
+            //y en el caso de que dirJ fuera menor que dirI, con los movimientos diagonales solucionamos la diferencia
+            //lateral y sólo nos quedaría la diferencia de altura.
+            //Es decir, que con dirI solucionamos dirJ y sólo nos queda dirI - dirJ que ya sabemos que es igual.
+
+
+
+            //std::cout << "cercania " << cercania << std::endl;
+
+
+            if (cercania <= 3) { //si estamos "cerca" nos tiramos
+                setState(COULD_FALL);
+            } else if (coilyCouldFall() && abs(dirI) + abs(dirJ) > 4) {
+                setState(AI);
+            }
+
+            if (dirI > 0) {//qbert esta por arriba 7 - 0 es 7, qbert en el sitio inicial, coily abajo max
+                if (dirJ > 0) { //qbert esta por la izq, 7 - 0 es 7, qbert en el inicial, coily a la derecha del to-do
+                    setDir(TOPLEFT);
+                } else { //qbert esta por la derecha
+                    setDir(TOPRIGHT);
+                }
+            } else {//qbert esta por abajo 0 - 7 es -7, qbert en abajo max, coily arriba
+                if (dirJ >= 0) {
+                    if (coilyI == 6 || coilyJ == 6) {
+                        setDir(TOPLEFT);
+                    } else {
+                        if(dirJ == 0 && dirI == 0){
+                            setDir(DONTMOVE);
+                        }else {
+                            setDir(DOWNLEFT);
+                        }
+                    }
+                } else {
+                    if (coilyI == 6 || coilyJ == 6) {
+                        setDir(TOPRIGHT);
+                    } else {
+                        setDir(DOWNRIGHT);
+                    }
+                }
+            }
+        }
+
+        assignIJ();
+
+        Enemy::setJumping(true);
+        Enemy::setSourceX(getSourceX()- leftSprite);
+    }
+
+    void AIMovement3(const int& qberti, const int& qbertj){
+
+        if(!isFalling()) {//mientras no estemos cayendo nos movemos como siempre
+
+            int coilyI = getI(), coilyJ = getJ();
+            int dirI, dirJ;
+
+            if(state == REACHING_LEDGE){//si tenemos que llegar al borde, perseguimos la última posición de qbert
+                dirI = coilyI - reachQberti;
+                dirJ = coilyJ - reachQbertj;
+            } else {//en cualquier otro caso, perseguimos la última posición de qbert que tenemos
+                dirI = coilyI - qberti;
+                dirJ = coilyJ - qbertj;
+            }
+
+            /*std::cout << "valor qbert i" << qberti << std::endl;
+            std::cout << "valor qbert j" << qbertj << std::endl;
+
+            std::cout << "valor i" << coilyI << std::endl;
+            std::cout << "valor j" << coilyJ << std::endl;
+
+            std::cout << "distancia i" << abs(dirI) << std::endl;
+            std::cout << "distancia j" << abs(dirJ) << std::endl;*/
+
+            //la diferencia de altura es igual en distancia en bloques
+            int cercania = abs(dirI);
+            if((dirJ < 0 && dirI >= 0) || (dirI <= 0 && dirJ > 0) ){
+                // Sólo tenemos diferencia lateral o la diferencia lateral no es en la misma dirección que la altura,
+                // impidiendo usar los movimientos diagonales para ajustar ambos
+                // , lo que implica que tendremos que hacer 2 movimientos
+                // por cada diferencia lateral EJ de 5 4 a 5 3 sólo podemos llegar pisando antes 6 4 y luego 5 3
+                cercania += 2*abs(dirJ);
+            }
+            //la otra alternativa sería que dirJ y dirI tuvieran el mismo signo
+            //significa que la diferencia lateral se puede solucionar usando dirI movimientos diagonales
+            //y en el caso de que dirJ fuera menor que dirI, con los movimientos diagonales solucionamos la diferencia
+            //lateral y sólo nos quedaría la diferencia de altura.
+            //Es decir, que con dirI solucionamos dirJ y sólo nos queda dirI - dirJ que ya sabemos que es igual.
+
+
+
+            //std::cout << "cercania " << cercania << std::endl;
+
+
+            if (cercania <= 3) { //si estamos "cerca" nos tiramos
+                setState(COULD_FALL);
+            } else if (coilyCouldFall() && abs(dirI) + abs(dirJ) > 4) {
+                setState(AI);
+            }
+
+            if (dirI > 0) {//qbert esta por arriba 7 - 0 es 7, qbert en el sitio inicial, coily abajo max
+                if (dirJ > 0) { //qbert esta por la izq, 7 - 0 es 7, qbert en el inicial, coily a la derecha del to-do
+                    setDir(TOPLEFT);
+                } else { //qbert esta por la derecha
+                    setDir(TOPRIGHT);
+                }
+            } else {//qbert esta por abajo 0 - 7 es -7, qbert en abajo max, coily arriba
+                if (dirJ >= 0) {
+                    if (coilyI == 6 || coilyJ == 6) {
+                        setDir(TOPLEFT);
+                    } else {
+                        if(dirJ == 0 && dirI == 0){
+                            setDir(DONTMOVE);
+                        }else {
+                            setDir(DOWNLEFT);
+                        }
+                    }
+                } else {
+                    if (coilyI == 6 || coilyJ == 6) {
+                        setDir(TOPRIGHT);
+                    } else {
+                        setDir(DOWNRIGHT);
+                    }
+                }
+            }
+        }
+
+        assignIJ();
+
+        Enemy::setJumping(true);
+        Enemy::setSourceX(getSourceX()- leftSprite);
+    }
+
+
     void setReachQberti(int reachQberti) {
         Coily::reachQberti = reachQberti;
     }
@@ -142,7 +312,12 @@ public:
         if(state == GOING_DOWN){
             Enemy::randomMovement(i, j);
         }else{
-            Coily::AIMovement(i, j);
+            if(IACoily == 0)
+                Coily::AIMovement(i, j);
+            else if(IACoily == 1)
+                Coily::AIMovement2(i,j);
+            else if(IACoily == 2)
+                Coily::AIMovement3(i,j);
         }
 
     }
