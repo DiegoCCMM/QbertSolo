@@ -25,6 +25,7 @@ class Enemy : public Character {
     int randMovePeriod;
     Estado estado = CIELO;
     bool colisionado = false;
+    int IABlob;
 
 public:
     bool isCoily = false;
@@ -75,6 +76,51 @@ public:
             playOnce(musica2);
         }
     }
+
+    Enemy(Piramide piramide, std::string nom, int i, int j, int xRespectCube, int yRespectCube, int IABlob) :
+            Character(piramide, nom, i, j, DOWNRIGHT, xRespectCube, yRespectCube) {
+
+        Enemy::setSourceX(16);
+        this->IABlob = IABlob;
+        std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
+        //
+        std::uniform_int_distribution<int> dist(MIN, MAX);
+        Enemy::randMovePeriod;
+        switch (piramide.getLevel()) {
+            case 6:
+                randMovePeriod = 23;
+                break;
+            case 7:
+                randMovePeriod = 20;
+                break;
+            case 8:
+                randMovePeriod = 17;
+                break;
+            case 9:
+                randMovePeriod = 15;
+                break;
+            default:
+                randMovePeriod = 25;
+                break;
+        }
+
+        if(nom != "Ugg" && nom != "WrongWay"){
+            Character::y = piramide.map[i][j].y -32-10-32;
+        }
+
+        if (nom == "GreenBlob") {
+            setHelpingPower(true);
+        }
+
+        if(nom == "Slick" || nom == "Sam"){
+            ALLEGRO_SAMPLE *musica1 = al_load_sample(("../sounds/" + nom + "1.ogg").c_str());
+            ALLEGRO_SAMPLE *musica2 = al_load_sample(("../sounds/" + nom + "2.ogg").c_str());
+
+            playOnce(musica1);
+            playOnce(musica2);
+        }
+    }
+
 
     virtual void randomMovement(int i, int j) {
         std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());

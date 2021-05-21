@@ -408,8 +408,8 @@ public:
         // ARRIBADER, ABAJOIZQ, ARRIBAIZQ, ABAJODER
         frase = "SALTO ARRIBA DERECHA   -" + controlsName[0] + "-\\"   //UP
                 "SALTO ABAJO IZQUIERDA  -" + controlsName[1] + "-\\"   //DOWN
-                "SALTO ARRIBA IZQUIERDA -" + controlsName[2] + "-\\"       //left
-                "SALTO ABAJO DERECHA    -" + controlsName[3] + "-\\";            //right                                                                                                                                                                                 "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
+                "SALTO ARRIBA IZQUIERDA -" + controlsName[2] + "-\\"   //left
+                "SALTO ABAJO DERECHA    -" + controlsName[3] + "-\\";  //right                                                                                                                                                                                 "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             if (int(frase[i]) == 92) { // '\' --> \n
                 x = width / 2 - 8*12-8;

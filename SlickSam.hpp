@@ -10,10 +10,12 @@
 class SlickSam : public Enemy{
 
     bool repeticion = false;
+    int IASlickSam;
 
 public:
-    SlickSam(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube) : Enemy(
+    SlickSam(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube, int IASlickSam) : Enemy(
             piramide, nom, i, j, xRespectCube, yRespectCube) {
+        this->IASlickSam = IASlickSam;
         setChangingGroundPower(true);
     }
 
