@@ -25,7 +25,8 @@ class Enemy : public Character {
     int randMovePeriod;
     Estado estado = CIELO;
     bool colisionado = false;
-    int IABlob;
+protected:
+    int IA;
 
 public:
     bool isCoily = false;
@@ -34,54 +35,11 @@ public:
     int leftSprite = 16;
 
     /* Constructor */
-    Enemy(Piramide piramide, std::string nom, int i, int j, int xRespectCube, int yRespectCube) :
+    Enemy(Piramide piramide, std::string nom, int i, int j, int xRespectCube, int yRespectCube, int IA=0) :
             Character(piramide, nom, i, j, DOWNRIGHT, xRespectCube, yRespectCube) {
 
         Enemy::setSourceX(16);
-        std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
-        //
-        std::uniform_int_distribution<int> dist(MIN, MAX);
-        Enemy::randMovePeriod;
-        switch (piramide.getLevel()) {
-            case 6:
-                randMovePeriod = 23;
-                break;
-            case 7:
-                randMovePeriod = 20;
-                break;
-            case 8:
-                randMovePeriod = 17;
-                break;
-            case 9:
-                randMovePeriod = 15;
-                break;
-            default:
-                randMovePeriod = 25;
-                break;
-        }
-
-        if(nom != "Ugg" && nom != "WrongWay"){
-            Character::y = piramide.map[i][j].y -32-10-32;
-        }
-
-        if (nom == "GreenBlob") {
-            setHelpingPower(true);
-        }
-
-        if(nom == "Slick" || nom == "Sam"){
-            ALLEGRO_SAMPLE *musica1 = al_load_sample(("../sounds/" + nom + "1.ogg").c_str());
-            ALLEGRO_SAMPLE *musica2 = al_load_sample(("../sounds/" + nom + "2.ogg").c_str());
-
-            playOnce(musica1);
-            playOnce(musica2);
-        }
-    }
-
-    Enemy(Piramide piramide, std::string nom, int i, int j, int xRespectCube, int yRespectCube, int IABlob) :
-            Character(piramide, nom, i, j, DOWNRIGHT, xRespectCube, yRespectCube) {
-
-        Enemy::setSourceX(16);
-        this->IABlob = IABlob;
+        this->IA = IA;
         std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         //
         std::uniform_int_distribution<int> dist(MIN, MAX);
@@ -122,27 +80,43 @@ public:
     }
 
 
-    virtual void randomMovement(int i, int j) {
+    virtual void randomMovement(int iQBert, int jQBert) {
+        bool aleatorio;
+        std::random_device rd;
         std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<int> dist(1, 2);
 
-
-        /*std::cout << nom << std::endl;
-
-        std::cout << "valor qbert i" << i << std::endl;
-        std::cout << "valor qbert j" << j << std::endl;
-
-        std::cout << "valor enemy i*" << getI() << std::endl;
-        std::cout << "valor enemy j" << getJ() << std::endl;*/
-
-        if (dist(mt) == 1) {
-            setDir(DOWNRIGHT);
-        } else {
-            setDir(DOWNLEFT);
+        if(IA == 0) aleatorio = true;
+        else if(IA == 1){ // 50% aleatorio 50% IA --> MEDIO
+            if(dist(mt) == 1) aleatorio = true;
+            else aleatorio = false;
         }
+        else if(IA == 2) {
+            bool enMedio = false;
+            int j = 1;
+            for(int i=2; i<=6 && !enMedio; i+=2){
+                enMedio = iQBert==(getI()-i) && jQBert==(getJ()-j);
+                j++;
+            }
+            if(enMedio) aleatorio = true;
+            else aleatorio = false;
+        }
+
+        Direction d;
+        if(aleatorio){
+            if (dist(mt) == 1) d = DOWNRIGHT;
+            else d = DOWNLEFT;
+        }
+        else {
+            if(iQBert==getI() && jQBert<getJ()) d = DOWNLEFT;
+            else if(iQBert==getI() && jQBert>getJ()) d = DOWNRIGHT;
+            else { // Estan en una fila distinta
+                // TODO
+            }
+        }
+
+        setDir(d);
         assignIJ();
-        /*std::cout << getI() << std::endl;
-        std::cout << getJ() << std::endl;*/
 
         Enemy::setJumping(true);
         Enemy::setSourceX(getSourceX() - 16);

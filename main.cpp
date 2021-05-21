@@ -62,6 +62,15 @@ int main() {
     al_init_acodec_addon();
     al_reserve_samples(NUMERODESAMPLES);
 
+    ALLEGRO_SAMPLE *intro = al_load_sample("../sounds/intro.ogg");
+    ALLEGRO_SAMPLE_INSTANCE *introInstance = al_create_sample_instance(intro);
+    al_set_sample_instance_playmode(introInstance, ALLEGRO_PLAYMODE_LOOP);
+    al_attach_sample_instance_to_mixer(introInstance, al_get_default_mixer());
+    ALLEGRO_SAMPLE *juego = al_load_sample("../sounds/juego.ogg");
+    ALLEGRO_SAMPLE_INSTANCE *juegoInstance = al_create_sample_instance(juego);
+    al_set_sample_instance_playmode(juegoInstance, ALLEGRO_PLAYMODE_LOOP);
+    al_attach_sample_instance_to_mixer(juegoInstance, al_get_default_mixer());
+
     al_identity_transform(&camera);
 
     al_acknowledge_resize(disp);
@@ -92,6 +101,8 @@ int main() {
 
     inicioIntro:
     {
+        al_stop_sample_instance(juegoInstance);
+        al_play_sample_instance(introInstance);
         // Pantalla inicial e instrucciones
         PantallaInicial init = PantallaInicial(WIDTH/scale, HEIGHT/scale,
                                 cuboID, coilyID, slicksamID, blobID, controls, level);
@@ -126,7 +137,10 @@ int main() {
                                 escena.setLevel(level);
                                 backdoor = level != 1;
 
-                                goto infonivelIntro;
+                                al_stop_sample_instance(introInstance);
+
+//                                goto infonivelIntro;
+                                goto juegoIntro;
 
                             } else if(init.pant == 1) { // Instrucciones
                                 init.escenarioInit();
@@ -202,6 +216,7 @@ int main() {
     // PREVIO AL NIVEL
     infonivelIntro:
     {
+        al_stop_sample_instance(juegoInstance);
         if(escena.getLevel()>9) goto creditos;
 
         PantallaInfoNivel infonivel = PantallaInfoNivel(WIDTH/scale, HEIGHT/scale);
@@ -280,6 +295,7 @@ int main() {
     // GAME LOOP
     juegoIntro:
     {
+        al_play_sample_instance(juegoInstance);
         escena.load(WIDTH/scale, HEIGHT/scale, backdoor, cuboID, coilyID, slicksamID, blobID);
         bool pause = false;
 
@@ -505,6 +521,10 @@ int main() {
     al_destroy_display(disp);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
+    al_destroy_sample(intro);
+    al_destroy_sample_instance(introInstance);
+    al_destroy_sample(juego);
+    al_destroy_sample_instance(juegoInstance);
 
     return 0;
 }
