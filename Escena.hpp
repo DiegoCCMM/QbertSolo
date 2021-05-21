@@ -26,7 +26,10 @@ class Escena {
             flechaObj, cuadrObj,
             vidaObj, numvidaObj,
             levelRoundObj, numLevelObj, numRoundObj,
-            gameoverObj;
+            gameoverObj,
+            pauseObj;
+
+    ALLEGRO_BITMAP *fonts = al_load_bitmap("../sprites/fonts.png");
 
 public:
 
@@ -37,9 +40,16 @@ public:
     int level, round, periodEnemies = 0;
     int puntuacion;
     bool hasCoily = false, gameover = false, hasSlickSam = false;
+    int posPause = 0;
 
     /* Constructor */
     Escena(float _width, float _height) : width(_width), height(_height), level(1), round(1) {
+        pauseObj.setDraw(al_load_bitmap("../sprites/escape.png"));
+        pauseObj.setSizePixelsX(230);
+        pauseObj.setSizePixelsY(60);
+        pauseObj.setXRespectCube(-94);
+        pauseObj.setYRespectCube(20);
+
         playerObj.setDraw(al_load_bitmap("../sprites/player-letras.png"));
         playerObj.setSizePixelsX(16 * 3 + 4);
         playerObj.setSizePixelsY(8);
@@ -115,7 +125,7 @@ public:
 
     }
 
-    void load(float _width, float _height) {
+    void load(float _width, float _height, bool backdoor) {
         width = _width, height = _height;
         gameover = false;
         colorSuperPower = 0;
@@ -124,7 +134,7 @@ public:
         piramide.loadMap(level, round, width, height);
 
         // Cargar personajes
-        if(level == 1 && round == 1){
+        if(level == 1 && round == 1 || backdoor){
             qbert = QBert(piramide);
             puntuacion = 0;
             puntosVidasAdicionales = 0;
@@ -153,6 +163,7 @@ public:
         numLevelObj.resize(&piramide);
         numRoundObj.resize(&piramide);
         gameoverObj.resize(&piramide);
+        pauseObj.resize(&piramide);
 
         cargarPlatillos();
         cargarEnemigos();
@@ -424,6 +435,62 @@ public:
 
     }
 
+    void drawPause(){
+        pauseObj.drawBitmap();
+
+        float x, y;
+        std::string frase;
+
+        x = width / 2 - 8*9, y = height/2 - 8*4-2;
+        frase = "QUE QUIERES HACER?\\";
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) == 92) { // '\' --> \n
+                x = width / 2 - 8*12-8;
+                y += 9*3;
+            }
+            else if(int(frase[i]) == 63){ // '?'
+                al_draw_bitmap_region(fonts, 7 * 8 + 9 * 9, 8 * 4,
+                                      7, 8, x, y, 0);
+            }
+            else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
+
+        x = width / 2 - 8*13;
+        int naranja = 0;
+        frase = "IR AL MENU-CERRAR JUEGO";
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if(int(frase[i]) == 45){ // '-'
+                x += 8*2;
+                naranja++;
+            }
+            else if (int(frase[i]) >= 48 && int(frase[i]) <= 57) { // Numero
+                if(posPause == naranja) {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 8*2,
+                                          8, 8, x, y, 0);
+                }
+                else {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 0,
+                                          8, 8, x, y, 0);
+                }
+            }
+            else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                if(posPause == naranja) {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8*3,
+                                          8, 8, x, y, 0);
+                }
+                else {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
+                                          8, 8, x, y, 0);
+                }
+            }
+            x += 8;
+        }
+    }
+
     void generarEnemigos() {
         if (!qbert.isColision() && !qbert.isEnPlatillo() && !qbert.hasSuperpower() && !piramide.isPiramideCompleta()) {
             if (periodEnemies >= periodoEnemigos && enemies.size() < limEnemigos) {
@@ -536,6 +603,7 @@ public:
         numLevelObj.resize(&piramide);
         numRoundObj.resize(&piramide);
         gameoverObj.resize(&piramide);
+        pauseObj.resize(&piramide);
     }
 
     void destroyAll() {
@@ -562,6 +630,9 @@ public:
         numLevelObj.destroy();
         numRoundObj.destroy();
         gameoverObj.destroy();
+        pauseObj.destroy();
+
+        al_destroy_bitmap(fonts);
     }
 
     void checkRandMovementEnemies(std::_List_iterator<Enemy *> it) {
@@ -610,6 +681,11 @@ public:
 
     int getPuntuacion() const { return puntuacion; }
     void setPuntuacion(int puntuacion) { Escena::puntuacion = puntuacion; }
+
+    void setPiramideCompleta(){
+        piramide.setTime(180);
+        piramide.setPiramideCompleta(true);
+    }
 
 };
 
