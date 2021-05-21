@@ -524,7 +524,7 @@ public:
                     //coily
                     if (!hasCoily) {
                         //std::cout << "meto coily" << std::endl;
-                        Coily *coily = new Coily(piramide, "coilyBola", 1, eleccion%2, 9, -3, IACoily);
+                        Coily *coily = new Coily(piramide, "coilyBola", 1, eleccion%2, 9, -3, IACoily, platillos);
                         enemies.push_back(coily);
                         hasCoily = true;
 //                        std::cout << "meto redblob" << std::endl;

@@ -20,16 +20,19 @@ class Coily : public Enemy {
     int reachQberti = VACIO, reachQbertj = VACIO;
     int IACoily;                                  //0 CLASICO, 1 MEDIO, 2 DIFICIL
     int qbertNosEspera = 0;//turnos de qbertEsperando
+    std::list<Platillo> platillos;
+
 
 public:
     Coily(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube,
-          int IACoily) : Enemy(piramide, nom, i, j, xRespectCube, yRespectCube) {
+          int IACoily, std::list<Platillo> platillos) : Enemy(piramide, nom, i, j, xRespectCube, yRespectCube) {
         ALLEGRO_BITMAP *draw = al_load_bitmap("../sprites/coilyEstirado.png");
         must_init(draw, nom.c_str());
         secondPhaseDraw = draw;
         leftSprite = 16;
         this->IACoily = IACoily;
         Enemy::isCoily = true;
+        this->platillos = platillos;
     }
 
     void setState(State s) {
@@ -225,12 +228,18 @@ public:
             } else {//en cualquier otro caso, perseguimos la última posición de qbert que tenemos
                 dirI = coilyI - qberti;
                 dirJ = coilyJ - qbertj;
-                if (qberti == reachQberti && qbertj == reachQbertj) {
-                    //for platillos, si qbert i y qbertj coincide con el de platillos -> qbertNosEspera ++
-                    if (qbertNosEspera != 2) {
-                        qbertNosEspera++;
+                if (qberti == reachQberti && qbertj == reachQbertj) {   //qbert está quieto
+                    for(std::_List_iterator<Platillo> iter = platillos.begin(); iter != platillos.end(); iter++){
+                        std::cout << " platillo pos i: " << iter->getI() + 1<< " platillo pos j -1: " << iter->getJ() -1<<
+                        " platillo pos j +1: " << iter->getJ()+1 << std::endl;
+                        std::cout << " qberti: " << qberti << " qbertj: " << qbertj<< std::endl;
+                        if(iter->getI() + 1 == qberti && (iter->getJ() == qbertj  || iter->getJ() + 1 == qbertj)){   //qbert nos espera en un platillo
+                            if (qbertNosEspera != 1) {  //es distinto de 1
+                                qbertNosEspera++;
+                            }
+                        }
                     }
-                }else if(qbertNosEspera == 2){
+                }else if(qbertNosEspera == 1){
                     qbertNosEspera = 0;
                 }
                 reachQbertj = qbertj;
@@ -266,13 +275,13 @@ public:
             //std::cout << "cercania " << cercania << std::endl;
 
 
-            if (cercania <= 2 && qbertNosEspera != 2) { //si estamos "cerca" nos tiramos
+            if (cercania <= 2 && qbertNosEspera != 1) { //si estamos "cerca" nos tiramos
                 setState(COULD_FALL);
             } else if (coilyCouldFall() && abs(dirI) + abs(dirJ) > 1) {
                 setState(AI);
             }
             std::cout << "la cercania es de :" << cercania << std::endl;
-            if (qbertNosEspera == 2 && cercania <= 2) {   //si nos esperan, no nos movemos
+            if (qbertNosEspera == 1 && cercania <= 2) {   //si nos esperan, no nos movemos
                 setDir(DONTMOVE);
             } else {
                 if (dirI > 0) {//qbert esta por arriba 7 - 0 es 7, qbert en el sitio inicial, coily abajo max
