@@ -549,7 +549,7 @@ public:
             else if(tecla == 84 && menu == DEFAULT){ // up
                 if(posMenu == 0) {
                     posMenu = 6;
-                    qbert.setY(qbert.getY()+9*3*5);
+                    qbert.setY(qbert.getY()+9*3*6);
                 }
                 else{
                     posMenu--;
@@ -640,7 +640,7 @@ public:
             else if(tecla == 84 && contr == NONE){ // up
                 if(posControles == 0) {
                     posControles = 3;
-                    qbert.setY(qbert.getY()+9*3*5);
+                    qbert.setY(qbert.getY()+9*3*3);
                 }
                 else{
                     posControles--;
