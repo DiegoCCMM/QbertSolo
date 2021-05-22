@@ -220,12 +220,20 @@ public:
             int dirI, dirJ;
 
             if (state == REACHING_LEDGE) {//si tenemos que llegar al borde, perseguimos la última posición de qbert
+                std::cout << "reachingLedge" << std::endl;
                 dirI = coilyI - reachQberti;
                 dirJ = coilyJ - reachQbertj;
+                qbertNosEspera = 0;
+
             } else if (qbertj < 0 || qbertj > qberti) {//si qbert se sube a platillo, buscamos cuspide
+                std::cout << "parriba" << std::endl;
                 dirI = coilyI - 0;
                 dirJ = coilyJ - 0;
+                qbertNosEspera = 0;
+                std::cout << "a cero" << std::endl;
             } else {//en cualquier otro caso, perseguimos la última posición de qbert que tenemos
+                std::cout << "OTRO CASO" << std::endl;
+
                 dirI = coilyI - qberti;
                 dirJ = coilyJ - qbertj;
                 if (qberti == reachQberti && qbertj == reachQbertj) {   //qbert está quieto
@@ -234,13 +242,16 @@ public:
                         " platillo pos j +1: " << iter->getJ()+1 << std::endl;
                         std::cout << " qberti: " << qberti << " qbertj: " << qbertj<< std::endl;
                         if(iter->getI() + 1 == qberti && (iter->getJ() == qbertj  || iter->getJ() + 1 == qbertj)){   //qbert nos espera en un platillo
-                            if (qbertNosEspera != 1) {  //es distinto de 1
+                            if (qbertNosEspera < 1) {  //nunca será superior a 1
                                 qbertNosEspera++;
+                                std::cout << "++" << std::endl;
+
                             }
                         }
                     }
-                }else if(qbertNosEspera == 1){
+                }else{
                     qbertNosEspera = 0;
+                    std::cout << "a cero" << std::endl;
                 }
                 reachQbertj = qbertj;
                 reachQberti = qberti;
@@ -275,7 +286,7 @@ public:
             //std::cout << "cercania " << cercania << std::endl;
 
 
-            if (cercania <= 2 && qbertNosEspera != 1) { //si estamos "cerca" nos tiramos
+            if (cercania <= 2 && qbertNosEspera < 1) { //si estamos "cerca" nos tiramos
                 setState(COULD_FALL);
             } else if (coilyCouldFall() && abs(dirI) + abs(dirJ) > 1) {
                 setState(AI);
