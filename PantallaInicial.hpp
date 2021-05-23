@@ -13,11 +13,7 @@
 
 class PantallaInicial{
     enum Pantalla {
-        INICIO, INSTRUCCIONES, MENU, CONTROLES
-    };
-
-    enum Menu {
-        DEFAULT, TIMECUBO, IACOILY, IABLOB, IASLICKSAM, LEVEL
+        INICIO, INSTRUCCIONES, MENU, CONTROLES, DIFICULTAD
     };
     
     enum Controls {
@@ -27,24 +23,28 @@ class PantallaInicial{
     float width, height;
     int timer = 0;
 
-    ALLEGRO_BITMAP *drawInit = al_load_bitmap("../sprites/fonts.png");
+    ALLEGRO_BITMAP *coilyBitmap = al_load_bitmap("../sprites/coilyEstirado.png");
+    ALLEGRO_BITMAP *samBitmap = al_load_bitmap("../sprites/Sam.png");
+    ALLEGRO_BITMAP *slickMap = al_load_bitmap("../sprites/Slick.png");
+    ALLEGRO_BITMAP *redblobBitmap = al_load_bitmap("../sprites/RedBlob.png");
+
+    ALLEGRO_BITMAP *fonts = al_load_bitmap("../sprites/fonts.png");
     ALLEGRO_SAMPLE *helloSound = al_load_sample("../sounds/qbert-hello.ogg");
     QBert qbert = QBert();
     Platillo platillo = Platillo(width, height);
-    int posMenu, posControles;
+    int posMenu, posControles, posDificultad;
 
 public:
     int cuboID, coilyID, slicksamID, blobID, level;
-    std::string cubos[4] = {"OFF", "15 SEG", "30 SEG", "45 SEG"},
-                coily[3] = {"NORMAL", "MEDIA", "AVANZADA"},
-                slicksam[3] = {"NORMAL", "MEDIA", "AVANZADA"},
-                blob[3] = {"NORMAL", "MEDIA", "AVANZADA"};
+    std::string cubos[4] = {"OFF", "45 SEC", "30 SEC", "15 SEC"},
+                coily[3] = {"CLASSIC", "MEDIUM", "HARD"},
+                slicksam[3] = {"CLASSIC", "MEDIUM", "HARD"},
+                blob[3] = {"CLASSIC", "MEDIUM", "HARD"};
     int controls[4];
     std::string controlsName[4];
     Controls contr;
 
     Pantalla pant = INICIO;
-    Menu menu;
 
     PantallaInicial(float width, float height,
                     int _cuboID, int _coilyID, int _slicksamID, int _blobID,
@@ -69,7 +69,6 @@ public:
 
     void escenarioMenu(){
         pant = MENU;
-        menu = DEFAULT;
         posMenu = 0;
         qbert.setJ(0);
         qbert.setXRespectCube(20);
@@ -97,6 +96,17 @@ public:
         qbert.setYRespectCube(50);
         qbert.setX(width/2-155+qbert.getXRespectCube());
         qbert.setY(height/2-120+qbert.getYRespectCube());
+    }
+
+    void escenarioDificultad(){
+        pant = DIFICULTAD;
+        posDificultad = 0;
+        qbert.setJ(0);
+        qbert.setXRespectCube(20);
+        qbert.setYRespectCube(50);
+        qbert.setX(width/2-155+qbert.getXRespectCube());
+        qbert.setY(height/2-120+qbert.getYRespectCube());
+
     }
 
     void movement() {
@@ -137,36 +147,40 @@ public:
         else if(pant == CONTROLES) {
             pantallaControles();
         }
+        else if(pant = DIFICULTAD) {
+            pantallaDificultad();
+        }
     }
 
     void pantallaInicial(){
         float x = width/2-48, y = height/2-8*3;
         // Cargar logo Q*Bert
-        al_draw_bitmap_region(drawInit, 0, 4 * 8,
+        al_draw_bitmap_region(fonts, 0, 4 * 8,
                               12*8, 2*8, x, y, 0);
 
         // Cargar (C)
         x = width/2-88, y = height/2;
-        al_draw_bitmap_region(drawInit, 18 * 8, 4 * 8,
+        al_draw_bitmap_region(fonts, 18 * 8, 4 * 8,
                               8, 8, x, y, 0);
         x += 8;
 
         // Cargar anyo
         std::string frase = "2021";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
-            al_draw_bitmap_region(drawInit, (int(frase[i]) % 48) * 8, 0,
+            al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8, 0,
                                   8, 8, x, y, 0);
             x+=8;
         }
 
         // Cargar frase
+        y+=2;
         frase = " BY PATRI Y DIEGO\\ALL RIGHTS RESERVED";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             if(int(frase[i]) == 92) { // '\' --> \n
                 x = width/2-76-8;
                 y+=9;
             } else if(int(frase[i]) != 32){ // En caso de ser un espacio no se dibuja
-                al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 9,
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 9,
                                       8, 8, x, y, 0);
             }
             x+=8;
@@ -176,7 +190,7 @@ public:
         frase = "PRESS ENTER TO PLAY";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             if(int(frase[i]) != 32){ // En caso de ser un espacio no se dibuja
-                al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 8,
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
                                       8, 8, x, y, 0);
             }
             x+=8;
@@ -186,10 +200,10 @@ public:
         frase = "PRESS F1 FOR MENU";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             if (int(frase[i]) >= 48 && int(frase[i]) <= 57) { // Numero
-                al_draw_bitmap_region(drawInit, (int(frase[i]) % 48) * 8 + 9*9, 0,
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 0,
                                       8, 8, x, y, 0);
             } else if(int(frase[i]) != 32){ // En caso de ser un espacio no se dibuja
-                al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 8,
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
                                       8, 8, x, y, 0);
             }
             x+=8;
@@ -203,65 +217,52 @@ public:
 
         float x = width/2-165+20, y = height/2-140+20;
         // Cargar logo Q*Bert
-        al_draw_bitmap_region(drawInit, 0, 4 * 8,
+        al_draw_bitmap_region(fonts, 0, 4 * 8,
                               12*8, 2*8, x, y, 0);
 
         std::string frase;
 
         x = width / 2 + 8*4;
-        frase = "ESC PARA VOLVER";                                                                                                                                                                             "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
+        frase = "ESC TO RETURN";                                                                                                                                                                             "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
-                al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 8,
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
                                       8, 8, x, y, 0);
             }
             x += 8;
         }
 
-        x = width / 2 - 8*12, y = height/2 - 8*8-2;
-        int naranja = 0;
-        frase = "INSTRUCCIONES\\"
-                "CONTROLES\\"
-                "CAMBIO COLOR CUBOS   -" + cubos[cuboID] + "-\\"
-                "IA COILY             -" + coily[coilyID] + "-\\"
-                "IA SLICK-SAM         -" + slicksam[slicksamID] + "-\\"
-                "IA BLOB ROJO         -" + blob[blobID] + "-\\"
-                "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
+        x = width / 2 - 8*14, y = height/2 - 8*8-2;
+        frase = "INSTRUCTIONS\\"
+                "DEFINE GAME KEYS\\"
+                "DIFFICULTY\\"
+                "START LEVEL     -" + std::to_string(level) + "-\\";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             if (int(frase[i]) == 92) { // '\' --> \n
-                x = width / 2 - 8*12-8;
+                x = width / 2 - 8*14-8;
                 y += 9*3;
-                naranja++;
             }
             else if(int(frase[i]) == 45){ // '-'
-                if(posMenu == naranja && menu != DEFAULT) {
-                    al_draw_bitmap_region(drawInit, 10 * 8 + 9 * 9, 8 * 5,
-                                          8, 8, x, y, 0);
-                }
-                else {
-                    al_draw_bitmap_region(drawInit, 10 * 8 + 9 * 9, 8 * 4,
-                                          8, 8, x, y, 0);
-                }
+                al_draw_bitmap_region(fonts, 10 * 8 + 9 * 9, 8 * 4,
+                                      8, 8, x, y, 0);
             }
             else if (int(frase[i]) >= 48 && int(frase[i]) <= 57) { // Numero
-                if(posMenu == naranja && menu != DEFAULT) {
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 48) * 8 + 9 * 9, 8*2,
-                                          8, 8, x, y, 0);
-                }
-                else {
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 48) * 8 + 9 * 9, 0,
-                                          8, 8, x, y, 0);
-                }
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 0,
+                                      8, 8, x, y, 0);
             }
             else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
-                if(posMenu == naranja && menu != DEFAULT) {
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 8*3,
-                                          8, 8, x, y, 0);
-                }
-                else {
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 8,
-                                          8, 8, x, y, 0);
-                }
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
+
+        frase = "USE ARROWS TO MOVE";
+        x = width/2-18*8/2, y = height/2+8*12;
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8 * 3,
+                                      8, 8, x, y, 0);
             }
             x += 8;
         }
@@ -273,8 +274,19 @@ public:
     void pantallaInstruc(){
         float x = width/2-165+20, y = height/2-140+20;
         // Cargar logo Q*Bert
-        al_draw_bitmap_region(drawInit, 0, 4 * 8,
+        al_draw_bitmap_region(fonts, 0, 4 * 8,
                               12*8, 2*8, x, y, 0);
+
+        std::string frase;
+        x = width / 2 + 8*4;
+        frase = "ESC TO RETURN";                                                                                                                                                                             "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
 
         qbert.drawBitmap();
 
@@ -283,13 +295,13 @@ public:
         y = height/2-140+60;
         if(timer > topTimer*1) {
             x = xBase;
-            std::string frase = "JUMP ON SQUARES TO\\CHANGE THEM TO\\THE TARGET COLOR";
+            frase = "JUMP ON SQUARES TO\\CHANGE THEM TO\\THE TARGET COLOR";
             for (std::string::size_type i = 0; i < frase.size(); i++) {
                 if (int(frase[i]) == 92) { // '\' --> \n
                     x = xBase-8;
                     y += 9;
                 } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 9,
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 9,
                                           8, 8, x, y, 0);
                 }
                 x += 8;
@@ -307,10 +319,10 @@ public:
                     x = xBase+8*1-8;
                     y += 9;
                 } else if(int(frase[i]) == 33){ // '!'
-                    al_draw_bitmap_region(drawInit, 16*8, 4*8,
+                    al_draw_bitmap_region(fonts, 16 * 8, 4 * 8,
                                           8, 8, x, y, 0);
                 } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 9,
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 9,
                                           8, 8, x, y, 0);
                 }
                 x += 8;
@@ -328,10 +340,10 @@ public:
                     x = xBase+8*2-8;
                     y += 9;
                 } else if(int(frase[i]) == 33){ // '!'
-                    al_draw_bitmap_region(drawInit, 16*8, 4*8,
+                    al_draw_bitmap_region(fonts, 16 * 8, 4 * 8,
                                           8, 8, x, y, 0);
                 } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 9,
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 9,
                                           8, 8, x, y, 0);
                 }
                 x += 8;
@@ -348,10 +360,10 @@ public:
                     x = xBase+8*3-8;
                     y += 9;
                 } else if(int(frase[i]) == 33){ // '!'
-                    al_draw_bitmap_region(drawInit, 16*8, 4*8,
+                    al_draw_bitmap_region(fonts, 16 * 8, 4 * 8,
                                           8, 8, x, y, 0);
                 } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 9,
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 9,
                                           8, 8, x, y, 0);
                 }
                 x += 8;
@@ -368,13 +380,13 @@ public:
                     x = xBase+8*4-8;
                     y += 9;
                 } else if(int(frase[i]) == 33){ // '!'
-                    al_draw_bitmap_region(drawInit, 16*8, 4*8,
+                    al_draw_bitmap_region(fonts, 16 * 8, 4 * 8,
                                           8, 8, x, y, 0);
                 } else if(int(frase[i]) >= 48 && int(frase[i]) <= 57){ // Numero
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 48) * 8, 0,
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8, 0,
                                           8, 8, x, y, 0);
                 } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 9,
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 9,
                                           8, 8, x, y, 0);
                 }
                 x += 8;
@@ -387,69 +399,153 @@ public:
     void pantallaControles(){
         float x = width/2-165+20, y = height/2-140+20;
         // Cargar logo Q*Bert
-        al_draw_bitmap_region(drawInit, 0, 4 * 8,
+        al_draw_bitmap_region(fonts, 0, 4 * 8,
                               12*8, 2*8, x, y, 0);
 
         std::string frase;
 
         x = width / 2 + 8*4;
-        frase = "ESC PARA VOLVER";                                                                                                                                                                             "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
+        frase = "ESC TO RETURN";                                                                                                                                                                             "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
-                al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 8,
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
                                       8, 8, x, y, 0);
             }
             x += 8;
         }
 
-        x = width / 2 - 8*12, y = height/2 - 8*8-2;
+        x = width / 2 - 8*14, y = height/2 - 8*8-2;
         translateControls();
         int naranja = 0;
         // ARRIBADER, ABAJOIZQ, ARRIBAIZQ, ABAJODER
-        frase = "SALTO ARRIBA DERECHA   -" + controlsName[0] + "-\\"   //UP
-                "SALTO ABAJO IZQUIERDA  -" + controlsName[1] + "-\\"   //DOWN
-                "SALTO ARRIBA IZQUIERDA -" + controlsName[2] + "-\\"   //left
-                "SALTO ABAJO DERECHA    -" + controlsName[3] + "-\\";  //right                                                                                                                                                                                 "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
+        frase = "JUMP UP RIGHT     -" + controlsName[0] + "-\\"   //UP
+                "JUMP DOWN LEFT    -" + controlsName[1] + "-\\"   //DOWN
+                "JUMP UP LEFT      -" + controlsName[2] + "-\\"   //left
+                "JUMP DOWN RIGHT   -" + controlsName[3] + "-\\";  //right                                                                                                                                                                                 "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             if (int(frase[i]) == 92) { // '\' --> \n
-                x = width / 2 - 8*12-8;
+                x = width / 2 - 8*14-8;
                 y += 9*3;
                 naranja++;
             }
             else if(int(frase[i]) == 45){ // '-'
                 if(posControles == naranja && contr != NONE) {
-                    al_draw_bitmap_region(drawInit, 10 * 8 + 9 * 9, 8 * 5,
+                    al_draw_bitmap_region(fonts, 10 * 8 + 9 * 9, 8 * 5,
                                           8, 8, x, y, 0);
                 }
                 else {
-                    al_draw_bitmap_region(drawInit, 10 * 8 + 9 * 9, 8 * 4,
+                    al_draw_bitmap_region(fonts, 10 * 8 + 9 * 9, 8 * 4,
                                           8, 8, x, y, 0);
                 }
             }
             else if (int(frase[i]) >= 48 && int(frase[i]) <= 57) { // Numero
                 if(posControles == naranja && contr != NONE) {
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 48) * 8 + 9 * 9, 8*2,
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 8 * 2,
                                           8, 8, x, y, 0);
                 }
                 else {
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 48) * 8 + 9 * 9, 0,
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 0,
                                           8, 8, x, y, 0);
                 }
             }
             else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
                 if(posControles == naranja && contr != NONE) {
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 8*3,
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8 * 3,
                                           8, 8, x, y, 0);
                 }
                 else {
-                    al_draw_bitmap_region(drawInit, (int(frase[i]) % 65) * 8, 8,
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
                                           8, 8, x, y, 0);
                 }
             }
             x += 8;
         }
 
+        frase = "USE ARROWS TO MOVE";
+        x = width/2-18*8/2, y = height/2+8*12;
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8 * 3,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
+
+        frase = "PRESS ENTER TO CHANGE THE KEY";
+        x = width/2-29*8/2, y += 8*2;
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8 * 3,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
+
         qbert.drawBitmap();
+    }
+
+    void pantallaDificultad(){
+
+        float x = width/2-165+20, y = height/2-140+20;
+        // Cargar logo Q*Bert
+        al_draw_bitmap_region(fonts, 0, 4 * 8,
+                              12*8, 2*8, x, y, 0);
+
+        std::string frase;
+
+        x = width / 2 + 8*4;
+        frase = "ESC TO RETURN";                                                                                                                                                                             "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
+
+        x = width / 2 - 8*14, y = height/2 - 8*8-2;
+        int naranja = 0;
+        frase = "CHANGE CUBE COLORS   -" + cubos[cuboID] + "-\\"
+                "IA COILY             -" + coily[coilyID] + "-\\"
+                "IA SLICK-SAM         -" + slicksam[slicksamID] + "-\\"
+                "IA RED BLOB          -" + blob[blobID] + "-\\";
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) == 92) { // '\' --> \n
+                x = width / 2 - 8*14-8;
+                y += 9*3;
+                naranja++;
+            }
+            else if(int(frase[i]) == 45){ // '-'
+                al_draw_bitmap_region(fonts, 10 * 8 + 9 * 9, 8 * 4,
+                                      8, 8, x, y, 0);
+            }
+            else if (int(frase[i]) >= 48 && int(frase[i]) <= 57) { // Numero
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 0,
+                                      8, 8, x, y, 0);
+            }
+            else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
+
+        frase = "USE ARROWS TO MOVE";
+        x = width/2-18*8/2, y = height/2+8*12;
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8 * 3,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
+
+        qbert.drawBitmap();
+        al_draw_bitmap_region(coilyBitmap, 16*5-2,0,16,16*2,width/2-40,height/2-50, 0);
+        al_draw_bitmap_region(samBitmap, 16*5-2,0,16,16*2,width/2-15,height/2-20, 0);
+        al_draw_bitmap_region(slickMap, 16*5-2,0,16,16*2,width/2,height/2-20, 0);
+        al_draw_bitmap_region(redblobBitmap, 16,0,16,16,width/2-10,height/2+15, 0);
+
     }
     
     void translateControls(){
@@ -493,71 +589,54 @@ public:
             platillo.setX(width/2+platillo.getXRespectCube());
             platillo.setY(height/2+platillo.getYRespectCube());
             qbert.setY(platillo.getY()-6);
-        } else if(pant == INSTRUCCIONES) { // INSTRUCCIONES
+        }
+        else if(pant == INSTRUCCIONES) { // INSTRUCCIONES
             qbert.setX(width/2-165+qbert.getXRespectCube());
             qbert.setY(height/2-140+qbert.getYRespectCube());
         }
-        else if(pant == MENU) {
-            // TODO quitar?
-//            qbert.setX(width/2-165+qbert.getXRespectCube());
-//            qbert.setY(height/2-140+qbert.getYRespectCube());
+        else {
+            qbert.setX(width/2-155+qbert.getXRespectCube());
+            qbert.setY(height/2-120+qbert.getYRespectCube());
         }
     }
 
     void destroy(){
         qbert.destroy();
         platillo.destroy();
-        al_destroy_bitmap(drawInit);
+        al_destroy_bitmap(fonts);
         al_destroy_sample(helloSound);
     }
 
-    void accionMenu(int tecla){
+    void accionPantallas(int tecla){
         if(pant == MENU){ // Inicio del menu
             if(tecla == 59){ // ESCAPE
                 escenarioInit();
             }
             else if(tecla == 67){ // ENTER
-                if(menu == DEFAULT) {
-                    switch (posMenu) {
-                        case 0: // Instrucciones
-                            escenarioInstruc();
-                            break;
-                        case 1: // Controles
-                            escenarioControles();
-                            break;
-                        case 2: // Time reverse cube color
-                            menu = TIMECUBO;
-                            break;
-                        case 3: // IA Coily
-                            menu = IACOILY;
-                            break;
-                        case 4: // IA Slick y Sam
-                            menu = IASLICKSAM;
-                            break;
-                        case 5: // IA Blob rojo
-                            menu = IABLOB;
-                            break;
-                        case 6: // backdoor
-                            menu = LEVEL;
-                            break;
-                    }
-                }
-                else { // Hay algo seleccionado --> se deselecciona
-                    menu = DEFAULT;
+                switch (posMenu) {
+                    case 0: // Instrucciones
+                        escenarioInstruc();
+                        break;
+                    case 1: // Controles
+                        escenarioControles();
+                        break;
+                    case 2:
+                        escenarioDificultad();
+                        break;
                 }
             }
-            else if(tecla == 84 && menu == DEFAULT){ // up
+            else if(tecla == 84){ // up
                 if(posMenu == 0) {
-                    posMenu = 6;
-                    qbert.setY(qbert.getY()+9*3*6);
+                    posMenu = 3;
+                    qbert.setY(qbert.getY()+9*3*3);
                 }
                 else{
                     posMenu--;
                     qbert.setY(qbert.getY()-9*3);
                 }
             }
-            else if(tecla == 85 && menu == DEFAULT){ // down
-                if(posMenu == 6) {
+            else if(tecla == 85){ // down
+                if(posMenu == 3) {
                     posMenu = 0;
                     qbert.setY(height/2-120+qbert.getYRespectCube());
                 }
@@ -566,46 +645,14 @@ public:
                     qbert.setY(qbert.getY()+9*3);
                 }
             }
-            else if(tecla == 82 && menu != DEFAULT){ // left
-                if(menu == TIMECUBO){
-                    if(cuboID == 0) cuboID = 3;
-                    else cuboID--;
-                }
-                else if(menu == IACOILY) {
-                    if(coilyID == 0) coilyID = 2;
-                    else coilyID--;
-                }
-                else if(menu == IASLICKSAM) {
-                    if(slicksamID == 0) slicksamID = 2;
-                    else slicksamID--;
-                }
-                else if(menu == IABLOB) {
-                    if(blobID == 0) blobID = 2;
-                    else blobID--;
-                }
-                else if(menu == LEVEL){
+            else if(tecla == 82){ // left
+                if(posMenu == 3){
                     if(level == 1) level = 9;
                     else level--;
                 }
             }
-            else if(tecla == 83 && menu != DEFAULT){ // right
-                if(menu == TIMECUBO){
-                    if(cuboID == 3) cuboID = 0;
-                    else cuboID++;
-                }
-                else if(menu == IACOILY) {
-                    if(coilyID == 2) coilyID = 0;
-                    else coilyID++;
-                }
-                else if(menu == IASLICKSAM) {
-                    if(slicksamID == 2) slicksamID = 0;
-                    else slicksamID++;
-                }
-                else if(menu == IABLOB) {
-                    if(blobID == 2) blobID = 0;
-                    else blobID++;
-                }
-                else if(menu == LEVEL){
+            else if(tecla == 83){ // right
+                if(posMenu == 3){
                     if(level == 9) level = 1;
                     else level++;
                 }
@@ -667,6 +714,122 @@ public:
                 }
             }
             
+        }
+        else if(pant == DIFICULTAD){ // IA's
+            if(tecla == 59){ // ESCAPE
+                escenarioMenu();
+            }
+            else if(tecla == 84){ // up
+                if(posDificultad == 0) {
+                    posDificultad = 3;
+                    qbert.setY(qbert.getY()+9*3*3);
+                }
+                else{
+                    posDificultad--;
+                    qbert.setY(qbert.getY()-9*3);
+                }
+            }
+            else if(tecla == 85){ // down
+                if(posDificultad == 3) {
+                    posDificultad = 0;
+                    qbert.setY(height/2-120+qbert.getYRespectCube());
+                }
+                else{
+                    posDificultad++;
+                    qbert.setY(qbert.getY()+9*3);
+                }
+            }
+            else if(tecla == 82){ // left
+                if(posDificultad == 0){ // TIMECUBO
+                    if(cuboID == 0) cuboID = 3;
+                    else cuboID--;
+                }
+                else if(posDificultad == 1) { // IACOILY
+                    if(coilyID == 0) coilyID = 2;
+                    else coilyID--;
+                }
+                else if(posDificultad == 2) { // IASLICKSAM
+                    if(slicksamID == 0) slicksamID = 2;
+                    else slicksamID--;
+                }
+                else if(posDificultad == 3) { // IABLOB
+                    if(blobID == 0) blobID = 2;
+                    else blobID--;
+                }
+            }
+            else if(tecla == 83){ // right
+                if(posDificultad == 0){ // TIMECUBO
+                    if(cuboID == 3) cuboID = 0;
+                    else cuboID++;
+                }
+                else if(posDificultad == 1) { // IACOILY
+                    if(coilyID == 2) coilyID = 0;
+                    else coilyID++;
+                }
+                else if(posDificultad == 2) { // IASLICKSAM
+                    if(slicksamID == 2) slicksamID = 0;
+                    else slicksamID++;
+                }
+                else if(posDificultad == 3) { // IABLOB
+                    if(blobID == 2) blobID = 0;
+                    else blobID++;
+                }
+            }
+        }
+        else if(pant = INSTRUCCIONES){
+            if(tecla == 59){ // ESCAPE
+                escenarioMenu();
+            }
+        }
+    }
+
+    void drawPause(ALLEGRO_BITMAP *pauseBitmap, ALLEGRO_BITMAP *fonts, int posPause) {
+        al_draw_bitmap_region(pauseBitmap, 0, 0, 300, 200, width / 2 - 113, height / 2-50, 0);
+        float x, y;
+        std::string frase;
+
+        frase = "WHAT DO YOU WANT TO DO?\\";
+        x = width / 2 - frase.size()*8/2, y = height / 2 - 8 * 5;
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) == 92) { // '\' --> \n
+                x = width / 2 - 8 * 12 - 8;
+                y += 9 * 3;
+            } else if (int(frase[i]) == 63) { // '?'
+                al_draw_bitmap_region(fonts, 7 * 8 + 9 * 9, 8 * 4,
+                                      7, 8, x, y, 0);
+            } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
+
+        x = width / 2 - 8 * 6;
+        int naranja = 0;
+        frase = "CONTINUE\\GO TO MENU\\CLOSE GAME";
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) == 92) { // '\' --> \n
+                x = width / 2 - 8 * 6-8;
+                y += 9*2;
+                naranja++;
+            } else if (int(frase[i]) >= 48 && int(frase[i]) <= 57) { // Numero
+                if (posPause == naranja) {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 8 * 2,
+                                          8, 8, x, y, 0);
+                } else {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 0,
+                                          8, 8, x, y, 0);
+                }
+            } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                if (posPause == naranja) {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8 * 3,
+                                          8, 8, x, y, 0);
+                } else {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
+                                          8, 8, x, y, 0);
+                }
+            }
+            x += 8;
         }
     }
 

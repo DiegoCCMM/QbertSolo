@@ -23,6 +23,8 @@
 float scale;
 float WIDTH, HEIGHT;
 
+int posPause;
+
 void must_init(bool test, const char *description);
 void guardarResize();
 
@@ -80,6 +82,9 @@ int main() {
     al_scale_transform(&camera, scale, scale);
     al_use_transform(&camera);
 
+    ALLEGRO_BITMAP *pauseBitmap = al_load_bitmap("../sprites/escape.png");
+    ALLEGRO_BITMAP *fonts = al_load_bitmap("../sprites/fonts.png");
+
     Creditos credit = Creditos();
     Escena escena = Escena(WIDTH/scale, HEIGHT/scale);
     bool redraw = true;
@@ -98,6 +103,7 @@ int main() {
 
     // Pantallas/Estados:
     // INICIO, INFONIVEL, JUEGO, CREDITOS(registro nombre y highscore), CLOSE
+    bool pause = false;
 
     inicioIntro:
     {
@@ -117,46 +123,69 @@ int main() {
                 case ALLEGRO_EVENT_TIMER:
 
                     redraw = true;
-                    init.movement();
+                    if(!pause) init.movement();
                     break;
 
                 case ALLEGRO_EVENT_KEY_DOWN:
 
-                    switch (event.keyboard.keycode) {
-                        case ALLEGRO_KEY_ENTER:
-                            if(init.pant == 0){ // INICIO
-                                init.destroy();
+                    if(!pause) {
+                        switch (event.keyboard.keycode) {
+                            case ALLEGRO_KEY_ENTER:
+                                if (init.pant == 0) { // INICIO
+                                    init.destroy();
 
-                                level = init.level;
-                                cuboID = init.cuboID, coilyID = init.coilyID,
-                                slicksamID = init.slicksamID, blobID = init.blobID;
-                                // UP, DOWN, LEFT, RIGHT
-                                controls[0] = init.controls[0], controls[1] = init.controls[1],
-                                controls[2] = init.controls[2], controls[3] = init.controls[3];
+                                    level = init.level;
+                                    cuboID = init.cuboID, coilyID = init.coilyID,
+                                    slicksamID = init.slicksamID, blobID = init.blobID;
+                                    // UP, DOWN, LEFT, RIGHT
+                                    controls[0] = init.controls[0], controls[1] = init.controls[1],
+                                    controls[2] = init.controls[2], controls[3] = init.controls[3];
 
-                                escena.setLevel(level);
-                                backdoor = level != 1;
+                                    escena.setLevel(level);
+                                    backdoor = level != 1;
 
-                                al_stop_sample_instance(introInstance);
+                                    al_stop_sample_instance(introInstance);
 
 //                                goto infonivelIntro;
-                                goto juegoIntro;
+                                    goto juegoIntro;
 
-                            } else if(init.pant == 1) { // Instrucciones
-                                init.escenarioInit();
-                            }
-                            else if(init.pant == 2 || init.pant == 3){ // Menu/controles
-                                init.accionMenu(event.keyboard.keycode);
-                            }
+                                } else { // Menu/controles
+                                    init.accionPantallas(event.keyboard.keycode);
+                                }
 
-                            break;
+                                break;
 
-                        case ALLEGRO_KEY_F1:
-                            init.escenarioMenu();
-                            break;
+                            case ALLEGRO_KEY_F1:
+                                init.escenarioMenu();
+                                break;
 
-                        default:
-                            init.accionMenu(event.keyboard.keycode);
+                            default:
+                                if (init.pant != 0) {
+                                    init.accionPantallas(event.keyboard.keycode);
+                                }
+                        }
+                    }
+                    else{
+                        switch (event.keyboard.keycode) {
+                            case ALLEGRO_KEY_DOWN:
+                                if(posPause==2) posPause = 0;
+                                else posPause++;
+                                break;
+                            case ALLEGRO_KEY_UP:
+                                if(posPause==0) posPause = 2;
+                                else posPause--;
+                                break;
+                            case ALLEGRO_KEY_ENTER:
+                                pause = !pause;
+                                if(posPause == 1){
+                                    goto inicioIntro;
+                                }
+                                else if(posPause == 2){
+                                    init.destroy();
+                                    goto close;
+                                }
+                                break;
+                        }
                     }
 
                     break;
@@ -195,8 +224,11 @@ int main() {
                     break;
 
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    init.destroy();
-                    goto close;
+                    if(!pause) {
+                        posPause = 0;
+                        pause = !pause;
+                    }
+                    break;
 
             }
             if (redraw && al_is_event_queue_empty(queue)) {
@@ -204,6 +236,7 @@ int main() {
                 al_clear_to_color(al_map_rgb(49, 33, 121));
 
                 init.drawBitmap();
+                if(pause) init.drawPause(pauseBitmap, fonts, posPause);
 
                 al_flip_display();
                 redraw = false;
@@ -232,12 +265,37 @@ int main() {
                 case ALLEGRO_EVENT_TIMER:
 
                     redraw = true;
-                    infonivel.movement();
+                    if(!pause) infonivel.movement();
 
                     if (infonivel.fin()) {
                         goto juegoIntro;
                     }
 
+                    break;
+
+                case ALLEGRO_KEY_DOWN:
+                    if(pause){
+                        switch (event.keyboard.keycode) {
+                            case ALLEGRO_KEY_DOWN:
+                                if(posPause==2) posPause = 0;
+                                else posPause++;
+                                break;
+                            case ALLEGRO_KEY_UP:
+                                if(posPause==0) posPause = 2;
+                                else posPause--;
+                                break;
+                            case ALLEGRO_KEY_ENTER:
+                                pause = !pause;
+                                if(posPause == 1){
+                                    goto inicioIntro;
+                                }
+                                else if(posPause == 2){
+                                    infonivel.destroy();
+                                    goto close;
+                                }
+                                break;
+                        }
+                    }
                     break;
 
                 case ALLEGRO_EVENT_DISPLAY_RESIZE:
@@ -274,7 +332,10 @@ int main() {
                     break;
 
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    goto close;
+                    if(!pause) {
+                        posPause = 0;
+                        pause = !pause;
+                    }
                     break;
 
             }
@@ -283,6 +344,7 @@ int main() {
                 al_clear_to_color(al_map_rgb(0, 0, 0));
 
                 infonivel.drawBitmap();
+                if(pause) infonivel.drawPause(pauseBitmap, fonts, posPause);
 
                 al_flip_display();
                 redraw = false;
@@ -297,7 +359,6 @@ int main() {
     {
         al_play_sample_instance(juegoInstance);
         escena.load(WIDTH/scale, HEIGHT/scale, backdoor, cuboID, coilyID, slicksamID, blobID);
-        bool pause = false;
 
         juego:
         {
@@ -360,18 +421,28 @@ int main() {
                     }
                     else if(pause){
                         switch (event.keyboard.keycode) {
-                            case ALLEGRO_KEY_LEFT:
-                            case ALLEGRO_KEY_RIGHT:
-                                escena.posPause = ++escena.posPause%2;
+                            case ALLEGRO_KEY_DOWN:
+                                if(posPause==2) posPause = 0;
+                                else posPause++;
+                                break;
+                            case ALLEGRO_KEY_UP:
+                                if(posPause==0) posPause = 2;
+                                else posPause--;
                                 break;
                             case ALLEGRO_KEY_ENTER:
-                                if(escena.posPause == 0) goto inicioIntro;
-                                else goto close;
+                                pause = !pause;
+                                if(posPause == 1){
+                                    goto inicioIntro;
+                                }
+                                else if(posPause == 2){
+                                    goto close;
+                                }
                                 break;
                         }
                     }
 
                     if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE){ // ESC
+                        posPause = 0;
                         pause = !pause;
                     }
 
@@ -410,9 +481,11 @@ int main() {
 
                     break;
 
-
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    goto close;
+                    if(!pause) {
+                        posPause = 0;
+                        pause = !pause;
+                    }
                     break;
 
             }
@@ -421,7 +494,7 @@ int main() {
                 al_clear_to_color(al_map_rgb(0, 0, 0));
 
                 escena.drawAll();
-                if(pause) escena.drawPause(); // TODO
+                if(pause) escena.drawPause(pauseBitmap, fonts, posPause);
 
                 al_flip_display();
                 redraw = false;
@@ -447,13 +520,36 @@ int main() {
                 case ALLEGRO_EVENT_TIMER:
 
                     redraw = true;
-                    credit.movement();
+                    if(!pause) credit.movement();
+
                     break;
 
                 case ALLEGRO_EVENT_KEY_DOWN:
 
                     //std::cout << event.keyboard.keycode << std::endl;
-                    credit.write(event.keyboard.keycode);
+                    if(!pause) credit.write(event.keyboard.keycode);
+                    else {
+                        switch (event.keyboard.keycode) {
+                            case ALLEGRO_KEY_DOWN:
+                                if(posPause==2) posPause = 0;
+                                else posPause++;
+                                break;
+                            case ALLEGRO_KEY_UP:
+                                if(posPause==0) posPause = 2;
+                                else posPause--;
+                                break;
+                            case ALLEGRO_KEY_ENTER:
+                                pause = !pause;
+                                if(posPause == 1){
+                                    goto inicioIntro;
+                                }
+                                else if(posPause == 2){
+                                    credit.destroy();
+                                    goto close;
+                                }
+                                break;
+                        }
+                    }
 
                     break;
 
@@ -491,7 +587,11 @@ int main() {
                     break;
 
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    goto close;
+                    if(!pause) {
+                        posPause = 0;
+                        pause = !pause;
+                    }
+                    break;
 
             }
             if (redraw && al_is_event_queue_empty(queue)) {
@@ -499,6 +599,7 @@ int main() {
                 al_clear_to_color(al_map_rgb(0, 0, 0));
 
                 credit.drawBitmap();
+                if(pause) credit.drawPause(pauseBitmap, fonts, posPause);
 
                 al_flip_display();
                 redraw = false;
@@ -525,6 +626,9 @@ int main() {
     al_destroy_sample_instance(introInstance);
     al_destroy_sample(juego);
     al_destroy_sample_instance(juegoInstance);
+
+    al_destroy_bitmap(pauseBitmap);
+    al_destroy_bitmap(fonts);
 
     return 0;
 }
