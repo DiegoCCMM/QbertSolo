@@ -68,24 +68,7 @@ public:
             std::cout << "distancia j" << abs(dirJ) << std::endl;*/
 
             //la diferencia de altura es igual en distancia en bloques
-            int cercania = abs(dirI);
-            if ((dirJ < 0 && dirI >= 0) || (dirI <= 0 && dirJ > 0)) {
-                // Sólo tenemos diferencia lateral o la diferencia lateral no es en la misma dirección que la altura,
-                // impidiendo usar los movimientos diagonales para ajustar ambos
-                // , lo que implica que tendremos que hacer 2 movimientos
-                // por cada diferencia lateral EJ de 5 4 a 5 3 sólo podemos llegar pisando antes 6 4 y luego 5 3
-                cercania += 2 * abs(dirJ);
-            }
-            //la otra alternativa sería que dirJ y dirI tuvieran el mismo signo
-            //significa que la diferencia lateral se puede solucionar usando dirI movimientos diagonales
-            //y en el caso de que dirJ fuera menor que dirI, con los movimientos diagonales solucionamos la diferencia
-            //lateral y sólo nos quedaría la diferencia de altura.
-            //Es decir, que con dirI solucionamos dirJ y sólo nos queda dirI - dirJ que ya sabemos que es igual.
-
-
-
-            //std::cout << "cercania " << cercania << std::endl;
-
+            int cercania = distanciaQbert(qberti, qbertj);
 
             if (cercania <= 3) { //si estamos "cerca" nos tiramos
                 setState(COULD_FALL);
@@ -154,23 +137,8 @@ public:
             std::cout << "distancia j" << abs(dirJ) << std::endl;*/
 
             //la diferencia de altura es igual en distancia en bloques
-            int cercania = abs(dirI);
-            if ((dirJ < 0 && dirI >= 0) || (dirI <= 0 && dirJ > 0)) {
-                // Sólo tenemos diferencia lateral o la diferencia lateral no es en la misma dirección que la altura,
-                // impidiendo usar los movimientos diagonales para ajustar ambos
-                // , lo que implica que tendremos que hacer 2 movimientos
-                // por cada diferencia lateral EJ de 5 4 a 5 3 sólo podemos llegar pisando antes 6 4 y luego 5 3
-                cercania += 2 * abs(dirJ);
-            }
-            //la otra alternativa sería que dirJ y dirI tuvieran el mismo signo
-            //significa que la diferencia lateral se puede solucionar usando dirI movimientos diagonales
-            //y en el caso de que dirJ fuera menor que dirI, con los movimientos diagonales solucionamos la diferencia
-            //lateral y sólo nos quedaría la diferencia de altura.
-            //Es decir, que con dirI solucionamos dirJ y sólo nos queda dirI - dirJ que ya sabemos que es igual.
+            int cercania = distanciaQbert(qberti, qbertj);
 
-
-
-            //std::cout << "cercania " << cercania << std::endl;
 
 
             if (cercania <= 3) { //si estamos "cerca" nos tiramos
@@ -267,26 +235,10 @@ public:
             std::cout << "distancia j" << abs(dirJ) << std::endl;*/
 
             //la diferencia de altura es igual en distancia en bloques
-            int cercania = abs(dirI);
-            if ((dirJ < 0 && dirI >= 0) || (dirI <= 0 && dirJ > 0)) {
-                // Sólo tenemos diferencia lateral o la diferencia lateral no es en la misma dirección que la altura,
-                // impidiendo usar los movimientos diagonales para ajustar ambos
-                // , lo que implica que tendremos que hacer 2 movimientos
-                // por cada diferencia lateral EJ de 5 4 a 5 3 sólo podemos llegar pisando antes 6 4 y luego 5 3
-                cercania += 2 * abs(dirJ);
-            }
-            //la otra alternativa sería que dirJ y dirI tuvieran el mismo signo
-            //significa que la diferencia lateral se puede solucionar usando dirI movimientos diagonales
-            //y en el caso de que dirJ fuera menor que dirI, con los movimientos diagonales solucionamos la diferencia
-            //lateral y sólo nos quedaría la diferencia de altura.
-            //Es decir, que con dirI solucionamos dirJ y sólo nos queda dirI - dirJ que ya sabemos que es igual.
+            int cercania = distanciaQbert(qberti, qbertj);
 
 
-
-            //std::cout << "cercania " << cercania << std::endl;
-
-
-            if (cercania <= 2 && qbertNosEspera < 1) { //si estamos "cerca" nos tiramos
+            if (cercania <= 1 && qbertNosEspera < 1) { //si estamos "cerca" nos tiramos
                 setState(COULD_FALL);
             } else if (coilyCouldFall() && abs(dirI) + abs(dirJ) > 1) {
                 setState(AI);

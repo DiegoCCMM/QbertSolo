@@ -123,6 +123,48 @@ public:
         Enemy::setSourceX(getSourceX() - 16);
     }
 
+    int distanciaQbert(int qberti, int qbertj){
+
+        int distanciaQbert =  abs(getJ() - qbertj);
+        if(getI() == qberti){
+            //está en la misma fila, siempre habrá el mismo movimiento hacia vertical que lateral
+            distanciaQbert *=  2;
+        }else if(distanciaQbert == 0){
+            //solo hay diferencia vertical
+            distanciaQbert =  abs(getI() - qberti);
+        }else{//estamos difente tanto en fila como en columna
+            if((getJ() > qbertj && getI() < qberti) || (getJ() < qbertj && getI() > qberti)) {
+                //si vamos hacia abajo a la izquierda o arriba a la derecha, necesitamos un movimiento más hacia abajo o arriba
+                distanciaQbert += distanciaQbert + 1;
+            }else if((getJ() < qbertj && getI() < qberti) || (getJ() > qbertj && getI() > qberti)){
+                //si vamos hacia arriba a la izquierda o abajo a la derecha, necesitamos un movimiento menos hacia abajo o arriba
+                distanciaQbert += distanciaQbert - 1;
+            }
+        }
+        return distanciaQbert;
+    }
+
+    int distanciaQbert(int qberti, int qbertj, int i, int j){
+
+        int distanciaAQbert =  abs(j - qbertj);
+        if(i == qberti){
+            //está en la misma fila, siempre habrá el mismo movimiento hacia vertical que lateral
+            distanciaAQbert *=  2;
+        }else if(distanciaAQbert == 0){
+            //solo hay diferencia vertical
+            distanciaAQbert =  abs(i - qberti);
+        }else{//estamos difente tanto en fila como en columna
+            if((j > qbertj && i < qberti) || (j < qbertj && i > qberti)) {
+                //si vamos hacia abajo a la izquierda o arriba a la derecha, necesitamos un movimiento más hacia abajo o arriba
+                distanciaAQbert += distanciaAQbert + 1;
+            }else if((j < qbertj && i < qberti) || (j > qbertj && i > qberti)){
+                //si vamos hacia arriba a la izquierda o abajo a la derecha, necesitamos un movimiento menos hacia abajo o arriba
+                distanciaAQbert += distanciaAQbert - 1;
+            }
+        }
+        return distanciaAQbert;
+    }
+
     virtual void assignIJ() {
         if (getDir() == TOPLEFT) setI(getI() - 1), setJ(getJ() - 1);
         else if (getDir() == DOWNRIGHT) setI(getI() + 1), setJ(getJ() + 1);
