@@ -183,7 +183,7 @@ public:
         }
 
         x = width/2-64, y += 8*2;
-        frase = "PRESS F1 TO MENU";
+        frase = "PRESS F1 FOR MENU";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             if (int(frase[i]) >= 48 && int(frase[i]) <= 57) { // Numero
                 al_draw_bitmap_region(drawInit, (int(frase[i]) % 48) * 8 + 9*9, 0,
