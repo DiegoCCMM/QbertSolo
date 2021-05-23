@@ -142,8 +142,6 @@ int main() {
 //                                goto infonivelIntro;
                                 goto juegoIntro;
 
-                            } else if(init.pant == 1) { // Instrucciones
-                                init.escenarioInit();
                             }
                             else if(init.pant == 2 || init.pant == 3){ // Menu/controles
                                 init.accionMenu(event.keyboard.keycode);

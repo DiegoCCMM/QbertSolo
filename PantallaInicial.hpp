@@ -668,6 +668,11 @@ public:
             }
             
         }
+        else if(pant = INSTRUCCIONES){
+            if(tecla == 59){ // ESCAPE
+                escenarioMenu();
+            }
+        }
     }
 
 };
