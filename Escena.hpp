@@ -297,6 +297,18 @@ public:
     }
 
     void drawAll() {
+        std::string frase;
+        float x, y;
+
+        x = width / 2 + 8*4, y = height/2-140+20;
+        frase = "ESC TO PAUSE";                                                                                                                                                                             "EMPEZAR EN NIVEL     -" + std::to_string(level) + "-\\";
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8*7,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
 
         if (qbert.isFalling()) { // Si QBert esta cayendo primero se dibuja a QBert y luego la piramide
             qbert.drawBitmap();
@@ -443,54 +455,48 @@ public:
 
     }
 
-    void drawPause(){
-        pauseObj.drawBitmap();
-
+    void drawPause(ALLEGRO_BITMAP *pauseBitmap, ALLEGRO_BITMAP *fonts, int posPause) {
+        al_draw_bitmap_region(pauseBitmap, 0, 0, 300, 200, width / 2 - 113, height / 2-50, 0);
         float x, y;
         std::string frase;
 
-        x = width / 2 - 8*9, y = height/2 - 8*4-2;
-        frase = "QUE QUIERES HACER?\\";
+        frase = "WHAT DO YOU WANT TO DO?\\";
+        x = width / 2 - frase.size()*8/2, y = height / 2 - 8 * 5;
         for (std::string::size_type i = 0; i < frase.size(); i++) {
             if (int(frase[i]) == 92) { // '\' --> \n
-                x = width / 2 - 8*12-8;
-                y += 9*3;
-            }
-            else if(int(frase[i]) == 63){ // '?'
+                x = width / 2 - 8 * 12 - 8;
+                y += 9 * 3;
+            } else if (int(frase[i]) == 63) { // '?'
                 al_draw_bitmap_region(fonts, 7 * 8 + 9 * 9, 8 * 4,
                                       7, 8, x, y, 0);
-            }
-            else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+            } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
                 al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
                                       8, 8, x, y, 0);
             }
             x += 8;
         }
 
-        x = width / 2 - 8*13;
+        x = width / 2 - 8 * 6;
         int naranja = 0;
-        frase = "IR AL MENU-CERRAR JUEGO";
+        frase = "CONTINUE\\GO TO MENU\\CLOSE GAME";
         for (std::string::size_type i = 0; i < frase.size(); i++) {
-            if(int(frase[i]) == 45){ // '-'
-                x += 8*2;
+            if (int(frase[i]) == 92) { // '\' --> \n
+                x = width / 2 - 8 * 6-8;
+                y += 9*2;
                 naranja++;
-            }
-            else if (int(frase[i]) >= 48 && int(frase[i]) <= 57) { // Numero
-                if(posPause == naranja) {
-                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 8*2,
+            } else if (int(frase[i]) >= 48 && int(frase[i]) <= 57) { // Numero
+                if (posPause == naranja) {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 8 * 2,
                                           8, 8, x, y, 0);
-                }
-                else {
+                } else {
                     al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 0,
                                           8, 8, x, y, 0);
                 }
-            }
-            else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
-                if(posPause == naranja) {
-                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8*3,
+            } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                if (posPause == naranja) {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8 * 3,
                                           8, 8, x, y, 0);
-                }
-                else {
+                } else {
                     al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
                                           8, 8, x, y, 0);
                 }
@@ -670,7 +676,7 @@ public:
     }
 
     void changeCube(){
-        if(cuboTiempo != 0 && timerGlobal!= 0 && timerGlobal%(30*15*cuboTiempo) == 0){
+        if(cuboTiempo != 0 && timerGlobal!= 0 && timerGlobal%(30*(45-15*(cuboTiempo-1))) == 0){
             std::cout << cuboTiempo << std::endl;
             //genera un enemigo aleatorio
             std::random_device rd;

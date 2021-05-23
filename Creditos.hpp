@@ -308,6 +308,56 @@ public:
         return first.score > second.score;
     }
 
+    void drawPause(ALLEGRO_BITMAP *pauseBitmap, ALLEGRO_BITMAP *fonts, int posPause) {
+        al_draw_bitmap_region(pauseBitmap, 0, 0, 300, 200, width / 2 - 113, height / 2-50, 0);
+        float x, y;
+        std::string frase;
+
+        frase = "WHAT DO YOU WANT TO DO?\\";
+        x = width / 2 - frase.size()*8/2, y = height / 2 - 8 * 5;
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) == 92) { // '\' --> \n
+                x = width / 2 - 8 * 12 - 8;
+                y += 9 * 3;
+            } else if (int(frase[i]) == 63) { // '?'
+                al_draw_bitmap_region(fonts, 7 * 8 + 9 * 9, 8 * 4,
+                                      7, 8, x, y, 0);
+            } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
+                                      8, 8, x, y, 0);
+            }
+            x += 8;
+        }
+
+        x = width / 2 - 8 * 6;
+        int naranja = 0;
+        frase = "CONTINUE\\GO TO MENU\\CLOSE GAME";
+        for (std::string::size_type i = 0; i < frase.size(); i++) {
+            if (int(frase[i]) == 92) { // '\' --> \n
+                x = width / 2 - 8 * 6-8;
+                y += 9*2;
+                naranja++;
+            } else if (int(frase[i]) >= 48 && int(frase[i]) <= 57) { // Numero
+                if (posPause == naranja) {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 8 * 2,
+                                          8, 8, x, y, 0);
+                } else {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 48) * 8 + 9 * 9, 0,
+                                          8, 8, x, y, 0);
+                }
+            } else if (int(frase[i]) != 32) { // En caso de ser un espacio no se dibuja
+                if (posPause == naranja) {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8 * 3,
+                                          8, 8, x, y, 0);
+                } else {
+                    al_draw_bitmap_region(fonts, (int(frase[i]) % 65) * 8, 8,
+                                          8, 8, x, y, 0);
+                }
+            }
+            x += 8;
+        }
+    }
+
 
     /*************************
      * GETTER'S AND SETTER'S *
