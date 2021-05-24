@@ -93,14 +93,7 @@ public:
             else aleatorio = false;
         }
         else if(IA == 2) {
-            bool enMedio = false;
-            int j = 1;
-            for(int i=2; i<=6 && !enMedio; i+=2){
-                enMedio = iQBert==(getI()-i) && jQBert==(getJ()-j);
-                j++;
-            }
-            if(enMedio) aleatorio = true;
-            else aleatorio = false;
+            aleatorio = false;
         }
 
         Direction d;
@@ -109,10 +102,11 @@ public:
             else d = DOWNLEFT;
         }
         else {
-            if(iQBert==getI() && jQBert<getJ()) d = DOWNLEFT;
-            else if(iQBert==getI() && jQBert>getJ()) d = DOWNRIGHT;
-            else { // Estan en una fila distinta
-                // TODO
+            if(getJ()>=jQBert){
+                d = DOWNLEFT;
+            }
+            else {
+                d = DOWNRIGHT;
             }
         }
 

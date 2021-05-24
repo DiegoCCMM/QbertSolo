@@ -605,6 +605,10 @@ public:
         platillo.destroy();
         al_destroy_bitmap(fonts);
         al_destroy_sample(helloSound);
+        al_destroy_bitmap(coilyBitmap);
+        al_destroy_bitmap(samBitmap);
+        al_destroy_bitmap(slickMap);
+        al_destroy_bitmap(redblobBitmap);
     }
 
     void accionPantallas(int tecla){

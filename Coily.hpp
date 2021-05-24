@@ -33,6 +33,7 @@ public:
         this->IACoily = IACoily;
         Enemy::isCoily = true;
         this->platillos = platillos;
+//        std::cout << IACoily << std::endl;
     }
 
     void setState(State s) {
@@ -116,10 +117,16 @@ public:
             int coilyI = getI(), coilyJ = getJ();
             int dirI, dirJ;
 
+            if(state != REACHING_LEDGE){
+                std::cout << "he cambiado, estoy en " << getState() << std::endl;
+            }
+
             if (state == REACHING_LEDGE) {//si tenemos que llegar al borde, perseguimos el top de la pirámide
+                std::cout << "estoy reaching ledge" << std::endl;
                 dirI = coilyI - reachQberti;
                 dirJ = coilyJ - reachQbertj;
-            } else if (qbertj < 0 || qbertj > qberti) {//si qbert se sube a platillo, buscamos cuspide
+            } else if (qbertj < 0 || qbertj > qberti && state == IA) {//si qbert se sube a platillo, buscamos cuspide
+                std::cout << "estoy subiendo piramide" << std::endl;
                 dirI = coilyI - 0;
                 dirJ = coilyJ - 0;
             } else {//en cualquier otro caso, perseguimos la última posición de qbert que tenemos
@@ -141,9 +148,10 @@ public:
 
 
 
-            if (cercania <= 3) { //si estamos "cerca" nos tiramos
+            if (cercania <= 3 && getState() != REACHING_LEDGE) { //si estamos "cerca" nos tiramos
                 setState(COULD_FALL);
-            } else if (coilyCouldFall() && abs(dirI) + abs(dirJ) > 4) {
+                std::cout << "COULD_FALL" << std::endl;
+            } else if (coilyCouldFall() && abs(dirI) + abs(dirJ) > 4 && getState() != REACHING_LEDGE) {
                 setState(AI);
             }
 

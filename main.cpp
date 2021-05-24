@@ -142,6 +142,7 @@ int main() {
                                     controls[2] = init.controls[2], controls[3] = init.controls[3];
 
                                     escena.setLevel(level);
+                                    escena.setRound(1);
                                     backdoor = level != 1;
 
                                     al_stop_sample_instance(introInstance);
@@ -273,7 +274,7 @@ int main() {
 
                     break;
 
-                case ALLEGRO_KEY_DOWN:
+                case ALLEGRO_EVENT_KEY_DOWN:
                     if(pause){
                         switch (event.keyboard.keycode) {
                             case ALLEGRO_KEY_DOWN:

@@ -47,6 +47,7 @@ public:
         int cercaniaEsquinaAbajoIzq = distanciaQbert(6, 0, getI(), getJ());
         int cercaniaEsquinaArriba = distanciaQbert(0, 0, getI(), getJ());
         int cercaniaEsquinaAbajoDer = distanciaQbert(6, 6, getI(), getJ());
+        std::cout << "cercaniaEsquinaAbajoDer " << cercaniaEsquinaAbajoDer << std::endl;
 
         std::list<Direction> siguientePaso = {TOPLEFT, TOPRIGHT, DOWNLEFT, DOWNRIGHT};
         //ni vamos hacia qbert ni nos caemos
@@ -79,7 +80,13 @@ public:
         if(siguientePaso.size() == 0){//parcheo del bug, si no tiene movimiento, elegimos esos dos, bug equina izquierda
             if(getI() == 6 && getJ() == 1){
                 siguientePaso.push_back(TOPLEFT);
-            }else{
+            }else if(getI() == 5 && getJ() == 0) {
+                siguientePaso.push_back(DOWNRIGHT);
+            }
+            else if(getI() == 5 && getJ() == 5) {
+                siguientePaso.push_back(DOWNLEFT);
+            }
+            else if(getI() == 1 && getJ() == 1){
                 siguientePaso.push_back(DOWNRIGHT);
             }
         }
