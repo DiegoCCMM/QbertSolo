@@ -47,7 +47,7 @@ public:
         int cercaniaEsquinaAbajoIzq = distanciaQbert(6, 0, getI(), getJ());
         int cercaniaEsquinaArriba = distanciaQbert(0, 0, getI(), getJ());
         int cercaniaEsquinaAbajoDer = distanciaQbert(6, 6, getI(), getJ());
-        std::cout << "cercaniaEsquinaAbajoDer " << cercaniaEsquinaAbajoDer << std::endl;
+//        std::cout << "cercaniaEsquinaAbajoDer " << cercaniaEsquinaAbajoDer << std::endl;
 
         std::list<Direction> siguientePaso = {TOPLEFT, TOPRIGHT, DOWNLEFT, DOWNRIGHT};
         //ni vamos hacia qbert ni nos caemos
@@ -144,7 +144,7 @@ public:
     }
 
     void randomMovement(int i, int j) override {
-        std::cout << IASlickSam << std::endl;
+//        std::cout << IASlickSam << std::endl;
         if(IASlickSam == 0) {
             IAnivel1(i, j);
         }else if(IASlickSam == 1){

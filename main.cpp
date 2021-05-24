@@ -147,8 +147,8 @@ int main() {
 
                                     al_stop_sample_instance(introInstance);
 
-//                                goto infonivelIntro;
-                                    goto juegoIntro;
+                                goto infonivelIntro;
+//                                    goto juegoIntro;
 
                                 } else { // Menu/controles
                                     init.accionPantallas(event.keyboard.keycode);

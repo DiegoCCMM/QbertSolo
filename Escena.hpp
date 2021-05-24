@@ -677,13 +677,13 @@ public:
 
     void changeCube(){
         if(cuboTiempo != 0 && timerGlobal!= 0 && timerGlobal%(30*(45-15*(cuboTiempo-1))) == 0){
-            std::cout << cuboTiempo << std::endl;
+//            std::cout << cuboTiempo << std::endl;
             //genera un enemigo aleatorio
             std::random_device rd;
             std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());
             std::uniform_int_distribution<int> dist(0, 6);
             int i = dist(mt), j = dist(mt);
-            std::cout << i << " " << j << std::endl;
+//            std::cout << i << " " << j << std::endl;
             piramide.changeCubeInverse(i,j);
         }
         timerGlobal++;
