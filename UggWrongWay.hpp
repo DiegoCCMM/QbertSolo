@@ -18,8 +18,8 @@ public:
         i = 6;
         j = 6;
 
-        ALLEGRO_SAMPLE *musica1 = al_load_sample(("../sounds/" + nom + "-1.ogg").c_str());
-        ALLEGRO_SAMPLE *musica2 = al_load_sample(("../sounds/" + nom + "-2.ogg").c_str());
+        ALLEGRO_SAMPLE *musica1 = al_load_sample(("./sounds/" + nom + "-1.ogg").c_str());
+        ALLEGRO_SAMPLE *musica2 = al_load_sample(("./sounds/" + nom + "-2.ogg").c_str());
 
         playOnce(musica1);
         playOnce(musica2);
@@ -100,7 +100,7 @@ public:
                             setFalling(true);
                             if(nom == "coilyBola") {
                                 puntuacion+=500;
-                                ALLEGRO_SAMPLE *coilyCae = al_load_sample("../sounds/snake-fall.ogg");
+                                ALLEGRO_SAMPLE *coilyCae = al_load_sample("./sounds/snake-fall.ogg");
                                 playOnce(coilyCae);
                             }
                             if (getSourceX() != 0) {

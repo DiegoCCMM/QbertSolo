@@ -21,7 +21,7 @@ class Platillo : public Objeto {
     int i, j; // coordenada respecto piramide (cubo)
     Posicion pos;
     PosicionQBert posQBert = NONE;
-    ALLEGRO_SAMPLE *moveSound = al_load_sample("../sounds/platillo.ogg");
+    ALLEGRO_SAMPLE *moveSound = al_load_sample("./sounds/platillo.ogg");
 
 public:
     // Rango fila [0,6]
@@ -41,7 +41,7 @@ public:
             this->x = piramide.map[i+1][j].x + xRespectCube, this->y = piramide.map[i+1][j].y + yRespectCube;
         }
 
-        ALLEGRO_BITMAP *bitmap = al_load_bitmap("../sprites/platillos.png");
+        ALLEGRO_BITMAP *bitmap = al_load_bitmap("./sprites/platillos.png");
         must_init(bitmap, "platillo");
         this->draw = bitmap;
 
@@ -51,7 +51,7 @@ public:
 
     /* Constructor */
     Platillo(float width, float height) {
-        ALLEGRO_BITMAP *bitmap = al_load_bitmap("../sprites/platillos.png");
+        ALLEGRO_BITMAP *bitmap = al_load_bitmap("./sprites/platillos.png");
         must_init(bitmap, "platillo");
         this->draw = bitmap;
 

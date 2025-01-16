@@ -29,16 +29,16 @@ class Creditos{
     Persona jugador;
 
     std::list<Persona> personas;
-    ALLEGRO_BITMAP *letrasDraw = al_load_bitmap("../sprites/fonts.png");
-    ALLEGRO_BITMAP *letrasGrandesDraw = al_load_bitmap("../sprites/youdidit.png");
-    ALLEGRO_BITMAP *qbertDraw = al_load_bitmap("../sprites/qbert.png");
-    ALLEGRO_SAMPLE *teclaSound = al_load_sample("../sounds/qbert-jump.ogg");
-    ALLEGRO_SAMPLE *highscoreSound = al_load_sample("../sounds/highscores.ogg");
+    ALLEGRO_BITMAP *letrasDraw = al_load_bitmap("./sprites/fonts.png");
+    ALLEGRO_BITMAP *letrasGrandesDraw = al_load_bitmap("./sprites/youdidit.png");
+    ALLEGRO_BITMAP *qbertDraw = al_load_bitmap("./sprites/qbert.png");
+    ALLEGRO_SAMPLE *teclaSound = al_load_sample("./sounds/qbert-jump.ogg");
+    ALLEGRO_SAMPLE *highscoreSound = al_load_sample("./sounds/highscores.ogg");
 
 public:
 
     Creditos(){
-        std::ifstream file("../highscores.txt");
+        std::ifstream file("./highscores.txt");
         for(int i=0; !file.eof(); i++) {
             Persona persona;
             std::string nom, punt;
@@ -113,7 +113,7 @@ public:
         personas.sort(compare);
 
         // Meter todos los jugadores de vuelta en el fichero
-        std::ofstream file("../highscores.txt");
+        std::ofstream file("./highscores.txt");
         int i = 0;
         for (std::_List_iterator<Persona> it = personas.begin(); it != personas.end(); it++) {
             file << it->nombre << " " << it->score;

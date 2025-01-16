@@ -26,7 +26,7 @@ class Coily : public Enemy {
 public:
     Coily(const Piramide &piramide, const std::string &nom, int i, int j, int xRespectCube, int yRespectCube,
           int IACoily, std::list<Platillo> platillos) : Enemy(piramide, nom, i, j, xRespectCube, yRespectCube) {
-        ALLEGRO_BITMAP *draw = al_load_bitmap("../sprites/coilyEstirado.png");
+        ALLEGRO_BITMAP *draw = al_load_bitmap("./sprites/coilyEstirado.png");
         must_init(draw, nom.c_str());
         secondPhaseDraw = draw;
         leftSprite = 16;

@@ -41,7 +41,7 @@ public:
 
         this->nom = nom;
 
-        std::string path = "../sprites/" + nom + ".png";
+        std::string path = "./sprites/" + nom + ".png";
         ALLEGRO_BITMAP *player = al_load_bitmap(path.c_str());
         must_init(player, nom.c_str());
         this->draw = player;
@@ -55,7 +55,7 @@ public:
         this-> sizePixelsX = 16;
         this-> sizePixelsY = 16;
 
-        std::string path = "../sprites/" + nom + ".png";
+        std::string path = "./sprites/" + nom + ".png";
         ALLEGRO_BITMAP *player = al_load_bitmap(path.c_str());
         must_init(player, nom.c_str());
         this->draw = player;
@@ -94,8 +94,8 @@ public:
 
     ALLEGRO_SAMPLE *getJumpSound() const { return jumpSound; }
     void CsetJumpSound(std::string nom) {
-        Character::jumpSound = al_load_sample(("../sounds/" + nom + "-jump.ogg").c_str());
-        must_init(jumpSound, ("../sounds/" + nom + "-jump.ogg").c_str());
+        Character::jumpSound = al_load_sample(("./sounds/" + nom + "-jump.ogg").c_str());
+        must_init(jumpSound, ("./sounds/" + nom + "-jump.ogg").c_str());
     }
 
 

@@ -33,7 +33,7 @@ int main() {
     must_init(al_install_keyboard(), "keyboard");
 
     // Memoria a la hora del reescalado
-    std::ifstream file("../pantalla.txt");
+    std::ifstream file("./pantalla.txt");
     file >> WIDTH >> HEIGHT >> scale;
     file.close();
 
@@ -64,11 +64,11 @@ int main() {
     al_init_acodec_addon();
     al_reserve_samples(NUMERODESAMPLES);
 
-    ALLEGRO_SAMPLE *intro = al_load_sample("../sounds/intro.ogg");
+    ALLEGRO_SAMPLE *intro = al_load_sample("./sounds/intro.ogg");
     ALLEGRO_SAMPLE_INSTANCE *introInstance = al_create_sample_instance(intro);
     al_set_sample_instance_playmode(introInstance, ALLEGRO_PLAYMODE_LOOP);
     al_attach_sample_instance_to_mixer(introInstance, al_get_default_mixer());
-    ALLEGRO_SAMPLE *juego = al_load_sample("../sounds/juego.ogg");
+    ALLEGRO_SAMPLE *juego = al_load_sample("./sounds/juego.ogg");
     ALLEGRO_SAMPLE_INSTANCE *juegoInstance = al_create_sample_instance(juego);
     al_set_sample_instance_playmode(juegoInstance, ALLEGRO_PLAYMODE_LOOP);
     al_attach_sample_instance_to_mixer(juegoInstance, al_get_default_mixer());
@@ -82,8 +82,8 @@ int main() {
     al_scale_transform(&camera, scale, scale);
     al_use_transform(&camera);
 
-    ALLEGRO_BITMAP *pauseBitmap = al_load_bitmap("../sprites/escape.png");
-    ALLEGRO_BITMAP *fonts = al_load_bitmap("../sprites/fonts.png");
+    ALLEGRO_BITMAP *pauseBitmap = al_load_bitmap("./sprites/escape.png");
+    ALLEGRO_BITMAP *fonts = al_load_bitmap("./sprites/fonts.png");
 
     Creditos credit = Creditos();
     Escena escena = Escena(WIDTH/scale, HEIGHT/scale);
@@ -643,7 +643,7 @@ void must_init(bool test, const char *description) {
 
 void guardarResize(){
     // Guardar en memoria a la hora del reescalado
-    std::ofstream file("../pantalla.txt");
+    std::ofstream file("./pantalla.txt");
     file << WIDTH << " " << HEIGHT << " " << scale;
     file.close();
 }

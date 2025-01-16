@@ -14,10 +14,10 @@
 class QBert : public Character{
     int lives = 3;
     int score = 0;
-    ALLEGRO_SAMPLE *fallingSound = al_load_sample("../sounds/qbert-falling.ogg");
-    ALLEGRO_SAMPLE *colisionSound = al_load_sample("../sounds/colision-qbert.ogg");
-    ALLEGRO_SAMPLE *superPowerSound = al_load_sample("../sounds/superpower-qbert.ogg");
-    ALLEGRO_BITMAP *bocadilloDraw = al_load_bitmap("../sprites/qbert-blasfemia.png");   // sprite bocadillo
+    ALLEGRO_SAMPLE *fallingSound = al_load_sample("./sounds/qbert-falling.ogg");
+    ALLEGRO_SAMPLE *colisionSound = al_load_sample("./sounds/colision-qbert.ogg");
+    ALLEGRO_SAMPLE *superPowerSound = al_load_sample("./sounds/superpower-qbert.ogg");
+    ALLEGRO_BITMAP *bocadilloDraw = al_load_bitmap("./sprites/qbert-blasfemia.png");   // sprite bocadillo
     bool superpower = false;
     bool enPlatillo = false;
     bool colision = false;
@@ -173,7 +173,7 @@ public:
                                 superpower = false;
                                 timerSuperPower = 0;
                                 al_destroy_sample(superPowerSound);
-                                superPowerSound = al_load_sample("../sounds/superpower-qbert.ogg");
+                                superPowerSound = al_load_sample("./sounds/superpower-qbert.ogg");
                             }else{
                                 timerSuperPower++;
                             }

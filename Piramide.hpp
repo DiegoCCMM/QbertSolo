@@ -22,7 +22,7 @@ class Piramide {
     bool piramideCompleta;
 
     int time, level;
-    ALLEGRO_SAMPLE *finishSound = al_load_sample("../sounds/levelup.ogg");
+    ALLEGRO_SAMPLE *finishSound = al_load_sample("./sounds/levelup.ogg");
 
 public:
     Cube map[7][7]; // Ha de ser publico
@@ -30,10 +30,10 @@ public:
     /* Carga el mapa de la piramide de un .txt según el nivel y la ronda */
     void loadMap(int level, int round, float width, float height){
         this->level = level;
-        ALLEGRO_BITMAP *cubes = al_load_bitmap("../sprites/cubos.png");
+        ALLEGRO_BITMAP *cubes = al_load_bitmap("./sprites/cubos.png");
         must_init(cubes, "cubes");
 
-        std::ifstream file("../levels/piramide/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt");
+        std::ifstream file("./levels/piramide/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt");
         for(int i=0; !file.eof(); i++) {
             file >> sx[i] >> sy[i] >> sigCubo[i];
         }
@@ -134,10 +134,10 @@ public:
 
     /* Carga el mapa de la piramide de un .txt según el nivel y la ronda */
     void loadMap_IN(int level, int round, float width, float height){
-        ALLEGRO_BITMAP *cubes = al_load_bitmap("../sprites/cubos.png");
+        ALLEGRO_BITMAP *cubes = al_load_bitmap("./sprites/cubos.png");
         must_init(cubes, "cubes");
 
-        std::ifstream file("../levels/piramide/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt");
+        std::ifstream file("./levels/piramide/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt");
         for(int i=0; !file.eof(); i++) {
             file >> sx[i] >> sy[i] >> sigCubo[i];
         }

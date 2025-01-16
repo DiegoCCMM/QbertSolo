@@ -23,13 +23,13 @@ class PantallaInicial{
     float width, height;
     int timer = 0;
 
-    ALLEGRO_BITMAP *coilyBitmap = al_load_bitmap("../sprites/coilyEstirado.png");
-    ALLEGRO_BITMAP *samBitmap = al_load_bitmap("../sprites/Sam.png");
-    ALLEGRO_BITMAP *slickMap = al_load_bitmap("../sprites/Slick.png");
-    ALLEGRO_BITMAP *redblobBitmap = al_load_bitmap("../sprites/RedBlob.png");
+    ALLEGRO_BITMAP *coilyBitmap = al_load_bitmap("./sprites/coilyEstirado.png");
+    ALLEGRO_BITMAP *samBitmap = al_load_bitmap("./sprites/Sam.png");
+    ALLEGRO_BITMAP *slickMap = al_load_bitmap("./sprites/Slick.png");
+    ALLEGRO_BITMAP *redblobBitmap = al_load_bitmap("./sprites/RedBlob.png");
 
-    ALLEGRO_BITMAP *fonts = al_load_bitmap("../sprites/fonts.png");
-    ALLEGRO_SAMPLE *helloSound = al_load_sample("../sounds/qbert-hello.ogg");
+    ALLEGRO_BITMAP *fonts = al_load_bitmap("./sprites/fonts.png");
+    ALLEGRO_SAMPLE *helloSound = al_load_sample("./sounds/qbert-hello.ogg");
     QBert qbert = QBert();
     Platillo platillo = Platillo(width, height);
     int posMenu, posControles, posDificultad;

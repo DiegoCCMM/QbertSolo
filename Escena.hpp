@@ -30,7 +30,7 @@ class Escena {
             gameoverObj,
             pauseObj;
 
-    ALLEGRO_BITMAP *fonts = al_load_bitmap("../sprites/fonts.png");
+    ALLEGRO_BITMAP *fonts = al_load_bitmap("./sprites/fonts.png");
 
 public:
 
@@ -46,80 +46,80 @@ public:
 
     /* Constructor */
     Escena(float _width, float _height) : width(_width), height(_height), level(1), round(1) {
-        pauseObj.setDraw(al_load_bitmap("../sprites/escape.png"));
+        pauseObj.setDraw(al_load_bitmap("./sprites/escape.png"));
         pauseObj.setSizePixelsX(230);
         pauseObj.setSizePixelsY(60);
         pauseObj.setXRespectCube(-94);
         pauseObj.setYRespectCube(20);
 
-        playerObj.setDraw(al_load_bitmap("../sprites/player-letras.png"));
+        playerObj.setDraw(al_load_bitmap("./sprites/player-letras.png"));
         playerObj.setSizePixelsX(16 * 3 + 4);
         playerObj.setSizePixelsY(8);
         playerObj.setXRespectCube(-3 * 32);
         playerObj.setYRespectCube(-32 - 10);
 
-        numPlayerObj.setDraw(al_load_bitmap("../sprites/player-num.png"));
+        numPlayerObj.setDraw(al_load_bitmap("./sprites/player-num.png"));
         numPlayerObj.setSizePixelsX(9);
         numPlayerObj.setSizePixelsY(12);
         numPlayerObj.setXRespectCube(-32 - 3);
         numPlayerObj.setYRespectCube(-32 - 13);
 
-        puntuacionObj.setDraw(al_load_bitmap("../sprites/fonts.png"));
+        puntuacionObj.setDraw(al_load_bitmap("./sprites/fonts.png"));
         puntuacionObj.setSizePixelsX(8);
         puntuacionObj.setSizePixelsY(8);
         puntuacionObj.setXRespectCube(-3 * 32);
         puntuacionObj.setYRespectCube(-32 - 1);
 
-        changetoObj.setDraw(al_load_bitmap("../sprites/changeto-text.png"));
+        changetoObj.setDraw(al_load_bitmap("./sprites/changeto-text.png"));
         changetoObj.setSizePixelsX(7 * 8);
         changetoObj.setSizePixelsY(8);
         changetoObj.setXRespectCube(-3 * 32);
         changetoObj.setYRespectCube(-4);
 
-        flechaObj.setDraw(al_load_bitmap("../sprites/flechas.png"));
+        flechaObj.setDraw(al_load_bitmap("./sprites/flechas.png"));
         flechaObj.setSizePixelsX(9 * 8);
         flechaObj.setSizePixelsY(8);
         flechaObj.setXRespectCube(-3 * 32);
         flechaObj.setYRespectCube(6);
 
-        cuadrObj.setDraw(al_load_bitmap("../sprites/cubos.png"));
+        cuadrObj.setDraw(al_load_bitmap("./sprites/cubos.png"));
         cuadrObj.setSizePixelsX(16);
         cuadrObj.setSizePixelsY(16);
         cuadrObj.setXRespectCube(-3 * 32 + 17);
         cuadrObj.setYRespectCube(2);
 
-        vidaObj.setDraw(al_load_bitmap("../sprites/qbert-vida.png"));
+        vidaObj.setDraw(al_load_bitmap("./sprites/qbert-vida.png"));
         vidaObj.setSizePixelsX(16);
         vidaObj.setSizePixelsY(16);
         vidaObj.setXRespectCube(-3 * 32);
         vidaObj.setYRespectCube(32);
 
-        numvidaObj.setDraw(al_load_bitmap("../sprites/fonts.png"));
+        numvidaObj.setDraw(al_load_bitmap("./sprites/fonts.png"));
         numvidaObj.setSourceI(2);
         numvidaObj.setSizePixelsX(8);
         numvidaObj.setSizePixelsY(8);
         numvidaObj.setXRespectCube(-3 * 32 + 16);
         numvidaObj.setYRespectCube(33);
 
-        levelRoundObj.setDraw(al_load_bitmap("../sprites/level-round-text.png"));
+        levelRoundObj.setDraw(al_load_bitmap("./sprites/level-round-text.png"));
         levelRoundObj.setSizePixelsX(40);
         levelRoundObj.setSizePixelsY(16);
         levelRoundObj.setXRespectCube(2 * 32);
         levelRoundObj.setYRespectCube(-4);
 
-        numLevelObj.setDraw(al_load_bitmap("../sprites/fonts.png"));
+        numLevelObj.setDraw(al_load_bitmap("./sprites/fonts.png"));
         numLevelObj.setSizePixelsX(8);
         numLevelObj.setSizePixelsY(8);
         numLevelObj.setXRespectCube(2 * 32 + 40);
         numLevelObj.setYRespectCube(-4);
 
-        numRoundObj.setDraw(al_load_bitmap("../sprites/fonts.png"));
+        numRoundObj.setDraw(al_load_bitmap("./sprites/fonts.png"));
         numRoundObj.setSizePixelsX(8);
         numRoundObj.setSizePixelsY(8);
         numRoundObj.setXRespectCube(2 * 32 + 40);
         numRoundObj.setYRespectCube(4);
 
-        gameoverObj.setDraw(al_load_bitmap("../sprites/gameover.png"));
+        gameoverObj.setDraw(al_load_bitmap("./sprites/gameover.png"));
         gameoverObj.setSizePixelsX(8);
         gameoverObj.setSizePixelsY(8);
         gameoverObj.setXRespectCube(-16);
@@ -180,8 +180,8 @@ public:
     void cargarPlatillos() {
         std::string path;
         if (level < 6)
-            path = "../levels/platillos/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt";
-        else path = "../levels/platillos/restoLevels.txt";
+            path = "./levels/platillos/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt";
+        else path = "./levels/platillos/restoLevels.txt";
 
         std::ifstream file(path);
         int pos, fila;
@@ -196,8 +196,8 @@ public:
     void cargarEnemigos(){
         std::string path;
         if (level < 6)
-            path = "../levels/enemigos/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt";
-        else path = "../levels/enemigos/restoLevels.txt";
+            path = "./levels/enemigos/level" + std::to_string(level) + "_" + std::to_string(round) + ".txt";
+        else path = "./levels/enemigos/restoLevels.txt";
 
         // Formato de los ficheros:
         // blob verde, blob rojo, coily, wrong way&ugg, sam&slick

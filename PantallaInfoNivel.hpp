@@ -12,10 +12,10 @@ class PantallaInfoNivel{
 
     int level;
 
-    ALLEGRO_BITMAP *infoLevel = al_load_bitmap("../sprites/infonivel.png");
+    ALLEGRO_BITMAP *infoLevel = al_load_bitmap("./sprites/infonivel.png");
 
     ALLEGRO_SAMPLE *musicSound;
-    ALLEGRO_SAMPLE *coinSound = al_load_sample("../sounds/coin.ogg");
+    ALLEGRO_SAMPLE *coinSound = al_load_sample("./sounds/coin.ogg");
 
     Piramide piramide;
     QBert qbert;
@@ -32,10 +32,10 @@ public:
         level = _level;
 
         std::string path;
-        if(level == 1 || level == 8) path = "../sounds/tune-1.ogg";
-        else if(level == 2 || level == 7) path = "../sounds/tune-2.ogg";
-        else if(level == 3 || level == 5 || level == 9) path = "../sounds/tune-3.ogg";
-        else if(level == 4 || level == 6) path = "../sounds/tune-4.ogg";
+        if(level == 1 || level == 8) path = "./sounds/tune-1.ogg";
+        else if(level == 2 || level == 7) path = "./sounds/tune-2.ogg";
+        else if(level == 3 || level == 5 || level == 9) path = "./sounds/tune-3.ogg";
+        else if(level == 4 || level == 6) path = "./sounds/tune-4.ogg";
 
         musicSound = al_load_sample(path.c_str());
         al_play_sample(musicSound, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);

@@ -1,0 +1,20 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "configurations": [
+    {
+      "name": "Linux",
+      "includePath": [
+        "${workspaceFolder}/**",   // Incluye todos los subdirectorios
+        "${workspaceFolder}/paquete"  // Incluye específicamente el directorio "paquete"
+      ],
+      "defines": [],
+      "compilerPath": "/usr/bin/g++",  // Asegúrate de que este sea el compilador que estás usando
+      "cStandard": "c11",
+      "cppStandard": "c++17",  // Puedes ajustar esto según tu estándar C++ preferido
+      "intelliSenseMode": "linux-gcc-x64"  // O ajusta según tu plataforma y compilador
+    }
+  ],
+  "version": 4
+}
